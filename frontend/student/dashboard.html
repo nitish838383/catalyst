@@ -1,1 +1,1504 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Student Dashboard | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="student";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Student Dashboard</h1><p class="mt-2 text-slate-500">Track skills, applications and career progress.</p></header><div id="profileNotice" class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800"></div><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><div class="card p-5"><p class="text-sm text-slate-500">Skills</p><p id="skillsCount" class="mt-2 text-3xl font-black">—</p></div><div class="card p-5"><p class="text-sm text-slate-500">Applications</p><p id="appsCount" class="mt-2 text-3xl font-black">—</p></div><div class="card p-5"><p class="text-sm text-slate-500">Unread Notifications</p><p id="notifCount" class="mt-2 text-3xl font-black">—</p></div><div class="card p-5"><p class="text-sm text-slate-500">Profile</p><p id="profileStatus" class="mt-2 text-xl font-black">Checking…</p></div></div><div class="mt-6 grid gap-5 lg:grid-cols-3"><a href="profile.html" class="card p-6 hover:border-indigo-300"><i data-lucide="user-round-cog" class="h-7 w-7 text-indigo-600"></i><h2 class="mt-4 font-black">Build your skill profile</h2><p class="mt-2 text-sm text-slate-500">Add education, skills and interests.</p></a><a href="resume.html" class="card p-6 hover:border-indigo-300"><i data-lucide="scan-search" class="h-7 w-7 text-indigo-600"></i><h2 class="mt-4 font-black">Analyze your resume</h2><p class="mt-2 text-sm text-slate-500">Extract skills from a PDF resume.</p></a><a href="opportunities.html" class="card p-6 hover:border-indigo-300"><i data-lucide="target" class="h-7 w-7 text-indigo-600"></i><h2 class="mt-4 font-black">Find best matches</h2><p class="mt-2 text-sm text-slate-500">See explainable internship and job matches.</p></a></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>(async()=>{try{await SB.get('/students/profile');profileStatus.textContent='Complete'}catch(e){profileStatus.textContent='Incomplete';profileNotice.classList.remove('hidden');profileNotice.innerHTML='Complete your student profile first to unlock skills, matching and career tools. <a class="font-bold underline" href="profile.html">Create profile</a>';return}try{const s=await SB.get('/students/skills');skillsCount.textContent=(s.data||[]).length}catch{}try{const a=await SB.get('/students/applications');appsCount.textContent=(a.data||[]).length}catch{}try{const n=await SB.get('/notifications');const arr=n.data||n||[];notifCount.textContent=arr.filter(x=>!x.is_read).length}catch{notifCount.textContent='0'}})();</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="SkillBridge AI — Student Dashboard">
+
+    <title>Student Dashboard | SkillBridge AI</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet"
+          href="/assets/css/app.css">
+</head>
+
+
+<body class="bg-slate-50 text-slate-900">
+
+<script>
+    window.SKILLBRIDGE_ROLE = "student";
+</script>
+
+
+<div id="app-shell">
+
+    <main class="min-h-screen lg:pl-72">
+
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+
+            <!-- ================================================= -->
+            <!-- HEADER -->
+            <!-- ================================================= -->
+
+            <header class="mb-7">
+
+                <p class="text-sm font-semibold text-indigo-600">
+                    SkillBridge AI
+                </p>
+
+                <div class="mt-1 flex flex-wrap items-center justify-between gap-4">
+
+                    <div>
+
+                        <h1 class="text-3xl font-bold tracking-tight">
+                            Student Dashboard
+                        </h1>
+
+                        <p class="mt-2 text-slate-500">
+                            Track your profile, skills, applications and career progress.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="profile.html"
+                        class="btn btn-primary"
+                    >
+                        <i data-lucide="plus" class="h-4 w-4"></i>
+                        Update Profile
+                    </a>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ================================================= -->
+            <!-- PROFILE NOTICE -->
+            <!-- ================================================= -->
+
+            <div
+                id="profileNotice"
+                class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800"
+            ></div>
+
+
+
+            <!-- ================================================= -->
+            <!-- DASHBOARD STATS -->
+            <!-- ================================================= -->
+
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+
+                <!-- Skills -->
+
+                <div class="card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <p class="text-sm text-slate-500">
+                                Skills
+                            </p>
+
+                            <p
+                                id="skillsCount"
+                                class="mt-2 text-3xl font-black"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+                        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+
+                            <i data-lucide="brain"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Applications -->
+
+                <div class="card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <p class="text-sm text-slate-500">
+                                Applications
+                            </p>
+
+                            <p
+                                id="appsCount"
+                                class="mt-2 text-3xl font-black"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+                        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+
+                            <i data-lucide="briefcase-business"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Notifications -->
+
+                <div class="card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <p class="text-sm text-slate-500">
+                                Unread Notifications
+                            </p>
+
+                            <p
+                                id="notifCount"
+                                class="mt-2 text-3xl font-black"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+                        <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
+
+                            <i data-lucide="bell"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Profile -->
+
+                <div class="card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <p class="text-sm text-slate-500">
+                                Profile
+                            </p>
+
+                            <p
+                                id="profileStatus"
+                                class="mt-2 text-xl font-black"
+                            >
+                                Checking...
+                            </p>
+
+                        </div>
+
+                        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+
+                            <i data-lucide="circle-user-round"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- SAVED PROFILE -->
+            <!-- ================================================= -->
+
+            <section class="card mt-6 overflow-hidden">
+
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-6">
+
+                    <div>
+
+                        <h2 class="text-xl font-black">
+                            My Saved Profile
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Your saved academic and career profile.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="profile.html"
+                        class="btn btn-primary"
+                    >
+                        <i data-lucide="pencil" class="h-4 w-4"></i>
+                        Edit Profile
+                    </a>
+
+                </div>
+
+
+                <!-- Loading -->
+
+                <div
+                    id="profileLoading"
+                    class="p-6 text-sm text-slate-500"
+                >
+                    Loading profile...
+                </div>
+
+
+                <!-- No Profile -->
+
+                <div
+                    id="noProfile"
+                    class="hidden p-8 text-center"
+                >
+
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+
+                        <i data-lucide="user-plus"></i>
+
+                    </div>
+
+                    <h3 class="mt-4 text-lg font-black">
+                        No profile created
+                    </h3>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Create your student profile to unlock matching and career tools.
+                    </p>
+
+                    <a
+                        href="profile.html"
+                        class="btn btn-primary mt-5"
+                    >
+                        Create Profile
+                    </a>
+
+                </div>
+
+
+                <!-- Profile Table -->
+
+                <div
+                    id="profileContent"
+                    class="hidden overflow-x-auto"
+                >
+
+                    <table class="w-full min-w-[950px] text-left">
+
+                        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+
+                        <tr>
+
+                            <th class="px-6 py-4">
+                                Student
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Branch
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Year
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Semester
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Career Goal
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Skills
+                            </th>
+
+                            <th class="px-6 py-4">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <tr class="border-t border-slate-100">
+
+                            <td class="px-6 py-5">
+
+                                <p
+                                    id="profileName"
+                                    class="font-bold text-slate-900"
+                                >
+                                    —
+                                </p>
+
+                                <p
+                                    id="profileEmail"
+                                    class="mt-1 text-xs text-slate-500"
+                                >
+                                    —
+                                </p>
+
+                            </td>
+
+
+                            <td
+                                id="profileBranch"
+                                class="px-6 py-5"
+                            >
+                                —
+                            </td>
+
+
+                            <td
+                                id="profileYear"
+                                class="px-6 py-5"
+                            >
+                                —
+                            </td>
+
+
+                            <td
+                                id="profileSemester"
+                                class="px-6 py-5"
+                            >
+                                —
+                            </td>
+
+
+                            <td
+                                id="profileCareer"
+                                class="px-6 py-5"
+                            >
+                                —
+                            </td>
+
+
+                            <td class="px-6 py-5">
+
+                                <span
+                                    id="profileSkills"
+                                    class="rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600"
+                                >
+                                    0
+                                </span>
+
+                            </td>
+
+
+                            <td class="px-6 py-5">
+
+                                <div class="flex flex-wrap gap-2">
+
+
+                                    <!-- View -->
+
+                                    <button
+                                        type="button"
+                                        onclick="viewProfile()"
+                                        class="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold hover:bg-slate-50"
+                                    >
+
+                                        <i data-lucide="eye" class="h-4 w-4"></i>
+
+                                        View
+
+                                    </button>
+
+
+                                    <!-- Edit -->
+
+                                    <a
+                                        href="profile.html"
+                                        class="inline-flex items-center gap-1 rounded-lg border border-indigo-200 px-3 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+                                    >
+
+                                        <i data-lucide="pencil" class="h-4 w-4"></i>
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <!-- Download -->
+
+                                    <button
+                                        type="button"
+                                        onclick="downloadProfile()"
+                                        class="inline-flex items-center gap-1 rounded-lg border border-emerald-200 px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
+                                    >
+
+                                        <i data-lucide="download" class="h-4 w-4"></i>
+
+                                        Download
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================= -->
+            <!-- QUICK ACTIONS -->
+            <!-- ================================================= -->
+
+            <div class="mt-6 grid gap-5 lg:grid-cols-3">
+
+
+                <!-- Profile -->
+
+                <a
+                    href="profile.html"
+                    class="card p-6 hover:border-indigo-300"
+                >
+
+                    <i
+                        data-lucide="user-round-cog"
+                        class="h-7 w-7 text-indigo-600"
+                    ></i>
+
+                    <h2 class="mt-4 font-black">
+                        Build your skill profile
+                    </h2>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Add education, skills and career interests.
+                    </p>
+
+                </a>
+
+
+                <!-- Resume -->
+
+                <a
+                    href="resume.html"
+                    class="card p-6 hover:border-indigo-300"
+                >
+
+                    <i
+                        data-lucide="scan-search"
+                        class="h-7 w-7 text-indigo-600"
+                    ></i>
+
+                    <h2 class="mt-4 font-black">
+                        Analyze your resume
+                    </h2>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Extract skills from your PDF resume.
+                    </p>
+
+                </a>
+
+
+                <!-- Opportunities -->
+
+                <a
+                    href="opportunities.html"
+                    class="card p-6 hover:border-indigo-300"
+                >
+
+                    <i
+                        data-lucide="target"
+                        class="h-7 w-7 text-indigo-600"
+                    ></i>
+
+                    <h2 class="mt-4 font-black">
+                        Find best matches
+                    </h2>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Find internships and jobs matching your skills.
+                    </p>
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- VIEW PROFILE MODAL -->
+<!-- ================================================= -->
+
+<div
+    id="profileModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
+>
+
+    <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+
+        <!-- Modal Header -->
+
+        <div class="flex items-center justify-between border-b border-slate-200 p-6">
+
+            <div>
+
+                <h2 class="text-2xl font-black">
+                    Student Profile
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Complete profile information
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="closeProfileModal()"
+                class="rounded-lg p-2 hover:bg-slate-100"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- Modal Content -->
+
+        <div
+            id="modalProfileContent"
+            class="p-6"
+        ></div>
+
+
+        <!-- Modal Footer -->
+
+        <div class="flex flex-wrap justify-end gap-3 border-t border-slate-200 p-6">
+
+            <button
+                onclick="downloadProfile()"
+                class="btn"
+            >
+                <i data-lucide="download" class="h-4 w-4"></i>
+                Download
+            </button>
+
+            <a
+                href="profile.html"
+                class="btn btn-primary"
+            >
+                <i data-lucide="pencil" class="h-4 w-4"></i>
+                Edit Profile
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- COMMON JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script src="/assets/js/config.js"></script>
+
+<script src="/assets/js/api.js"></script>
+
+<script src="/assets/js/auth.js"></script>
+
+<script src="/assets/js/shell.js"></script>
+
+
+
+<!-- ================================================= -->
+<!-- DASHBOARD LOGIC -->
+<!-- ================================================= -->
+
+<script>
+
+let currentProfile = null;
+let currentUser = null;
+let currentSkills = [];
+
+
+/* =====================================================
+   LOAD USER
+===================================================== */
+
+async function loadUser() {
+
+    try {
+
+        currentUser = await Auth.me();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Unable to load user:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD PROFILE
+===================================================== */
+
+async function loadProfile() {
+
+    try {
+
+        currentProfile =
+            await SB.get(
+                "/students/profile"
+            );
+
+
+        profileStatus.textContent =
+            "Complete";
+
+
+        profileLoading.classList.add(
+            "hidden"
+        );
+
+
+        profileContent.classList.remove(
+            "hidden"
+        );
+
+
+        profileName.textContent =
+            currentUser?.full_name ||
+            "Student";
+
+
+        profileEmail.textContent =
+            currentUser?.email ||
+            "—";
+
+
+        profileBranch.textContent =
+            currentProfile.branch ||
+            "—";
+
+
+        profileYear.textContent =
+            currentProfile.year
+                ? `${currentProfile.year}${
+                    currentProfile.year === 1
+                        ? "st"
+                        : currentProfile.year === 2
+                        ? "nd"
+                        : currentProfile.year === 3
+                        ? "rd"
+                        : "th"
+                } Year`
+                : "—";
+
+
+        profileSemester.textContent =
+            currentProfile.semester
+                ? `Semester ${currentProfile.semester}`
+                : "—";
+
+
+        profileCareer.textContent =
+            currentProfile.career_goal ||
+            "—";
+
+    }
+
+    catch (error) {
+
+        currentProfile = null;
+
+
+        profileStatus.textContent =
+            "Incomplete";
+
+
+        profileLoading.classList.add(
+            "hidden"
+        );
+
+
+        noProfile.classList.remove(
+            "hidden"
+        );
+
+
+        profileNotice.classList.remove(
+            "hidden"
+        );
+
+
+        profileNotice.innerHTML = `
+
+            Complete your student profile first
+            to unlock skill matching and career tools.
+
+            <a
+                class="font-bold underline"
+                href="profile.html"
+            >
+                Create profile
+            </a>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD SKILLS
+===================================================== */
+
+async function loadSkills() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/students/skills"
+            );
+
+
+        currentSkills =
+            response.data || [];
+
+
+        skillsCount.textContent =
+            currentSkills.length;
+
+
+        profileSkills.textContent =
+            currentSkills.length;
+
+    }
+
+    catch (error) {
+
+        currentSkills = [];
+
+        skillsCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   APPLICATION COUNT
+===================================================== */
+
+async function loadApplications() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/students/applications"
+            );
+
+
+        appsCount.textContent =
+            (response.data || []).length;
+
+    }
+
+    catch (error) {
+
+        appsCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   NOTIFICATION COUNT
+===================================================== */
+
+async function loadNotifications() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/notifications"
+            );
+
+
+        const notifications =
+            response.data ||
+            response ||
+            [];
+
+
+        notifCount.textContent =
+            notifications.filter(
+                item => !item.is_read
+            ).length;
+
+    }
+
+    catch (error) {
+
+        notifCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   VIEW PROFILE
+===================================================== */
+
+window.viewProfile =
+function () {
+
+    if (!currentProfile) {
+
+        SB.toast(
+            "Profile not available."
+        );
+
+        return;
+
+    }
+
+
+    const skillHTML =
+        currentSkills.length
+            ? currentSkills
+                .map(skill => `
+
+                    <span
+                        class="inline-block rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600"
+                    >
+                        ${SB.esc(skill.name)}
+                    </span>
+
+                `)
+                .join(" ")
+
+            : '<span class="text-slate-500">No skills added.</span>';
+
+
+    modalProfileContent.innerHTML = `
+
+        <div class="grid gap-5 sm:grid-cols-2">
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Student Name
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentUser?.full_name || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Email
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentUser?.email || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    College ID
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.college_id || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Department ID
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.department_id || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Branch
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.branch || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Year
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.year || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Semester
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.semester || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    CGPA
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.cgpa || "—")}
+                </p>
+
+            </div>
+
+
+            <div class="sm:col-span-2">
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Career Goal
+                </p>
+
+                <p class="mt-1 font-bold">
+                    ${SB.esc(currentProfile.career_goal || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    GitHub
+                </p>
+
+                <p class="mt-1 break-all">
+                    ${SB.esc(currentProfile.github_url || "—")}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    LinkedIn
+                </p>
+
+                <p class="mt-1 break-all">
+                    ${SB.esc(currentProfile.linkedin_url || "—")}
+                </p>
+
+            </div>
+
+
+            <div class="sm:col-span-2">
+
+                <p class="text-xs font-semibold uppercase text-slate-400">
+                    Skills
+                </p>
+
+                <div class="mt-2 flex flex-wrap gap-2">
+
+                    ${skillHTML}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    `;
+
+
+    profileModal.classList.remove(
+        "hidden"
+    );
+
+
+    profileModal.classList.add(
+        "flex"
+    );
+
+
+    if (window.lucide) {
+
+        lucide.createIcons();
+
+    }
+
+};
+
+
+
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
+window.closeProfileModal =
+function () {
+
+    profileModal.classList.add(
+        "hidden"
+    );
+
+    profileModal.classList.remove(
+        "flex"
+    );
+
+};
+
+
+
+/* =====================================================
+   DOWNLOAD / SAVE PROFILE AS PDF
+===================================================== */
+
+window.downloadProfile =
+function () {
+
+    if (!currentProfile) {
+
+        SB.toast(
+            "Profile not available."
+        );
+
+        return;
+
+    }
+
+
+    const skills =
+        currentSkills.length
+            ? currentSkills
+                .map(skill => SB.esc(skill.name))
+                .join(", ")
+
+            : "No skills added";
+
+
+    const printWindow =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    printWindow.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>
+                ${SB.esc(currentUser?.full_name || "Student")} - SkillBridge Profile
+            </title>
+
+            <style>
+
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 40px auto;
+                    padding: 30px;
+                    color: #0f172a;
+                }
+
+                h1 {
+                    color: #4f46e5;
+                    margin-bottom: 5px;
+                }
+
+                h2 {
+                    margin-top: 30px;
+                    border-bottom: 2px solid #e2e8f0;
+                    padding-bottom: 8px;
+                }
+
+                .subtitle {
+                    color: #64748b;
+                    margin-bottom: 30px;
+                }
+
+                .grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 20px;
+                }
+
+                .field {
+                    margin-bottom: 15px;
+                }
+
+                .label {
+                    font-size: 11px;
+                    color: #64748b;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                }
+
+                .value {
+                    margin-top: 5px;
+                    font-weight: bold;
+                }
+
+                .skills {
+                    margin-top: 10px;
+                    line-height: 1.8;
+                }
+
+                @media print {
+
+                    body {
+                        margin: 0;
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+
+            <h1>
+                SkillBridge AI
+            </h1>
+
+            <p class="subtitle">
+                Student Skill Profile
+            </p>
+
+
+            <h2>
+                Student Information
+            </h2>
+
+
+            <div class="grid">
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Student Name
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentUser?.full_name || "—")}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Email
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentUser?.email || "—")}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Branch
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentProfile.branch || "—")}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Year
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentProfile.year || "—")}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Semester
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentProfile.semester || "—")}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        CGPA
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(currentProfile.cgpa || "—")}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <h2>
+                Career Information
+            </h2>
+
+
+            <div class="field">
+
+                <div class="label">
+                    Career Goal
+                </div>
+
+                <div class="value">
+                    ${SB.esc(currentProfile.career_goal || "—")}
+                </div>
+
+            </div>
+
+
+            <h2>
+                Skills
+            </h2>
+
+
+            <div class="skills">
+
+                ${skills}
+
+            </div>
+
+
+            <h2>
+                Professional Links
+            </h2>
+
+
+            <div class="field">
+
+                <div class="label">
+                    GitHub
+                </div>
+
+                <div class="value">
+                    ${SB.esc(currentProfile.github_url || "—")}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    LinkedIn
+                </div>
+
+                <div class="value">
+                    ${SB.esc(currentProfile.linkedin_url || "—")}
+                </div>
+
+            </div>
+
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    printWindow.document.close();
+
+
+    setTimeout(
+        () => {
+
+            printWindow.focus();
+
+            printWindow.print();
+
+        },
+        400
+    );
+
+};
+
+
+
+/* =====================================================
+   INITIALIZE DASHBOARD
+===================================================== */
+
+async function initDashboard() {
+
+    await loadUser();
+
+    await loadProfile();
+
+
+    if (currentProfile) {
+
+        await loadSkills();
+
+        await Promise.all([
+            loadApplications(),
+            loadNotifications()
+        ]);
+
+    }
+
+    else {
+
+        skillsCount.textContent =
+            "0";
+
+        appsCount.textContent =
+            "0";
+
+        notifCount.textContent =
+            "0";
+
+    }
+
+
+    if (window.lucide) {
+
+        lucide.createIcons();
+
+    }
+
+}
+
+
+initDashboard();
+
+</script>
+
+
+</body>
+
+</html>

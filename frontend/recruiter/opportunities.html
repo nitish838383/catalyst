@@ -1,1 +1,262 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Create Opportunity | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="recruiter";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Create Opportunity</h1><p class="mt-2 text-slate-500">Publish a job or internship and define required skills.</p></header><section class="card p-6"><h2 class="text-xl font-black">Create opportunity</h2><form id="form" class="mt-5 grid gap-4 sm:grid-cols-2"><input class="input" name="title" placeholder="Title" required><select class="input" name="opportunity_type"><option value="internship">Internship</option><option value="job">Job</option></select><input class="input" name="location" placeholder="Location"><input class="input" type="number" step="0.01" name="stipend" placeholder="Stipend"><input class="input" name="experience_required" placeholder="Experience required"><textarea class="input sm:col-span-2" name="description" placeholder="Description"></textarea><input class="input sm:col-span-2" name="skills" placeholder="Required skills: Python, FastAPI, PostgreSQL"><button class="btn btn-primary sm:col-span-2">Create opportunity</button><p id="msg" class="sm:col-span-2 text-sm"></p></form></section></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>form.onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),skills=String(f.get('skills')||'').split(',').map(x=>x.trim()).filter(Boolean),b={};for(const[k,v]of f)if(k!=='skills'&&v!=='')b[k]=k==='stipend'?Number(v):v;try{const o=await SB.post('/recruiters/opportunities',b);for(const s of skills){try{await SB.post(`/recruiters/opportunities/${o.id}/skills`,{skill_name:s,is_required:true,weight:1,category:null})}catch{}}msg.className='sm:col-span-2 text-sm text-emerald-600';msg.textContent=`Opportunity #${o.id} created. Use this ID on Applicants page.`;e.target.reset()}catch(err){msg.className='sm:col-span-2 text-sm text-rose-600';msg.textContent=err.message}};</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="/assets/css/app.css">
+
+    <title>Create Opportunity | SkillBridge AI</title>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+
+    <script>
+        window.SKILLBRIDGE_ROLE = "recruiter";
+    </script>
+
+    <div id="app-shell">
+
+        <main class="min-h-screen lg:pl-72">
+
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+                <header class="mb-7">
+
+                    <p class="text-sm font-semibold text-indigo-600">
+                        SkillBridge AI
+                    </p>
+
+                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
+                        Create Opportunity
+                    </h1>
+
+                    <p class="mt-2 text-slate-500">
+                        Publish a job or internship and define required skills.
+                    </p>
+
+                </header>
+
+
+                <section class="card p-6">
+
+                    <h2 class="text-xl font-black">
+                        Create opportunity
+                    </h2>
+
+
+                    <form
+                        id="form"
+                        class="mt-5 grid gap-4 sm:grid-cols-2"
+                    >
+
+                        <input
+                            class="input"
+                            name="title"
+                            placeholder="Title"
+                            required
+                        >
+
+
+                        <select
+                            class="input"
+                            name="opportunity_type"
+                        >
+
+                            <option value="internship">
+                                Internship
+                            </option>
+
+                            <option value="job">
+                                Job
+                            </option>
+
+                        </select>
+
+
+                        <input
+                            class="input"
+                            name="location"
+                            placeholder="Location"
+                        >
+
+
+                        <input
+                            class="input"
+                            type="number"
+                            step="0.01"
+                            name="stipend"
+                            placeholder="Stipend"
+                        >
+
+
+                        <input
+                            class="input"
+                            name="experience_required"
+                            placeholder="Experience required"
+                        >
+
+
+                        <textarea
+                            class="input sm:col-span-2"
+                            name="description"
+                            placeholder="Description"
+                        ></textarea>
+
+
+                        <input
+                            class="input sm:col-span-2"
+                            name="skills"
+                            placeholder="Required skills: Python, FastAPI, PostgreSQL"
+                        >
+
+
+                        <button
+                            class="btn btn-primary sm:col-span-2"
+                        >
+                            Create opportunity
+                        </button>
+
+
+                        <p
+                            id="msg"
+                            class="sm:col-span-2 text-sm"
+                        ></p>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/shell.js"></script>
+
+
+    <script>
+
+        form.onsubmit = async e => {
+
+            e.preventDefault();
+
+
+            const f =
+                new FormData(
+                    e.target
+                );
+
+
+            const skills =
+                String(
+                    f.get('skills') || ''
+                )
+                    .split(',')
+                    .map(
+                        x => x.trim()
+                    )
+                    .filter(Boolean);
+
+
+            const b = {};
+
+
+            for (const [k, v] of f) {
+
+                if (
+                    k !== 'skills' &&
+                    v !== ''
+                ) {
+
+                    b[k] =
+                        k === 'stipend'
+                            ? Number(v)
+                            : v;
+
+                }
+
+            }
+
+
+            try {
+
+                const o =
+                    await SB.post(
+                        '/recruiters/opportunities',
+                        b
+                    );
+
+
+                for (const s of skills) {
+
+                    try {
+
+                        await SB.post(
+                            `/recruiters/opportunities/${o.id}/skills`,
+                            {
+                                skill_name: s,
+                                is_required: true,
+                                weight: 1,
+                                category: null
+                            }
+                        );
+
+                    }
+
+                    catch {
+
+                    }
+
+                }
+
+
+                msg.className =
+                    'sm:col-span-2 text-sm text-emerald-600';
+
+
+                msg.textContent =
+                    `Opportunity #${o.id} created. Use this ID on Applicants page.`;
+
+
+                e.target.reset();
+
+            }
+
+            catch (err) {
+
+                msg.className =
+                    'sm:col-span-2 text-sm text-rose-600';
+
+
+                msg.textContent =
+                    err.message;
+
+            }
+
+        };
+
+    </script>
+
+
+    <script>
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    </script>
+
+</body>
+
+</html>

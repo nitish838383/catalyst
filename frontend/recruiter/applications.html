@@ -1,1 +1,2080 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Ranked Applicants | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="recruiter";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Ranked Applicants</h1><p class="mt-2 text-slate-500">Review candidates by explainable match score and update status.</p></header><div class="card p-5"><div class="flex gap-3"><input id="oid" class="input" type="number" placeholder="Opportunity ID"><button id="loadBtn" class="btn btn-primary">Load applicants</button></div></div><div id="list" class="mt-5 space-y-4"></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>loadBtn.onclick=load;async function load(){if(!oid.value)return;try{const r=await SB.get(`/recruiters/opportunities/${oid.value}/applications`);list.innerHTML=(r.candidates||[]).map(c=>`<article class="card p-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="text-lg font-black">${SB.esc(c.name)}</h2><p class="text-sm text-slate-500">${SB.esc(c.email)}</p></div><div class="text-2xl font-black text-indigo-600">${c.match_score}%</div></div><p class="mt-3 text-sm"><b>Matched:</b> ${(c.matched_skills||[]).map(SB.esc).join(', ')||'—'}</p><p class="mt-1 text-sm"><b>Missing:</b> ${(c.missing_skills||[]).map(SB.esc).join(', ')||'—'}</p><div class="mt-4 flex flex-wrap gap-2"><select id="status-${c.application_id}" class="input max-w-xs"><option>under_review</option><option>shortlisted</option><option>interview</option><option>selected</option><option>rejected</option></select><button class="btn btn-primary" onclick="setStatus(${c.application_id})">Update</button><button class="btn btn-soft" onclick="schedule(${c.application_id})">Schedule interview</button></div></article>`).join('')||'<p class="text-slate-500">No applicants.</p>'}catch(e){list.innerHTML=`<p class="text-rose-600">${SB.esc(e.message)}</p>`}}window.setStatus=async id=>{try{await SB.patch(`/recruiters/applications/${id}/status`,{status:document.getElementById('status-'+id).value,recruiter_note:null});SB.toast('Status updated')}catch(e){SB.toast(e.message)}};window.schedule=async id=>{const scheduled_at=prompt('Interview date/time (YYYY-MM-DDTHH:MM:SS):');if(!scheduled_at)return;const mode=prompt('Mode (online/offline):','online')||'online';const meeting_link=mode==='online'?prompt('Meeting link:',''):null;try{await SB.post(`/recruiters/applications/${id}/interview`,{scheduled_at,mode,meeting_link,location:null,instructions:null});SB.toast('Interview scheduled')}catch(e){SB.toast(e.message)}};</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SkillBridge AI Ranked Applicants"
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
+
+    <title>
+        Ranked Applicants | SkillBridge AI
+    </title>
+</head>
+
+
+<body class="bg-slate-50 text-slate-900">
+
+<script>
+    window.SKILLBRIDGE_ROLE = "recruiter";
+</script>
+
+
+<div id="app-shell">
+
+    <main class="min-h-screen lg:pl-72">
+
+        <div
+            class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
+        >
+
+
+            <!-- HEADER -->
+
+            <header class="mb-7">
+
+                <p
+                    class="text-sm font-semibold text-indigo-600"
+                >
+                    SkillBridge AI
+                </p>
+
+                <h1
+                    class="mt-1 text-3xl font-black tracking-tight"
+                >
+                    Ranked Applicants
+                </h1>
+
+                <p
+                    class="mt-2 text-slate-500"
+                >
+                    Review candidates by explainable match score,
+                    profile and resume.
+                </p>
+
+            </header>
+
+
+
+            <!-- LOAD OPPORTUNITY -->
+
+            <section class="card p-5">
+
+                <div
+                    class="flex flex-col gap-3 sm:flex-row"
+                >
+
+                    <input
+                        id="oid"
+                        type="number"
+                        min="1"
+                        class="input"
+                        placeholder="Opportunity ID"
+                    >
+
+                    <button
+                        id="loadBtn"
+                        class="btn btn-primary"
+                    >
+
+                        <i
+                            data-lucide="users"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Load Applicants
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- OPPORTUNITY INFO -->
+
+            <section
+                id="opportunityInfo"
+                class="card mt-5 hidden p-5"
+            ></section>
+
+
+
+            <!-- CANDIDATE COUNT -->
+
+            <div
+                class="mt-5 flex items-center justify-between"
+            >
+
+                <p
+                    id="resultCount"
+                    class="text-sm text-slate-500"
+                >
+                    Select an opportunity.
+                </p>
+
+            </div>
+
+
+
+            <!-- APPLICANTS -->
+
+            <div
+                id="list"
+                class="mt-4 space-y-4"
+            ></div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- STUDENT PROFILE MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="profileModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
+>
+
+    <div
+        class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+    >
+
+        <div
+            class="flex items-start justify-between border-b p-6"
+        >
+
+            <div>
+
+                <p
+                    class="text-xs font-black uppercase text-indigo-600"
+                >
+                    Candidate Profile
+                </p>
+
+                <h2
+                    id="profileName"
+                    class="mt-1 text-2xl font-black"
+                >
+                    Student
+                </h2>
+
+                <p
+                    id="profileId"
+                    class="mt-1 text-sm text-slate-500"
+                ></p>
+
+            </div>
+
+
+            <button
+                onclick="closeProfile()"
+                class="rounded-lg p-2 hover:bg-slate-100"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="profileContent"
+            class="p-6"
+        ></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- INTERVIEW MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="interviewModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
+>
+
+    <div
+        class="w-full max-w-xl rounded-2xl bg-white shadow-2xl"
+    >
+
+        <div
+            class="flex items-center justify-between border-b p-5"
+        >
+
+            <div>
+
+                <h2
+                    class="text-xl font-black"
+                >
+                    Schedule Interview
+                </h2>
+
+                <p
+                    id="interviewCandidate"
+                    class="mt-1 text-sm text-slate-500"
+                ></p>
+
+            </div>
+
+
+            <button
+                onclick="closeInterview()"
+                class="rounded-lg p-2 hover:bg-slate-100"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="interviewForm"
+            class="space-y-4 p-6"
+        >
+
+            <div>
+
+                <label class="label">
+                    Date & Time
+                </label>
+
+                <input
+                    id="scheduledAt"
+                    type="datetime-local"
+                    class="input"
+                    required
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="label">
+                    Mode
+                </label>
+
+                <select
+                    id="interviewMode"
+                    class="input"
+                >
+
+                    <option value="online">
+                        Online
+                    </option>
+
+                    <option value="offline">
+                        Offline
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div id="meetingBox">
+
+                <label class="label">
+                    Meeting Link
+                </label>
+
+                <input
+                    id="meetingLink"
+                    type="url"
+                    class="input"
+                    placeholder="https://meet.google.com/..."
+                >
+
+            </div>
+
+
+            <div
+                id="locationBox"
+                class="hidden"
+            >
+
+                <label class="label">
+                    Location
+                </label>
+
+                <input
+                    id="interviewLocation"
+                    class="input"
+                    placeholder="Company office / campus"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="label">
+                    Instructions
+                </label>
+
+                <textarea
+                    id="instructions"
+                    class="input min-h-24"
+                    placeholder="Interview instructions..."
+                ></textarea>
+
+            </div>
+
+
+            <div
+                class="flex justify-end gap-2 pt-3"
+            >
+
+                <button
+                    type="button"
+                    onclick="closeInterview()"
+                    class="btn btn-soft"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Schedule
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+
+<script>
+
+let candidates = [];
+
+let opportunity = null;
+
+let selectedApplicationId = null;
+
+
+/* =====================================================
+   LOAD APPLICANTS
+===================================================== */
+
+loadBtn.onclick = loadApplicants;
+
+
+async function loadApplicants() {
+
+    const opportunityId =
+        Number(
+            oid.value
+        );
+
+
+    if (!opportunityId) {
+
+        SB.toast(
+            "Enter Opportunity ID"
+        );
+
+        return;
+
+    }
+
+
+    list.innerHTML = `
+
+        <div class="card p-8 text-center">
+
+            <p class="text-slate-500">
+                Loading applicants...
+            </p>
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response =
+            await SB.get(
+                `/recruiters/opportunities/${opportunityId}/applications`
+            );
+
+
+        candidates =
+            response.candidates ||
+            response.data?.candidates ||
+            [];
+
+
+        opportunity =
+            response.opportunity ||
+            response.data?.opportunity ||
+            null;
+
+
+        renderOpportunity();
+
+        renderCandidates();
+
+    }
+
+    catch (error) {
+
+        list.innerHTML = `
+
+            <div
+                class="card p-6 text-rose-600"
+            >
+                ${SB.esc(
+                    error.message
+                )}
+            </div>
+
+        `;
+
+    }
+
+
+    lucide.createIcons();
+
+}
+
+
+/* =====================================================
+   OPPORTUNITY
+===================================================== */
+
+function renderOpportunity() {
+
+    if (!opportunity) {
+
+        opportunityInfo.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    opportunityInfo.classList.remove(
+        "hidden"
+    );
+
+
+    opportunityInfo.innerHTML = `
+
+        <div
+            class="flex flex-wrap items-center justify-between gap-4"
+        >
+
+            <div>
+
+                <p
+                    class="text-xs font-black uppercase text-indigo-600"
+                >
+                    Recruiting For
+                </p>
+
+
+                <h2
+                    class="mt-1 text-xl font-black"
+                >
+                    ${SB.esc(
+                        opportunity.title
+                    )}
+                </h2>
+
+
+                <p
+                    class="mt-2 text-sm text-slate-500"
+                >
+                    Opportunity ID:
+                    #${SB.esc(
+                        opportunity.id
+                    )}
+
+                    • ${SB.esc(
+                        opportunity.type ||
+                        "Opportunity"
+                    )}
+
+                    • ${SB.esc(
+                        opportunity.location ||
+                        "Flexible"
+                    )}
+                </p>
+
+            </div>
+
+
+            <div
+                class="rounded-xl bg-indigo-50 px-5 py-3 text-center"
+            >
+
+                <p
+                    class="text-2xl font-black text-indigo-600"
+                >
+                    ${candidates.length}
+                </p>
+
+                <p
+                    class="text-xs font-bold text-indigo-500"
+                >
+                    Applicants
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   RENDER CANDIDATES
+===================================================== */
+
+function renderCandidates() {
+
+    resultCount.textContent =
+        `${candidates.length} applicant(s)`;
+
+
+    if (!candidates.length) {
+
+        list.innerHTML = `
+
+            <div
+                class="card p-10 text-center"
+            >
+
+                <h3 class="font-black">
+                    No applicants yet
+                </h3>
+
+                <p
+                    class="mt-2 text-sm text-slate-500"
+                >
+                    Students who apply will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        candidates
+            .map(
+                (candidate, index) =>
+                    candidateHTML(
+                        candidate,
+                        index
+                    )
+            )
+            .join("");
+
+
+    lucide.createIcons();
+
+}
+
+
+/* =====================================================
+   CANDIDATE CARD
+===================================================== */
+
+function candidateHTML(
+    candidate,
+    index
+) {
+
+    const score =
+        Math.round(
+            Number(
+                candidate.match_score ||
+                0
+            )
+        );
+
+
+    const status =
+        normalizeStatus(
+            candidate.status
+        );
+
+
+    const matched =
+        candidate.matched_skills ||
+        [];
+
+
+    const missing =
+        candidate.missing_skills ||
+        [];
+
+
+    return `
+
+        <article
+            class="card overflow-hidden"
+        >
+
+            <div class="p-6">
+
+
+                <!-- TOP -->
+
+                <div
+                    class="flex flex-col justify-between gap-5 md:flex-row"
+                >
+
+
+                    <div
+                        class="flex items-start gap-4"
+                    >
+
+                        <div
+                            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 font-black text-indigo-600"
+                        >
+                            #${index + 1}
+                        </div>
+
+
+                        <div>
+
+                            <div
+                                class="flex flex-wrap items-center gap-2"
+                            >
+
+                                <h2
+                                    class="text-xl font-black"
+                                >
+                                    ${SB.esc(
+                                        candidate.name
+                                    )}
+                                </h2>
+
+
+                                <span
+                                    class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold"
+                                >
+                                    Student ID:
+                                    #${SB.esc(
+                                        candidate.student_id
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                ${SB.esc(
+                                    candidate.email
+                                )}
+                            </p>
+
+
+                            <div
+                                class="mt-3 flex flex-wrap gap-2 text-sm text-slate-600"
+                            >
+
+                                ${
+                                    candidate.college_name
+                                    ?
+                                    `<span>
+                                        ${SB.esc(
+                                            candidate.college_name
+                                        )}
+                                    </span>`
+                                    :
+                                    ""
+                                }
+
+
+                                ${
+                                    candidate.branch
+                                    ?
+                                    `<span>
+                                        • ${SB.esc(
+                                            candidate.branch
+                                        )}
+                                    </span>`
+                                    :
+                                    ""
+                                }
+
+
+                                ${
+                                    candidate.year
+                                    ?
+                                    `<span>
+                                        • Year ${SB.esc(
+                                            candidate.year
+                                        )}
+                                    </span>`
+                                    :
+                                    ""
+                                }
+
+
+                                ${
+                                    candidate.semester
+                                    ?
+                                    `<span>
+                                        • Sem ${SB.esc(
+                                            candidate.semester
+                                        )}
+                                    </span>`
+                                    :
+                                    ""
+                                }
+
+                            </div>
+
+
+                            ${
+                                candidate.career_goal
+                                ?
+                                `
+
+                                    <p
+                                        class="mt-3 text-sm"
+                                    >
+                                        <b>
+                                            Career Goal:
+                                        </b>
+
+                                        ${SB.esc(
+                                            candidate.career_goal
+                                        )}
+                                    </p>
+
+                                `
+                                :
+                                ""
+                            }
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- MATCH -->
+
+                    <div
+                        class="min-w-36 rounded-2xl bg-indigo-50 p-4 text-center"
+                    >
+
+                        <p
+                            class="text-3xl font-black text-indigo-600"
+                        >
+                            ${score}%
+                        </p>
+
+                        <p
+                            class="text-xs font-black uppercase text-indigo-500"
+                        >
+                            Skill Match
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SCORE BAR -->
+
+                <div
+                    class="mt-5 h-2 overflow-hidden rounded-full bg-slate-100"
+                >
+
+                    <div
+                        class="h-full rounded-full bg-indigo-600"
+                        style="width:${Math.min(
+                            score,
+                            100
+                        )}%"
+                    ></div>
+
+                </div>
+
+
+
+                <!-- SKILLS -->
+
+                <div
+                    class="mt-5 grid gap-4 md:grid-cols-2"
+                >
+
+
+                    <div
+                        class="rounded-xl bg-emerald-50 p-4"
+                    >
+
+                        <p
+                            class="text-xs font-black uppercase text-emerald-700"
+                        >
+                            Matched Skills
+                        </p>
+
+
+                        <div
+                            class="mt-3 flex flex-wrap gap-2"
+                        >
+
+                            ${
+                                matched.length
+                                ?
+                                matched.map(
+                                    skill => `
+
+                                        <span
+                                            class="rounded-full bg-white px-3 py-1 text-xs font-bold text-emerald-700"
+                                        >
+                                            ${SB.esc(
+                                                skillValue(
+                                                    skill
+                                                )
+                                            )}
+                                        </span>
+
+                                    `
+                                ).join("")
+                                :
+                                "<span>—</span>"
+                            }
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="rounded-xl bg-amber-50 p-4"
+                    >
+
+                        <p
+                            class="text-xs font-black uppercase text-amber-700"
+                        >
+                            Missing Skills
+                        </p>
+
+
+                        <div
+                            class="mt-3 flex flex-wrap gap-2"
+                        >
+
+                            ${
+                                missing.length
+                                ?
+                                missing.map(
+                                    skill => `
+
+                                        <span
+                                            class="rounded-full bg-white px-3 py-1 text-xs font-bold text-amber-700"
+                                        >
+                                            ${SB.esc(
+                                                skillValue(
+                                                    skill
+                                                )
+                                            )}
+                                        </span>
+
+                                    `
+                                ).join("")
+                                :
+                                `
+
+                                    <span
+                                        class="text-sm text-emerald-700"
+                                    >
+                                        No major gaps
+                                    </span>
+
+                                `
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STATUS -->
+
+                <div
+                    class="mt-5 grid gap-3 rounded-xl bg-slate-50 p-4 lg:grid-cols-[1fr_1fr_auto]"
+                >
+
+
+                    <div>
+
+                        <label class="label">
+                            Status
+                        </label>
+
+                        <select
+                            id="status-${candidate.application_id}"
+                            class="input"
+                        >
+
+                            ${statusOption(
+                                "applied",
+                                status,
+                                "Applied"
+                            )}
+
+                            ${statusOption(
+                                "under_review",
+                                status,
+                                "Under Review"
+                            )}
+
+                            ${statusOption(
+                                "shortlisted",
+                                status,
+                                "Shortlisted"
+                            )}
+
+                            ${statusOption(
+                                "interview",
+                                status,
+                                "Interview"
+                            )}
+
+                            ${statusOption(
+                                "selected",
+                                status,
+                                "Selected"
+                            )}
+
+                            ${statusOption(
+                                "rejected",
+                                status,
+                                "Rejected"
+                            )}
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <label class="label">
+                            Recruiter Note
+                        </label>
+
+                        <input
+                            id="note-${candidate.application_id}"
+                            class="input"
+                            value="${SB.esc(
+                                candidate.recruiter_note ||
+                                ""
+                            )}"
+                            placeholder="Optional note"
+                        >
+
+                    </div>
+
+
+
+                    <div
+                        class="flex items-end"
+                    >
+
+                        <button
+                            onclick="updateStatus(${candidate.application_id})"
+                            class="btn btn-primary"
+                        >
+                            Update
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div
+                    class="mt-5 flex flex-wrap gap-2 border-t pt-5"
+                >
+
+
+                    <button
+                        onclick="viewProfile(${candidate.student_id})"
+                        class="btn btn-soft"
+                    >
+
+                        <i
+                            data-lucide="user"
+                            class="h-4 w-4"
+                        ></i>
+
+                        View Profile
+
+                    </button>
+
+
+
+                    ${
+                        candidate.has_resume
+                        ?
+                        `
+
+                            <button
+                                onclick="viewResume(${candidate.student_id})"
+                                class="btn btn-soft"
+                            >
+
+                                <i
+                                    data-lucide="file-text"
+                                    class="h-4 w-4"
+                                ></i>
+
+                                View Resume
+
+                            </button>
+
+
+                            <button
+                                onclick="downloadResume(${candidate.student_id})"
+                                class="btn btn-soft"
+                            >
+
+                                <i
+                                    data-lucide="download"
+                                    class="h-4 w-4"
+                                ></i>
+
+                                Download Resume
+
+                            </button>
+
+                        `
+                        :
+                        `
+
+                            <span
+                                class="rounded-lg bg-slate-100 px-4 py-2 text-sm text-slate-400"
+                            >
+                                No Resume
+                            </span>
+
+                        `
+                    }
+
+
+
+                    <button
+                        onclick="quickStatus(
+                            ${candidate.application_id},
+                            'shortlisted'
+                        )"
+                        class="btn bg-emerald-50 text-emerald-700"
+                    >
+
+                        <i
+                            data-lucide="star"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Shortlist
+
+                    </button>
+
+
+
+                    <button
+                        onclick="openInterview(
+                            ${candidate.application_id},
+                            '${safeJS(
+                                candidate.name
+                            )}'
+                        )"
+                        class="btn btn-soft"
+                    >
+
+                        <i
+                            data-lucide="calendar"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Interview
+
+                    </button>
+
+
+
+                    <button
+                        onclick="quickStatus(
+                            ${candidate.application_id},
+                            'rejected'
+                        )"
+                        class="btn bg-rose-50 text-rose-700"
+                    >
+
+                        Reject
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function statusOption(
+    value,
+    current,
+    label
+) {
+
+    return `
+
+        <option
+            value="${value}"
+            ${
+                value === current
+                ? "selected"
+                : ""
+            }
+        >
+            ${label}
+        </option>
+
+    `;
+
+}
+
+
+function normalizeStatus(
+    status
+) {
+
+    return String(
+        status || "applied"
+    )
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+}
+
+
+/* =====================================================
+   UPDATE STATUS
+===================================================== */
+
+window.updateStatus =
+async function(applicationId) {
+
+    const status =
+        document.getElementById(
+            `status-${applicationId}`
+        ).value;
+
+
+    const note =
+        document.getElementById(
+            `note-${applicationId}`
+        ).value.trim();
+
+
+    try {
+
+        await SB.patch(
+            `/recruiters/applications/${applicationId}/status`,
+            {
+                status: status,
+                recruiter_note:
+                    note || null
+            }
+        );
+
+
+        SB.toast(
+            "Status updated"
+        );
+
+
+        await loadApplicants();
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   QUICK STATUS
+===================================================== */
+
+window.quickStatus =
+async function(
+    applicationId,
+    status
+) {
+
+    try {
+
+        await SB.patch(
+            `/recruiters/applications/${applicationId}/status`,
+            {
+                status: status,
+                recruiter_note: null
+            }
+        );
+
+
+        SB.toast(
+            `Candidate ${status}`
+        );
+
+
+        await loadApplicants();
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   STUDENT PROFILE
+===================================================== */
+
+window.viewProfile =
+async function(studentId) {
+
+    profileModal.classList.remove(
+        "hidden"
+    );
+
+    profileModal.classList.add(
+        "flex"
+    );
+
+
+    profileName.textContent =
+        "Loading...";
+
+
+    profileId.textContent =
+        `Student ID: #${studentId}`;
+
+
+    profileContent.innerHTML =
+        "<p>Loading profile...</p>";
+
+
+    try {
+
+        const response =
+            await SB.get(
+                `/recruiters/students/${studentId}`
+            );
+
+
+        const student =
+            response.data ||
+            response;
+
+
+        profileName.textContent =
+            student.name;
+
+
+        profileId.textContent =
+            `Student ID: #${student.student_id}`;
+
+
+        profileContent.innerHTML = `
+
+            <div
+                class="grid gap-4 sm:grid-cols-2"
+            >
+
+                ${field(
+                    "Email",
+                    student.email
+                )}
+
+                ${field(
+                    "College",
+                    student.college_name
+                )}
+
+                ${field(
+                    "Branch",
+                    student.branch
+                )}
+
+                ${field(
+                    "Year",
+                    student.year
+                )}
+
+                ${field(
+                    "Semester",
+                    student.semester
+                )}
+
+                ${field(
+                    "Career Goal",
+                    student.career_goal
+                )}
+
+            </div>
+
+
+            <div class="mt-6">
+
+                <p
+                    class="text-xs font-black uppercase text-slate-400"
+                >
+                    About Student
+                </p>
+
+                <p
+                    class="mt-2 text-sm leading-7 text-slate-600"
+                >
+                    ${SB.esc(
+                        student.bio ||
+                        "No bio added."
+                    )}
+                </p>
+
+            </div>
+
+
+            <div
+                class="mt-6 flex flex-wrap gap-2"
+            >
+
+                ${linkButton(
+                    "GitHub",
+                    student.github_url
+                )}
+
+                ${linkButton(
+                    "LinkedIn",
+                    student.linkedin_url
+                )}
+
+                ${linkButton(
+                    "Portfolio",
+                    student.portfolio_url
+                )}
+
+            </div>
+
+
+            ${
+                student.has_resume
+                ?
+                `
+
+                    <div
+                        class="mt-6 flex gap-2 border-t pt-5"
+                    >
+
+                        <button
+                            onclick="viewResume(${student.student_id})"
+                            class="btn btn-primary"
+                        >
+                            View Resume
+                        </button>
+
+
+                        <button
+                            onclick="downloadResume(${student.student_id})"
+                            class="btn btn-soft"
+                        >
+                            Download Resume
+                        </button>
+
+                    </div>
+
+                `
+                :
+                `
+
+                    <div
+                        class="mt-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-500"
+                    >
+                        Student has not uploaded a resume.
+                    </div>
+
+                `
+            }
+
+        `;
+
+
+        lucide.createIcons();
+
+    }
+
+    catch (error) {
+
+        profileContent.innerHTML = `
+
+            <p class="text-rose-600">
+                ${SB.esc(
+                    error.message
+                )}
+            </p>
+
+        `;
+
+    }
+
+};
+
+
+window.closeProfile =
+function() {
+
+    profileModal.classList.add(
+        "hidden"
+    );
+
+    profileModal.classList.remove(
+        "flex"
+    );
+
+};
+
+
+/* =====================================================
+   RESUME AUTH FETCH
+===================================================== */
+
+function accessToken() {
+
+    /*
+       api.js/auth.js me jo token key use ho rahi hai
+       usko sabse pehle try kiya gaya hai.
+
+       Common fallbacks bhi rakhe hain.
+    */
+
+    return (
+        localStorage.getItem(
+            "skillbridge_token"
+        ) ||
+
+        localStorage.getItem(
+            "skillbridge_access_token"
+        ) ||
+
+        localStorage.getItem(
+            "access_token"
+        ) ||
+
+        localStorage.getItem(
+            "token"
+        )
+    );
+
+}
+
+
+async function authenticatedFileFetch(
+    path
+) {
+
+    const token =
+        accessToken();
+
+
+    if (!token) {
+
+        throw new Error(
+            "Authentication token not found"
+        );
+
+    }
+
+
+    const response =
+        await fetch(
+            `${SB.apiUrl()}${path}`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+
+    if (!response.ok) {
+
+        let message =
+            "Request failed";
+
+
+        try {
+
+            const data =
+                await response.json();
+
+
+            message =
+                data.detail ||
+                message;
+
+        }
+
+        catch (_) {}
+
+
+        throw new Error(
+            message
+        );
+
+    }
+
+
+    return response;
+
+}
+
+
+/* =====================================================
+   VIEW RESUME
+===================================================== */
+
+window.viewResume =
+async function(studentId) {
+
+    try {
+
+        const response =
+            await authenticatedFileFetch(
+                `/recruiters/students/${studentId}/resume/view`
+            );
+
+
+        const blob =
+            await response.blob();
+
+
+        const pdfUrl =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const newWindow =
+            window.open(
+                pdfUrl,
+                "_blank"
+            );
+
+
+        if (!newWindow) {
+
+            SB.toast(
+                "Allow popups to view resume"
+            );
+
+        }
+
+
+        setTimeout(
+            () => {
+                URL.revokeObjectURL(
+                    pdfUrl
+                );
+            },
+            60000
+        );
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   DOWNLOAD RESUME
+===================================================== */
+
+window.downloadResume =
+async function(studentId) {
+
+    try {
+
+        const infoResponse =
+            await SB.get(
+                `/recruiters/students/${studentId}/resume`
+            );
+
+
+        const info =
+            infoResponse.data ||
+            infoResponse;
+
+
+        const response =
+            await authenticatedFileFetch(
+                `/recruiters/students/${studentId}/resume/download`
+            );
+
+
+        const blob =
+            await response.blob();
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const anchor =
+            document.createElement(
+                "a"
+            );
+
+
+        anchor.href =
+            url;
+
+
+        anchor.download =
+            info.filename ||
+            `student-${studentId}-resume.pdf`;
+
+
+        document.body.appendChild(
+            anchor
+        );
+
+
+        anchor.click();
+
+        anchor.remove();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+        SB.toast(
+            "Resume downloaded"
+        );
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   INTERVIEW
+===================================================== */
+
+window.openInterview =
+function(
+    applicationId,
+    candidateName
+) {
+
+    selectedApplicationId =
+        applicationId;
+
+
+    interviewCandidate.textContent =
+        candidateName;
+
+
+    interviewForm.reset();
+
+
+    meetingBox.classList.remove(
+        "hidden"
+    );
+
+
+    locationBox.classList.add(
+        "hidden"
+    );
+
+
+    interviewModal.classList.remove(
+        "hidden"
+    );
+
+
+    interviewModal.classList.add(
+        "flex"
+    );
+
+};
+
+
+window.closeInterview =
+function() {
+
+    selectedApplicationId =
+        null;
+
+
+    interviewModal.classList.add(
+        "hidden"
+    );
+
+
+    interviewModal.classList.remove(
+        "flex"
+    );
+
+};
+
+
+interviewMode.onchange =
+function() {
+
+    const online =
+        interviewMode.value ===
+        "online";
+
+
+    meetingBox.classList.toggle(
+        "hidden",
+        !online
+    );
+
+
+    locationBox.classList.toggle(
+        "hidden",
+        online
+    );
+
+};
+
+
+interviewForm.onsubmit =
+async function(event) {
+
+    event.preventDefault();
+
+
+    if (!selectedApplicationId) {
+        return;
+    }
+
+
+    if (!scheduledAt.value) {
+
+        SB.toast(
+            "Select interview date/time"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await SB.post(
+            `/recruiters/applications/${selectedApplicationId}/interview`,
+            {
+                scheduled_at:
+                    scheduledAt.value,
+
+                mode:
+                    interviewMode.value,
+
+                meeting_link:
+                    interviewMode.value ===
+                    "online"
+                    ?
+                    meetingLink.value.trim() ||
+                    null
+                    :
+                    null,
+
+                location:
+                    interviewMode.value ===
+                    "offline"
+                    ?
+                    interviewLocation.value.trim() ||
+                    null
+                    :
+                    null,
+
+                instructions:
+                    instructions.value.trim() ||
+                    null
+            }
+        );
+
+
+        SB.toast(
+            "Interview scheduled"
+        );
+
+
+        closeInterview();
+
+        await loadApplicants();
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function field(
+    label,
+    value
+) {
+
+    return `
+
+        <div
+            class="rounded-xl bg-slate-50 p-4"
+        >
+
+            <p
+                class="text-xs font-black uppercase text-slate-400"
+            >
+                ${SB.esc(label)}
+            </p>
+
+            <p
+                class="mt-1 font-semibold"
+            >
+                ${SB.esc(
+                    value ?? "—"
+                )}
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+function linkButton(
+    label,
+    url
+) {
+
+    if (!url) {
+        return "";
+    }
+
+
+    return `
+
+        <a
+            href="${SB.esc(url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-soft"
+        >
+            ${SB.esc(label)}
+        </a>
+
+    `;
+
+}
+
+
+function skillValue(
+    value
+) {
+
+    if (
+        typeof value ===
+        "string"
+    ) {
+        return value;
+    }
+
+
+    return (
+        value.name ||
+        value.skill_name ||
+        value.skill ||
+        "Skill"
+    );
+
+}
+
+
+function safeJS(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replaceAll(
+        "\\",
+        "\\\\"
+    )
+    .replaceAll(
+        "'",
+        "\\'"
+    );
+
+}
+
+
+/* =====================================================
+   AUTO LOAD OPPORTUNITY
+===================================================== */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const opportunityId =
+    params.get(
+        "opportunity_id"
+    );
+
+
+if (opportunityId) {
+
+    oid.value =
+        opportunityId;
+
+
+    loadApplicants();
+
+}
+
+
+if (window.lucide) {
+
+    lucide.createIcons();
+
+}
+
+</script>
+
+</body>
+</html>

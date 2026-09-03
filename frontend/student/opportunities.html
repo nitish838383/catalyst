@@ -1,1 +1,2091 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Opportunities | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="student";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Opportunities</h1><p class="mt-2 text-slate-500">Discover jobs and internships with explainable skill matching.</p></header><div class="card p-5"><div class="flex flex-col gap-3 sm:flex-row"><input id="search" class="input" placeholder="Search opportunities"><select id="type" class="input sm:max-w-xs"><option value="">All types</option><option value="internship">Internship</option><option value="job">Job</option></select><button id="searchBtn" class="btn btn-primary">Search</button></div></div><div id="list" class="mt-5 grid gap-4 lg:grid-cols-2"></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>async function load(){list.innerHTML='<p>Loading…</p>';try{const q=new URLSearchParams();if(search.value)q.set('search',search.value);if(type.value)q.set('opportunity_type',type.value);const r=await SB.get('/opportunities?'+q.toString());const arr=r.data||r;list.innerHTML=arr.map(o=>`<article class="card p-6"><div class="flex items-start justify-between gap-4"><div><span class="badge">${SB.esc(o.type||o.opportunity_type||'Opportunity')}</span><h2 class="mt-3 text-xl font-black">${SB.esc(o.title)}</h2><p class="mt-2 text-sm text-slate-500">${SB.esc(o.location||'Remote / Flexible')}</p></div><div id="score-${o.id}" class="text-right text-sm font-bold text-indigo-600"></div></div><p class="mt-4 text-sm text-slate-600">${SB.esc(o.description||'')}</p><div id="gap-${o.id}" class="mt-4 text-sm"></div><div class="mt-5 flex gap-2"><button class="btn btn-soft" onclick="match(${o.id})">Check match</button><button class="btn btn-primary" onclick="apply(${o.id})">Apply</button></div></article>`).join('')||'<p class="text-slate-500">No opportunities found.</p>'}catch(e){list.innerHTML=`<p class="text-rose-600">${SB.esc(e.message)}</p>`}}window.match=async id=>{try{const r=await SB.get(`/students/opportunities/${id}/match`),m=r.match||r;document.getElementById('score-'+id).textContent=`${m.score||0}% match`;document.getElementById('gap-'+id).innerHTML=`<b>Matched:</b> ${(m.matched_skills||[]).map(SB.esc).join(', ')||'None'}<br><b>Missing:</b> ${(m.missing_skills||[]).map(SB.esc).join(', ')||'None'}`}catch(e){SB.toast(e.message)}};window.apply=async id=>{try{await SB.post(`/students/opportunities/${id}/apply`,{});SB.toast('Application submitted')}catch(e){SB.toast(e.message)}};searchBtn.onclick=load;load();</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="SkillBridge AI — Jobs and Internship Opportunities">
+
+    <title>Opportunities | SkillBridge AI</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Existing CSS -->
+    <link rel="stylesheet"
+          href="/assets/css/app.css">
+
+    <style>
+        .opportunity-card {
+            transition: all .2s ease;
+        }
+
+        .opportunity-card:hover {
+            transform: translateY(-2px);
+            border-color: #c7d2fe;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, .06);
+        }
+
+        .match-track {
+            height: 7px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .match-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(
+                90deg,
+                #4f46e5,
+                #7c3aed
+            );
+        }
+    </style>
+</head>
+
+
+<body class="bg-slate-50 text-slate-900">
+
+<script>
+    window.SKILLBRIDGE_ROLE = "student";
+</script>
+
+
+<div id="app-shell">
+
+    <main class="min-h-screen lg:pl-72">
+
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+
+            <!-- HEADER -->
+
+            <header class="mb-7">
+
+                <div class="flex flex-wrap items-start justify-between gap-4">
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-indigo-600">
+                            SkillBridge AI
+                        </p>
+
+                        <h1 class="mt-1 text-3xl font-black tracking-tight">
+                            Opportunities
+                        </h1>
+
+                        <p class="mt-2 text-slate-500">
+                            Discover internships and jobs matched with your skills.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="applications.html"
+                        class="btn btn-soft"
+                    >
+                        <i data-lucide="briefcase-business"
+                           class="h-4 w-4"></i>
+
+                        My Applications
+                    </a>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- PROFILE WARNING -->
+
+            <div
+                id="profileWarning"
+                class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
+            ></div>
+
+
+
+            <!-- SEARCH / FILTER -->
+
+            <section class="card p-5">
+
+                <div class="grid gap-3 md:grid-cols-12">
+
+
+                    <!-- Search -->
+
+                    <div class="md:col-span-5">
+
+                        <label class="label">
+                            Search
+                        </label>
+
+                        <div class="relative">
+
+                            <i
+                                data-lucide="search"
+                                class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            ></i>
+
+                            <input
+                                id="searchInput"
+                                class="input pl-11"
+                                placeholder="Backend, Python, AI, internship..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Type -->
+
+                    <div class="md:col-span-3">
+
+                        <label class="label">
+                            Opportunity Type
+                        </label>
+
+                        <select
+                            id="typeFilter"
+                            class="input"
+                        >
+
+                            <option value="">
+                                All Types
+                            </option>
+
+                            <option value="internship">
+                                Internship
+                            </option>
+
+                            <option value="job">
+                                Job
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort -->
+
+                    <div class="md:col-span-2">
+
+                        <label class="label">
+                            Sort By
+                        </label>
+
+                        <select
+                            id="sortFilter"
+                            class="input"
+                        >
+
+                            <option value="newest">
+                                Newest
+                            </option>
+
+                            <option value="match">
+                                Best Match
+                            </option>
+
+                            <option value="title">
+                                Title
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Search Button -->
+
+                    <div class="flex items-end md:col-span-2">
+
+                        <button
+                            id="searchBtn"
+                            class="btn btn-primary w-full justify-center"
+                        >
+
+                            <i data-lucide="search"
+                               class="h-4 w-4"></i>
+
+                            Search
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- RESULT SUMMARY -->
+
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+
+                <p
+                    id="resultCount"
+                    class="text-sm text-slate-500"
+                >
+                    Loading opportunities...
+                </p>
+
+
+                <button
+                    id="refreshBtn"
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600"
+                >
+
+                    <i
+                        data-lucide="refresh-cw"
+                        class="h-4 w-4"
+                    ></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+
+            <!-- LIST -->
+
+            <div
+                id="list"
+                class="mt-5 grid gap-5 lg:grid-cols-2"
+            ></div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- VIEW DETAILS MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="detailsModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
+>
+
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+
+        <!-- Header -->
+
+        <div class="flex items-start justify-between border-b border-slate-200 p-6">
+
+            <div>
+
+                <span
+                    id="modalType"
+                    class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold uppercase text-indigo-600"
+                >
+                    Opportunity
+                </span>
+
+                <h2
+                    id="modalTitle"
+                    class="mt-3 text-2xl font-black"
+                >
+                    —
+                </h2>
+
+                <p
+                    id="modalCompany"
+                    class="mt-1 text-sm text-slate-500"
+                >
+                    —
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="closeDetails()"
+                class="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- Content -->
+
+        <div
+            id="modalContent"
+            class="p-6"
+        ></div>
+
+
+
+        <!-- Footer -->
+
+        <div class="flex flex-wrap justify-end gap-3 border-t border-slate-200 p-6">
+
+            <button
+                onclick="closeDetails()"
+                class="btn btn-soft"
+            >
+                Close
+            </button>
+
+            <button
+                id="modalApplyBtn"
+                class="btn btn-primary"
+            >
+
+                <i data-lucide="send"
+                   class="h-4 w-4"></i>
+
+                Apply Now
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- COMMON SCRIPTS -->
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+
+<script>
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let opportunities = [];
+
+let applications = [];
+
+let matchCache = {};
+
+let currentOpportunity = null;
+
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const list =
+    document.getElementById("list");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const typeFilter =
+    document.getElementById("typeFilter");
+
+const sortFilter =
+    document.getElementById("sortFilter");
+
+const searchBtn =
+    document.getElementById("searchBtn");
+
+const refreshBtn =
+    document.getElementById("refreshBtn");
+
+const resultCount =
+    document.getElementById("resultCount");
+
+const profileWarning =
+    document.getElementById("profileWarning");
+
+
+
+/* =====================================================
+   CHECK STUDENT PROFILE
+===================================================== */
+
+async function checkProfile() {
+
+    try {
+
+        await SB.get(
+            "/students/profile"
+        );
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        profileWarning.classList.remove(
+            "hidden"
+        );
+
+
+        profileWarning.innerHTML = `
+
+            <div class="flex items-start gap-3">
+
+                <i
+                    data-lucide="triangle-alert"
+                    class="mt-0.5 h-5 w-5 text-amber-600"
+                ></i>
+
+                <div>
+
+                    <p class="font-bold">
+                        Complete your profile for accurate matching
+                    </p>
+
+                    <p class="mt-1">
+                        SkillBridge needs your profile and skills to calculate
+                        job and internship match percentages.
+
+                        <a
+                            href="profile.html"
+                            class="font-bold underline"
+                        >
+                            Complete Profile
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        return false;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD EXISTING APPLICATIONS
+===================================================== */
+
+async function loadApplications() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/students/applications"
+            );
+
+
+        applications =
+            response.data ||
+            response ||
+            [];
+
+    }
+
+    catch (error) {
+
+        applications = [];
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CHECK IF ALREADY APPLIED
+===================================================== */
+
+function hasApplied(
+    opportunityId
+) {
+
+    return applications.some(
+        app =>
+            Number(
+                app.opportunity_id
+            )
+            ===
+            Number(
+                opportunityId
+            )
+    );
+
+}
+
+
+
+/* =====================================================
+   LOAD OPPORTUNITIES
+===================================================== */
+
+async function loadOpportunities() {
+
+    list.innerHTML = `
+
+        <div class="card p-6 lg:col-span-2">
+
+            <div class="flex items-center justify-center gap-3 py-12">
+
+                <div
+                    class="h-7 w-7 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"
+                ></div>
+
+                <span class="text-sm text-slate-500">
+                    Loading opportunities...
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const query =
+            new URLSearchParams();
+
+
+        if (
+            searchInput.value.trim()
+        ) {
+
+            query.set(
+                "search",
+                searchInput.value.trim()
+            );
+
+        }
+
+
+        if (
+            typeFilter.value
+        ) {
+
+            query.set(
+                "opportunity_type",
+                typeFilter.value
+            );
+
+        }
+
+
+        const response =
+            await SB.get(
+                `/opportunities?${query.toString()}`
+            );
+
+
+        opportunities =
+            response.data ||
+            response ||
+            [];
+
+
+        if (
+            !Array.isArray(
+                opportunities
+            )
+        ) {
+
+            opportunities = [];
+
+        }
+
+
+        await loadApplications();
+
+
+        /*
+            Load skill matches.
+
+            For MVP this uses one match request per
+            opportunity.
+
+            Later backend can optimize this into a
+            single matched-opportunities endpoint.
+        */
+
+        await Promise.all(
+
+            opportunities.map(
+                opportunity =>
+                    loadMatch(
+                        opportunity.id,
+                        false
+                    )
+            )
+
+        );
+
+
+        sortOpportunities();
+
+        renderOpportunities();
+
+    }
+
+    catch (error) {
+
+        resultCount.textContent =
+            "Unable to load opportunities";
+
+
+        list.innerHTML = `
+
+            <div
+                class="card p-8 text-center lg:col-span-2"
+            >
+
+                <div
+                    class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600"
+                >
+
+                    <i data-lucide="circle-alert"></i>
+
+                </div>
+
+
+                <h3 class="mt-4 font-black">
+                    Could not load opportunities
+                </h3>
+
+
+                <p class="mt-2 text-sm text-slate-500">
+                    ${SB.esc(error.message)}
+                </p>
+
+
+                <button
+                    onclick="loadOpportunities()"
+                    class="btn btn-primary mt-5"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (window.lucide) {
+
+        lucide.createIcons();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD MATCH
+===================================================== */
+
+async function loadMatch(
+    opportunityId,
+    showError = true
+) {
+
+    try {
+
+        const response =
+            await SB.get(
+                `/students/opportunities/${opportunityId}/match`
+            );
+
+
+        const match =
+            response.match ||
+            response.data ||
+            response;
+
+
+        matchCache[opportunityId] =
+            normalizeMatch(
+                match
+            );
+
+
+        return matchCache[
+            opportunityId
+        ];
+
+    }
+
+    catch (error) {
+
+        matchCache[
+            opportunityId
+        ] = null;
+
+
+        if (showError) {
+
+            SB.toast(
+                error.message
+            );
+
+        }
+
+
+        return null;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   NORMALIZE MATCH
+===================================================== */
+
+function normalizeMatch(
+    match
+) {
+
+    if (!match) {
+
+        return null;
+
+    }
+
+
+    let score =
+        Number(
+            match.score ??
+            match.match_percentage ??
+            match.percentage ??
+            0
+        );
+
+
+    /*
+        Support score returned as 0.75 or 75
+    */
+
+    if (
+        score > 0 &&
+        score <= 1
+    ) {
+
+        score *= 100;
+
+    }
+
+
+    return {
+
+        score:
+            Math.round(
+                score
+            ),
+
+        matched_skills:
+            match.matched_skills ||
+            match.matched ||
+            [],
+
+        missing_skills:
+            match.missing_skills ||
+            match.missing ||
+            []
+
+    };
+
+}
+
+
+
+/* =====================================================
+   SORT
+===================================================== */
+
+function sortOpportunities() {
+
+    if (
+        sortFilter.value ===
+        "match"
+    ) {
+
+        opportunities.sort(
+            (a, b) => {
+
+                const aScore =
+                    matchCache[
+                        a.id
+                    ]?.score || 0;
+
+                const bScore =
+                    matchCache[
+                        b.id
+                    ]?.score || 0;
+
+
+                return (
+                    bScore -
+                    aScore
+                );
+
+            }
+        );
+
+    }
+
+
+    else if (
+        sortFilter.value ===
+        "title"
+    ) {
+
+        opportunities.sort(
+            (a, b) =>
+                String(
+                    a.title || ""
+                )
+                .localeCompare(
+                    String(
+                        b.title || ""
+                    )
+                )
+        );
+
+    }
+
+
+    else {
+
+        opportunities.sort(
+            (a, b) => {
+
+                const aDate =
+                    new Date(
+                        a.created_at || 0
+                    );
+
+                const bDate =
+                    new Date(
+                        b.created_at || 0
+                    );
+
+
+                return (
+                    bDate -
+                    aDate
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderOpportunities() {
+
+    resultCount.textContent =
+        `${opportunities.length} opportunity${
+            opportunities.length === 1
+                ? ""
+                : "ies"
+        } found`;
+
+
+    if (
+        !opportunities.length
+    ) {
+
+        list.innerHTML = `
+
+            <div
+                class="card p-10 text-center lg:col-span-2"
+            >
+
+                <div
+                    class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
+                >
+
+                    <i
+                        data-lucide="search-x"
+                        class="h-8 w-8"
+                    ></i>
+
+                </div>
+
+
+                <h3
+                    class="mt-4 text-lg font-black"
+                >
+                    No opportunities found
+                </h3>
+
+
+                <p
+                    class="mt-2 text-sm text-slate-500"
+                >
+                    Try changing your search or opportunity type.
+                </p>
+
+            </div>
+
+        `;
+
+
+        if (
+            window.lucide
+        ) {
+
+            lucide.createIcons();
+
+        }
+
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        opportunities
+            .map(
+                opportunity =>
+                    renderOpportunityCard(
+                        opportunity
+                    )
+            )
+            .join("");
+
+
+    if (
+        window.lucide
+    ) {
+
+        lucide.createIcons();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   OPPORTUNITY CARD
+===================================================== */
+
+function renderOpportunityCard(
+    opportunity
+) {
+
+    const match =
+        matchCache[
+            opportunity.id
+        ];
+
+
+    const applied =
+        hasApplied(
+            opportunity.id
+        );
+
+
+    const type =
+        opportunity.type ||
+        opportunity.opportunity_type ||
+        "Opportunity";
+
+
+    const location =
+        opportunity.location ||
+        "Remote / Flexible";
+
+
+    const company =
+        opportunity.company_name ||
+        opportunity.company?.name ||
+        opportunity.company ||
+        "Company";
+
+
+    const description =
+        opportunity.description ||
+        "No description provided.";
+
+
+    const requiredSkills =
+        opportunity.required_skills ||
+        opportunity.skills ||
+        [];
+
+
+    const score =
+        match?.score ?? null;
+
+
+    let scoreClass =
+        "text-indigo-600";
+
+
+    if (
+        score !== null
+    ) {
+
+        if (
+            score >= 80
+        ) {
+
+            scoreClass =
+                "text-emerald-600";
+
+        }
+
+        else if (
+            score < 50
+        ) {
+
+            scoreClass =
+                "text-amber-600";
+
+        }
+
+    }
+
+
+    return `
+
+        <article
+            class="opportunity-card card overflow-hidden"
+        >
+
+
+            <div class="p-6">
+
+
+                <!-- TOP -->
+
+                <div
+                    class="flex items-start justify-between gap-4"
+                >
+
+
+                    <div
+                        class="min-w-0 flex-1"
+                    >
+
+                        <div
+                            class="flex flex-wrap items-center gap-2"
+                        >
+
+                            <span
+                                class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold uppercase text-indigo-600"
+                            >
+                                ${SB.esc(type)}
+                            </span>
+
+
+                            ${
+                                applied
+                                    ? `
+
+                                        <span
+                                            class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"
+                                        >
+                                            Applied
+                                        </span>
+
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+
+                        <h2
+                            class="mt-3 text-xl font-black"
+                        >
+                            ${SB.esc(
+                                opportunity.title ||
+                                "Untitled Opportunity"
+                            )}
+                        </h2>
+
+
+                        <p
+                            class="mt-1 text-sm font-semibold text-slate-600"
+                        >
+                            ${SB.esc(company)}
+                        </p>
+
+
+                        <div
+                            class="mt-3 flex flex-wrap gap-4 text-sm text-slate-500"
+                        >
+
+                            <span
+                                class="inline-flex items-center gap-1"
+                            >
+
+                                <i
+                                    data-lucide="map-pin"
+                                    class="h-4 w-4"
+                                ></i>
+
+                                ${SB.esc(location)}
+
+                            </span>
+
+
+                            ${
+                                opportunity.duration
+                                    ? `
+
+                                        <span
+                                            class="inline-flex items-center gap-1"
+                                        >
+
+                                            <i
+                                                data-lucide="clock"
+                                                class="h-4 w-4"
+                                            ></i>
+
+                                            ${SB.esc(
+                                                opportunity.duration
+                                            )}
+
+                                        </span>
+
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- MATCH SCORE -->
+
+                    <div
+                        class="min-w-[80px] text-right"
+                    >
+
+                        ${
+                            score !== null
+                                ? `
+
+                                    <p
+                                        class="text-2xl font-black ${scoreClass}"
+                                    >
+                                        ${score}%
+                                    </p>
+
+                                    <p
+                                        class="text-xs text-slate-500"
+                                    >
+                                        match
+                                    </p>
+
+                                `
+                                : `
+
+                                    <p
+                                        class="text-xs text-slate-400"
+                                    >
+                                        Match unavailable
+                                    </p>
+
+                                `
+                        }
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- MATCH BAR -->
+
+                ${
+                    score !== null
+                        ? `
+
+                            <div
+                                class="mt-5"
+                            >
+
+                                <div
+                                    class="match-track"
+                                >
+
+                                    <div
+                                        class="match-fill"
+                                        style="width:${Math.min(
+                                            100,
+                                            score
+                                        )}%"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        `
+                        : ""
+                }
+
+
+
+                <!-- DESCRIPTION -->
+
+                <p
+                    class="mt-5 line-clamp-3 text-sm leading-6 text-slate-600"
+                >
+                    ${SB.esc(description)}
+                </p>
+
+
+
+                <!-- REQUIRED SKILLS -->
+
+                ${
+                    Array.isArray(
+                        requiredSkills
+                    ) &&
+                    requiredSkills.length
+
+                        ? `
+
+                            <div
+                                class="mt-5"
+                            >
+
+                                <p
+                                    class="text-xs font-bold uppercase text-slate-400"
+                                >
+                                    Required Skills
+                                </p>
+
+
+                                <div
+                                    class="mt-2 flex flex-wrap gap-2"
+                                >
+
+                                    ${requiredSkills
+                                        .slice(
+                                            0,
+                                            6
+                                        )
+                                        .map(
+                                            skill => `
+
+                                                <span
+                                                    class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
+                                                >
+                                                    ${SB.esc(
+                                                        getSkillName(
+                                                            skill
+                                                        )
+                                                    )}
+                                                </span>
+
+                                            `
+                                        )
+                                        .join("")}
+
+                                </div>
+
+                            </div>
+
+                        `
+                        : ""
+                }
+
+
+
+                <!-- GAP ANALYSIS -->
+
+                ${
+                    match
+                        ? renderGap(
+                            match
+                        )
+                        : ""
+                }
+
+
+
+                <!-- ACTIONS -->
+
+                <div
+                    class="mt-6 flex flex-wrap gap-2 border-t border-slate-100 pt-5"
+                >
+
+
+                    <button
+                        type="button"
+                        onclick="viewDetails(${opportunity.id})"
+                        class="btn btn-soft"
+                    >
+
+                        <i
+                            data-lucide="eye"
+                            class="h-4 w-4"
+                        ></i>
+
+                        View Details
+
+                    </button>
+
+
+
+                    ${
+                        applied
+                            ? `
+
+                                <a
+                                    href="applications.html"
+                                    class="btn bg-emerald-50 text-emerald-700"
+                                >
+
+                                    <i
+                                        data-lucide="circle-check"
+                                        class="h-4 w-4"
+                                    ></i>
+
+                                    Applied
+
+                                </a>
+
+                            `
+                            : `
+
+                                <button
+                                    type="button"
+                                    onclick="applyOpportunity(${opportunity.id}, this)"
+                                    class="btn btn-primary"
+                                >
+
+                                    <i
+                                        data-lucide="send"
+                                        class="h-4 w-4"
+                                    ></i>
+
+                                    Apply Now
+
+                                </button>
+
+                            `
+                    }
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   GAP UI
+===================================================== */
+
+function renderGap(
+    match
+) {
+
+    const matched =
+        match.matched_skills ||
+        [];
+
+
+    const missing =
+        match.missing_skills ||
+        [];
+
+
+    return `
+
+        <div
+            class="mt-5 rounded-xl bg-slate-50 p-4"
+        >
+
+
+            <div>
+
+                <p
+                    class="text-xs font-bold uppercase text-emerald-600"
+                >
+                    Matched
+                </p>
+
+
+                <p
+                    class="mt-1 text-sm text-slate-600"
+                >
+                    ${
+                        matched.length
+                            ? matched
+                                .slice(
+                                    0,
+                                    5
+                                )
+                                .map(
+                                    getSkillName
+                                )
+                                .map(
+                                    SB.esc
+                                )
+                                .join(", ")
+
+                            : "None"
+                    }
+                </p>
+
+            </div>
+
+
+            <div
+                class="mt-3"
+            >
+
+                <p
+                    class="text-xs font-bold uppercase text-amber-600"
+                >
+                    Missing
+                </p>
+
+
+                <p
+                    class="mt-1 text-sm text-slate-600"
+                >
+                    ${
+                        missing.length
+                            ? missing
+                                .slice(
+                                    0,
+                                    5
+                                )
+                                .map(
+                                    getSkillName
+                                )
+                                .map(
+                                    SB.esc
+                                )
+                                .join(", ")
+
+                            : "No major skill gaps"
+                    }
+                </p>
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   VIEW DETAILS
+===================================================== */
+
+window.viewDetails =
+function (
+    id
+) {
+
+    const opportunity =
+        opportunities.find(
+            item =>
+                Number(
+                    item.id
+                )
+                ===
+                Number(
+                    id
+                )
+        );
+
+
+    if (
+        !opportunity
+    ) {
+
+        return;
+
+    }
+
+
+    currentOpportunity =
+        opportunity;
+
+
+    const match =
+        matchCache[
+            id
+        ];
+
+
+    const applied =
+        hasApplied(
+            id
+        );
+
+
+    const company =
+        opportunity.company_name ||
+        opportunity.company?.name ||
+        opportunity.company ||
+        "Company";
+
+
+    modalType.textContent =
+        opportunity.type ||
+        opportunity.opportunity_type ||
+        "Opportunity";
+
+
+    modalTitle.textContent =
+        opportunity.title ||
+        "Opportunity";
+
+
+    modalCompany.textContent =
+        company;
+
+
+    modalContent.innerHTML = `
+
+        <div
+            class="grid gap-5 sm:grid-cols-2"
+        >
+
+
+            <div>
+
+                <p
+                    class="text-xs font-bold uppercase text-slate-400"
+                >
+                    Location
+                </p>
+
+                <p
+                    class="mt-1 font-semibold"
+                >
+                    ${SB.esc(
+                        opportunity.location ||
+                        "Remote / Flexible"
+                    )}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p
+                    class="text-xs font-bold uppercase text-slate-400"
+                >
+                    Your Match
+                </p>
+
+                <p
+                    class="mt-1 text-xl font-black text-indigo-600"
+                >
+                    ${
+                        match
+                            ? `${match.score}%`
+                            : "Not available"
+                    }
+                </p>
+
+            </div>
+
+
+            ${
+                opportunity.duration
+                    ? `
+
+                        <div>
+
+                            <p
+                                class="text-xs font-bold uppercase text-slate-400"
+                            >
+                                Duration
+                            </p>
+
+                            <p
+                                class="mt-1 font-semibold"
+                            >
+                                ${SB.esc(
+                                    opportunity.duration
+                                )}
+                            </p>
+
+                        </div>
+
+                    `
+                    : ""
+            }
+
+
+            ${
+                opportunity.deadline
+                    ? `
+
+                        <div>
+
+                            <p
+                                class="text-xs font-bold uppercase text-slate-400"
+                            >
+                                Application Deadline
+                            </p>
+
+                            <p
+                                class="mt-1 font-semibold"
+                            >
+                                ${SB.esc(
+                                    SB.fmtDate(
+                                        opportunity.deadline
+                                    )
+                                )}
+                            </p>
+
+                        </div>
+
+                    `
+                    : ""
+            }
+
+
+            <div
+                class="sm:col-span-2"
+            >
+
+                <p
+                    class="text-xs font-bold uppercase text-slate-400"
+                >
+                    Description
+                </p>
+
+                <p
+                    class="mt-2 whitespace-pre-line text-sm leading-7 text-slate-600"
+                >
+                    ${SB.esc(
+                        opportunity.description ||
+                        "No description provided."
+                    )}
+                </p>
+
+            </div>
+
+
+            ${
+                match
+                    ? `
+
+                        <div
+                            class="sm:col-span-2"
+                        >
+
+                            <h3
+                                class="font-black"
+                            >
+                                Skill Match Analysis
+                            </h3>
+
+                            ${renderGap(
+                                match
+                            )}
+
+                        </div>
+
+                    `
+                    : ""
+            }
+
+
+        </div>
+
+    `;
+
+
+    if (
+        applied
+    ) {
+
+        modalApplyBtn.disabled =
+            true;
+
+
+        modalApplyBtn.innerHTML = `
+
+            <i
+                data-lucide="circle-check"
+                class="h-4 w-4"
+            ></i>
+
+            Already Applied
+
+        `;
+
+    }
+
+    else {
+
+        modalApplyBtn.disabled =
+            false;
+
+
+        modalApplyBtn.innerHTML = `
+
+            <i
+                data-lucide="send"
+                class="h-4 w-4"
+            ></i>
+
+            Apply Now
+
+        `;
+
+    }
+
+
+    detailsModal.classList.remove(
+        "hidden"
+    );
+
+
+    detailsModal.classList.add(
+        "flex"
+    );
+
+
+    if (
+        window.lucide
+    ) {
+
+        lucide.createIcons();
+
+    }
+
+};
+
+
+
+/* =====================================================
+   CLOSE DETAILS
+===================================================== */
+
+window.closeDetails =
+function () {
+
+    detailsModal.classList.add(
+        "hidden"
+    );
+
+
+    detailsModal.classList.remove(
+        "flex"
+    );
+
+};
+
+
+
+/* =====================================================
+   MODAL APPLY
+===================================================== */
+
+modalApplyBtn.addEventListener(
+    "click",
+    async function () {
+
+        if (
+            !currentOpportunity
+        ) {
+
+            return;
+
+        }
+
+
+        await applyOpportunity(
+            currentOpportunity.id,
+            this
+        );
+
+    }
+);
+
+
+
+/* =====================================================
+   APPLY
+===================================================== */
+
+window.applyOpportunity =
+async function (
+    id,
+    button
+) {
+
+    if (
+        hasApplied(
+            id
+        )
+    ) {
+
+        SB.toast(
+            "You already applied for this opportunity."
+        );
+
+        return;
+
+    }
+
+
+    const original =
+        button?.innerHTML;
+
+
+    if (
+        button
+    ) {
+
+        button.disabled =
+            true;
+
+
+        button.innerHTML = `
+
+            <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span>
+
+            Applying...
+
+        `;
+
+    }
+
+
+    try {
+
+        await SB.post(
+            `/students/opportunities/${id}/apply`,
+            {}
+        );
+
+
+        applications.push({
+            opportunity_id:
+                id
+        });
+
+
+        SB.toast(
+            "Application submitted successfully."
+        );
+
+
+        closeDetails();
+
+
+        renderOpportunities();
+
+    }
+
+    catch (error) {
+
+        SB.toast(
+            error.message
+        );
+
+
+        if (
+            button
+        ) {
+
+            button.disabled =
+                false;
+
+
+            button.innerHTML =
+                original;
+
+        }
+
+    }
+
+
+    if (
+        window.lucide
+    ) {
+
+        lucide.createIcons();
+
+    }
+
+};
+
+
+
+/* =====================================================
+   SKILL NAME
+===================================================== */
+
+function getSkillName(
+    skill
+) {
+
+    if (
+        typeof skill ===
+        "string"
+    ) {
+
+        return skill;
+
+    }
+
+
+    return (
+        skill.name ||
+        skill.skill_name ||
+        skill.skill ||
+        "Skill"
+    );
+
+}
+
+
+
+/* =====================================================
+   EVENTS
+===================================================== */
+
+searchBtn.addEventListener(
+    "click",
+    loadOpportunities
+);
+
+
+refreshBtn.addEventListener(
+    "click",
+    loadOpportunities
+);
+
+
+sortFilter.addEventListener(
+    "change",
+    function () {
+
+        sortOpportunities();
+
+        renderOpportunities();
+
+    }
+);
+
+
+searchInput.addEventListener(
+    "keydown",
+    function (
+        event
+    ) {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            loadOpportunities();
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+async function init() {
+
+    await checkProfile();
+
+    await loadOpportunities();
+
+
+    if (
+        window.lucide
+    ) {
+
+        lucide.createIcons();
+
+    }
+
+}
+
+
+init();
+
+</script>
+
+
+</body>
+
+</html>

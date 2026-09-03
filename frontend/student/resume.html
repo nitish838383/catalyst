@@ -1,1 +1,2228 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Resume AI | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="student";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Resume AI</h1><p class="mt-2 text-slate-500">Upload a PDF, extract skills and add them to your profile.</p></header><div class="grid gap-6 lg:grid-cols-2"><section class="card p-6"><h2 class="text-xl font-black">Upload resume</h2><p class="mt-2 text-sm text-slate-500">PDF only, maximum size follows backend configuration.</p><form id="resumeForm" class="mt-5 space-y-4"><input class="input" type="file" name="file" accept="application/pdf" required><button class="btn btn-primary">Upload & Analyze</button></form><div id="resumeInfo" class="mt-5 text-sm"></div></section><section class="card p-6"><h2 class="text-xl font-black">Detected skills</h2><div id="detected" class="mt-5 space-y-2"><p class="text-sm text-slate-500">Upload a resume to start analysis.</p></div><button id="acceptBtn" class="btn btn-primary mt-5 hidden">Accept selected skills</button></section></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>let rid=null;let detectedSkills=[];resumeForm.onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);try{const up=await SB.request('/resumes/upload',{method:'POST',body:fd});rid=up.id||up.resume_id;resumeInfo.textContent=`Resume #${rid} uploaded. Running analysis…`;await SB.post(`/resumes/${rid}/analyze`,{});const a=await SB.get(`/resumes/${rid}/analysis`);detectedSkills=a.data||[];detected.innerHTML=detectedSkills.map((s,i)=>`<label class="flex items-center gap-3 rounded-xl border p-3"><input type="checkbox" class="skillCheck" value="${s.resume_skill_id||s.id}" checked><div><b>${SB.esc(s.skill_name||s.name)}</b><div class="text-xs text-slate-500">Confidence: ${Math.round((s.confidence_score||s.confidence||0)*100)}%</div></div></label>`).join('')||'<p class="text-slate-500">No skills detected.</p>';if(detectedSkills.length)acceptBtn.classList.remove('hidden')}catch(err){resumeInfo.innerHTML=`<span class="text-rose-600">${SB.esc(err.message)}</span>`}};acceptBtn.onclick=async()=>{const ids=[...document.querySelectorAll('.skillCheck:checked')].map(x=>Number(x.value));try{await SB.request(`/resumes/${rid}/accept-skills`,{method:'POST',body:JSON.stringify(ids),headers:{'Content-Type':'application/json'}});SB.toast('Skills added to your profile')}catch(e){SB.toast(e.message)}};</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="SkillBridge AI — AI Resume & Skill Gap Analyzer">
+
+    <title>Resume AI | SkillBridge AI</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet"
+          href="/assets/css/app.css">
+
+    <style>
+
+        .gradient-card {
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(99, 102, 241, 0.10),
+                    transparent 35%
+                ),
+                #ffffff;
+        }
+
+        .drop-area {
+            transition: all .2s ease;
+            background: linear-gradient(
+                180deg,
+                #ffffff,
+                #f8fafc
+            );
+        }
+
+        .drop-area:hover {
+            border-color: #6366f1;
+            background: #f8faff;
+        }
+
+        .skill-card {
+            transition: all .2s ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-2px);
+            border-color: #a5b4fc;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .05);
+        }
+
+        .progress-track {
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width .6s ease;
+            background: linear-gradient(
+                90deg,
+                #4f46e5,
+                #7c3aed
+            );
+        }
+
+    </style>
+</head>
+
+
+<body class="bg-slate-50 text-slate-900">
+
+<script>
+    window.SKILLBRIDGE_ROLE = "student";
+</script>
+
+
+<div id="app-shell">
+
+    <main class="min-h-screen lg:pl-72">
+
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+
+            <!-- ========================================= -->
+            <!-- HEADER -->
+            <!-- ========================================= -->
+
+            <header class="mb-8">
+
+                <div class="flex flex-wrap items-start justify-between gap-4">
+
+                    <div>
+
+                        <p class="text-sm font-bold text-indigo-600">
+                            SkillBridge AI
+                        </p>
+
+                        <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                            AI Resume & Skill Gap Analyzer
+                        </h1>
+
+                        <p class="mt-2 max-w-3xl text-slate-500">
+                            Upload your resume, select your target career role
+                            and discover what you already know, what you're missing,
+                            and what you should learn next.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3">
+
+                        <div class="flex items-center gap-2 text-sm font-semibold text-indigo-700">
+
+                            <i data-lucide="sparkles"
+                               class="h-4 w-4"></i>
+
+                            AI Career Intelligence
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ========================================= -->
+            <!-- PROCESS -->
+            <!-- ========================================= -->
+
+            <div class="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
+
+                <div class="card flex items-center gap-3 p-4">
+
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 font-black text-indigo-600">
+                        1
+                    </div>
+
+                    <div>
+                        <p class="font-bold">Upload Resume</p>
+                        <p class="text-xs text-slate-500">
+                            PDF resume
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="card flex items-center gap-3 p-4">
+
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 font-black text-violet-600">
+                        2
+                    </div>
+
+                    <div>
+                        <p class="font-bold">Extract Skills</p>
+                        <p class="text-xs text-slate-500">
+                            Resume skill analysis
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="card flex items-center gap-3 p-4">
+
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 font-black text-amber-600">
+                        3
+                    </div>
+
+                    <div>
+                        <p class="font-bold">Find Skill Gap</p>
+                        <p class="text-xs text-slate-500">
+                            Compare with target role
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="card flex items-center gap-3 p-4">
+
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 font-black text-emerald-600">
+                        4
+                    </div>
+
+                    <div>
+                        <p class="font-bold">Get Roadmap</p>
+                        <p class="text-xs text-slate-500">
+                            Learn what matters next
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ========================================= -->
+            <!-- TARGET ROLE -->
+            <!-- ========================================= -->
+
+            <section class="gradient-card card mb-6 p-6">
+
+                <div class="flex flex-wrap items-end gap-4">
+
+                    <div class="min-w-[260px] flex-1">
+
+                        <label class="label">
+                            Target Career Role
+                        </label>
+
+                        <select
+                            id="targetRole"
+                            class="input"
+                        >
+
+                            <option value="backend developer">
+                                Backend Developer
+                            </option>
+
+                            <option value="frontend developer">
+                                Frontend Developer
+                            </option>
+
+                            <option value="full stack developer">
+                                Full Stack Developer
+                            </option>
+
+                            <option value="ai ml engineer">
+                                AI / ML Engineer
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="max-w-lg text-sm text-slate-500">
+
+                        SkillBridge will compare your profile and resume
+                        against the selected role.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ========================================= -->
+            <!-- UPLOAD + DETECTED SKILLS -->
+            <!-- ========================================= -->
+
+            <div class="grid gap-6 lg:grid-cols-2">
+
+
+                <!-- UPLOAD -->
+
+                <section class="card overflow-hidden">
+
+                    <div class="border-b border-slate-200 p-6">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+
+                                <i data-lucide="file-up"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="text-xl font-black">
+                                    Upload Resume
+                                </h2>
+
+                                <p class="text-sm text-slate-500">
+                                    Upload your latest PDF resume
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="p-6">
+
+                        <form id="resumeForm"
+                              class="space-y-5">
+
+
+                            <label
+                                id="dropArea"
+                                for="resumeFile"
+                                class="drop-area block cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 p-9 text-center"
+                            >
+
+                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+
+                                    <i data-lucide="cloud-upload"
+                                       class="h-8 w-8"></i>
+
+                                </div>
+
+
+                                <h3 class="mt-4 text-lg font-black">
+                                    Drop your resume here
+                                </h3>
+
+
+                                <p class="mt-2 text-sm text-slate-500">
+                                    or click to browse your PDF
+                                </p>
+
+
+                                <span class="mt-5 inline-flex rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white">
+
+                                    Choose Resume
+
+                                </span>
+
+
+                                <input
+                                    id="resumeFile"
+                                    class="hidden"
+                                    type="file"
+                                    name="file"
+                                    accept="application/pdf"
+                                    required
+                                >
+
+                            </label>
+
+
+
+                            <!-- FILE INFO -->
+
+                            <div
+                                id="selectedFile"
+                                class="hidden rounded-xl border border-slate-200 bg-slate-50 p-4"
+                            >
+
+                                <div class="flex items-center gap-3">
+
+                                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+
+                                        <i data-lucide="file-text"></i>
+
+                                    </div>
+
+
+                                    <div class="min-w-0 flex-1">
+
+                                        <p
+                                            id="fileName"
+                                            class="truncate font-bold"
+                                        ></p>
+
+                                        <p
+                                            id="fileSize"
+                                            class="text-xs text-slate-500"
+                                        ></p>
+
+                                    </div>
+
+
+                                    <button
+                                        id="removeFileBtn"
+                                        type="button"
+                                        class="rounded-lg p-2 hover:bg-white"
+                                    >
+
+                                        <i data-lucide="x"
+                                           class="h-4 w-4"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <button
+                                id="analyzeBtn"
+                                type="submit"
+                                class="btn btn-primary w-full justify-center"
+                            >
+
+                                <i data-lucide="scan-search"
+                                   class="h-4 w-4"></i>
+
+                                Analyze Resume & Skill Gap
+
+                            </button>
+
+
+                        </form>
+
+
+                        <div
+                            id="resumeInfo"
+                            class="mt-5"
+                        ></div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- DETECTED SKILLS -->
+
+                <section class="card overflow-hidden">
+
+                    <div class="flex items-center justify-between border-b border-slate-200 p-6">
+
+                        <div>
+
+                            <h2 class="text-xl font-black">
+                                Skills Found In Resume
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-500">
+                                Skills SkillBridge detected from your resume.
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            id="detectedBadge"
+                            class="hidden rounded-full bg-indigo-50 px-3 py-1 text-sm font-bold text-indigo-600"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <div class="p-6">
+
+                        <div
+                            id="detectedEmpty"
+                            class="py-12 text-center"
+                        >
+
+                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+
+                                <i data-lucide="file-search"
+                                   class="h-8 w-8"></i>
+
+                            </div>
+
+                            <h3 class="mt-4 font-black">
+                                Resume not analyzed yet
+                            </h3>
+
+                            <p class="mt-2 text-sm text-slate-500">
+                                Upload your resume to detect your skills.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            id="analysisLoader"
+                            class="hidden py-12 text-center"
+                        >
+
+                            <div class="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"></div>
+
+                            <p class="mt-4 font-bold">
+                                Analyzing your resume...
+                            </p>
+
+                            <p class="mt-1 text-sm text-slate-500">
+                                Extracting skills and comparing your profile.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            id="detectedSkillsContainer"
+                            class="hidden space-y-3"
+                        ></div>
+
+
+                        <div
+                            id="acceptArea"
+                            class="hidden mt-6 border-t border-slate-200 pt-5"
+                        >
+
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+
+                                <p
+                                    id="selectedCount"
+                                    class="text-sm text-slate-500"
+                                >
+                                    0 selected
+                                </p>
+
+
+                                <button
+                                    id="acceptBtn"
+                                    type="button"
+                                    class="btn btn-primary"
+                                >
+
+                                    <i data-lucide="plus-circle"
+                                       class="h-4 w-4"></i>
+
+                                    Add Selected To Profile
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+
+            <!-- ========================================= -->
+            <!-- CAREER ANALYSIS -->
+            <!-- ========================================= -->
+
+            <section
+                id="careerAnalysis"
+                class="hidden mt-6"
+            >
+
+
+                <!-- READINESS -->
+
+                <div class="grid gap-5 md:grid-cols-3">
+
+
+                    <div class="card p-6 md:col-span-1">
+
+                        <p class="text-sm font-semibold text-slate-500">
+                            Career Readiness
+                        </p>
+
+
+                        <div class="mt-5 flex items-end gap-2">
+
+                            <span
+                                id="readinessScore"
+                                class="text-5xl font-black text-indigo-600"
+                            >
+                                0
+                            </span>
+
+                            <span class="mb-2 text-xl font-bold text-slate-400">
+                                %
+                            </span>
+
+                        </div>
+
+
+                        <p
+                            id="readinessText"
+                            class="mt-3 text-sm text-slate-500"
+                        >
+                            —
+                        </p>
+
+
+                        <div class="mt-5 progress-track">
+
+                            <div
+                                id="readinessBar"
+                                class="progress-fill"
+                                style="width:0%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- MATCHED -->
+
+                    <div class="card p-6">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+
+                                <i data-lucide="circle-check"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 class="font-black">
+                                    What You Already Have
+                                </h3>
+
+                                <p class="text-xs text-slate-500">
+                                    Skills matching your target role
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="matchedSkills"
+                            class="mt-5 flex flex-wrap gap-2"
+                        ></div>
+
+                    </div>
+
+
+
+                    <!-- MISSING -->
+
+                    <div class="card p-6">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+
+                                <i data-lucide="triangle-alert"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 class="font-black">
+                                    Missing Skills
+                                </h3>
+
+                                <p class="text-xs text-slate-500">
+                                    Skills you should focus on
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="missingSkills"
+                            class="mt-5 flex flex-wrap gap-2"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ===================================== -->
+                <!-- WHAT TO FOCUS ON -->
+                <!-- ===================================== -->
+
+                <div class="mt-6 grid gap-6 lg:grid-cols-2">
+
+
+                    <section class="card p-6">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+
+                                <i data-lucide="crosshair"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="text-xl font-black">
+                                    What To Focus On
+                                </h2>
+
+                                <p class="text-sm text-slate-500">
+                                    Priority skills for your career goal
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="focusList"
+                            class="mt-6 space-y-3"
+                        ></div>
+
+                    </section>
+
+
+
+                    <!-- RECOMMENDATION -->
+
+                    <section class="card p-6">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+
+                                <i data-lucide="lightbulb"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="text-xl font-black">
+                                    AI Recommendation
+                                </h2>
+
+                                <p class="text-sm text-slate-500">
+                                    Your next best action
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="recommendation"
+                            class="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 text-sm leading-7 text-slate-700"
+                        >
+                            —
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+
+                <!-- ===================================== -->
+                <!-- ROADMAP -->
+                <!-- ===================================== -->
+
+                <section class="card mt-6 overflow-hidden">
+
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-6">
+
+                        <div>
+
+                            <h2 class="text-xl font-black">
+                                Personalized Learning Roadmap
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-500">
+                                Your recommended next learning steps.
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            id="generateRoadmapBtn"
+                            type="button"
+                            class="btn btn-primary"
+                        >
+
+                            <i data-lucide="route"
+                               class="h-4 w-4"></i>
+
+                            Generate Roadmap
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="p-6">
+
+                        <div
+                            id="roadmapEmpty"
+                            class="py-8 text-center text-sm text-slate-500"
+                        >
+                            Generate your personalized roadmap after analyzing your resume.
+                        </div>
+
+
+                        <div
+                            id="roadmapList"
+                            class="hidden space-y-4"
+                        ></div>
+
+                    </div>
+
+                </section>
+
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ========================================= -->
+<!-- COMMON JS -->
+<!-- ========================================= -->
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+
+
+<script>
+
+/* ======================================================
+   GLOBAL STATE
+====================================================== */
+
+let resumeId = null;
+
+let detectedSkills = [];
+
+let readinessData = null;
+
+let selectedRole =
+    "backend developer";
+
+
+
+/* ======================================================
+   ELEMENTS
+====================================================== */
+
+const resumeFile =
+    document.getElementById("resumeFile");
+
+const selectedFile =
+    document.getElementById("selectedFile");
+
+const fileName =
+    document.getElementById("fileName");
+
+const fileSize =
+    document.getElementById("fileSize");
+
+const removeFileBtn =
+    document.getElementById("removeFileBtn");
+
+const analyzeBtn =
+    document.getElementById("analyzeBtn");
+
+const resumeInfo =
+    document.getElementById("resumeInfo");
+
+const analysisLoader =
+    document.getElementById("analysisLoader");
+
+const detectedEmpty =
+    document.getElementById("detectedEmpty");
+
+const detectedSkillsContainer =
+    document.getElementById("detectedSkillsContainer");
+
+const acceptArea =
+    document.getElementById("acceptArea");
+
+const acceptBtn =
+    document.getElementById("acceptBtn");
+
+const selectedCount =
+    document.getElementById("selectedCount");
+
+const detectedBadge =
+    document.getElementById("detectedBadge");
+
+const careerAnalysis =
+    document.getElementById("careerAnalysis");
+
+const readinessScore =
+    document.getElementById("readinessScore");
+
+const readinessText =
+    document.getElementById("readinessText");
+
+const readinessBar =
+    document.getElementById("readinessBar");
+
+const matchedSkills =
+    document.getElementById("matchedSkills");
+
+const missingSkills =
+    document.getElementById("missingSkills");
+
+const focusList =
+    document.getElementById("focusList");
+
+const recommendation =
+    document.getElementById("recommendation");
+
+const generateRoadmapBtn =
+    document.getElementById("generateRoadmapBtn");
+
+const roadmapList =
+    document.getElementById("roadmapList");
+
+const roadmapEmpty =
+    document.getElementById("roadmapEmpty");
+
+
+
+/* ======================================================
+   TARGET ROLE
+====================================================== */
+
+document
+    .getElementById("targetRole")
+    .addEventListener(
+        "change",
+        function () {
+
+            selectedRole =
+                this.value;
+
+        }
+    );
+
+
+
+/* ======================================================
+   FILE SELECT
+====================================================== */
+
+resumeFile.addEventListener(
+    "change",
+    function () {
+
+        const file =
+            this.files[0];
+
+
+        if (!file) {
+
+            selectedFile.classList.add(
+                "hidden"
+            );
+
+            return;
+
+        }
+
+
+        fileName.textContent =
+            file.name;
+
+
+        fileSize.textContent =
+            formatBytes(
+                file.size
+            );
+
+
+        selectedFile.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+/* ======================================================
+   REMOVE FILE
+====================================================== */
+
+removeFileBtn.addEventListener(
+    "click",
+    function () {
+
+        resumeFile.value = "";
+
+        selectedFile.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+/* ======================================================
+   FORMAT BYTES
+====================================================== */
+
+function formatBytes(bytes) {
+
+    const kb =
+        bytes / 1024;
+
+
+    if (kb < 1024) {
+
+        return `${kb.toFixed(1)} KB`;
+
+    }
+
+
+    return `${(kb / 1024).toFixed(2)} MB`;
+
+}
+
+
+
+/* ======================================================
+   ANALYZE RESUME
+====================================================== */
+
+document
+    .getElementById("resumeForm")
+    .addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const file =
+                resumeFile.files[0];
+
+
+            if (!file) {
+
+                SB.toast(
+                    "Please select your resume."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                SB.toast(
+                    "Only PDF resume is allowed."
+                );
+
+                return;
+
+            }
+
+
+            selectedRole =
+                document
+                    .getElementById(
+                        "targetRole"
+                    )
+                    .value;
+
+
+            setAnalyzingState(
+                true
+            );
+
+
+            try {
+
+                /* =========================
+                   UPLOAD
+                ========================= */
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "file",
+                    file
+                );
+
+
+                const uploadResponse =
+                    await SB.request(
+                        "/resumes/upload",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                resumeId =
+                    uploadResponse.id ||
+                    uploadResponse.resume_id;
+
+
+                if (!resumeId) {
+
+                    throw new Error(
+                        "Resume ID not returned."
+                    );
+
+                }
+
+
+
+                /* =========================
+                   ANALYZE RESUME
+                ========================= */
+
+                await SB.post(
+                    `/resumes/${resumeId}/analyze`,
+                    {}
+                );
+
+
+
+                /* =========================
+                   GET DETECTED SKILLS
+                ========================= */
+
+                const analysis =
+                    await SB.get(
+                        `/resumes/${resumeId}/analysis`
+                    );
+
+
+                detectedSkills =
+                    analysis.data || [];
+
+
+                renderDetectedSkills();
+
+
+
+                /* =========================
+                   CAREER READINESS
+                ========================= */
+
+                await loadCareerAnalysis();
+
+
+
+                resumeInfo.innerHTML = `
+
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+
+                        <div class="flex items-start gap-3">
+
+                            <i
+                                data-lucide="circle-check"
+                                class="mt-0.5 h-5 w-5 text-emerald-600"
+                            ></i>
+
+                            <div>
+
+                                <p class="font-bold text-emerald-800">
+                                    Resume analyzed successfully
+                                </p>
+
+                                <p class="mt-1 text-xs text-emerald-700">
+                                    Resume #${resumeId} · Target role: ${SB.esc(selectedRole)}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                careerAnalysis.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+            catch (error) {
+
+                resumeInfo.innerHTML = `
+
+                    <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+
+                        <p class="font-bold text-rose-700">
+                            Analysis failed
+                        </p>
+
+                        <p class="mt-1 text-sm text-rose-600">
+                            ${SB.esc(error.message)}
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                detectedEmpty.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+            finally {
+
+                setAnalyzingState(
+                    false
+                );
+
+
+                if (window.lucide) {
+
+                    lucide.createIcons();
+
+                }
+
+            }
+
+        }
+    );
+
+
+
+/* ======================================================
+   ANALYZING STATE
+====================================================== */
+
+function setAnalyzingState(
+    active
+) {
+
+    if (active) {
+
+        analyzeBtn.disabled =
+            true;
+
+
+        analyzeBtn.innerHTML = `
+
+            <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-white/50 border-t-white"
+            ></span>
+
+            Analyzing Resume...
+
+        `;
+
+
+        detectedEmpty.classList.add(
+            "hidden"
+        );
+
+
+        detectedSkillsContainer.classList.add(
+            "hidden"
+        );
+
+
+        acceptArea.classList.add(
+            "hidden"
+        );
+
+
+        analysisLoader.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    else {
+
+        analysisLoader.classList.add(
+            "hidden"
+        );
+
+
+        analyzeBtn.disabled =
+            false;
+
+
+        analyzeBtn.innerHTML = `
+
+            <i
+                data-lucide="scan-search"
+                class="h-4 w-4"
+            ></i>
+
+            Analyze Resume & Skill Gap
+
+        `;
+
+    }
+
+}
+
+
+
+/* ======================================================
+   RENDER DETECTED SKILLS
+====================================================== */
+
+function renderDetectedSkills() {
+
+    analysisLoader.classList.add(
+        "hidden"
+    );
+
+
+    detectedEmpty.classList.add(
+        "hidden"
+    );
+
+
+    detectedSkillsContainer.classList.remove(
+        "hidden"
+    );
+
+
+    if (!detectedSkills.length) {
+
+        detectedSkillsContainer.innerHTML = `
+
+            <div class="rounded-xl border border-slate-200 p-5 text-center">
+
+                <p class="font-bold">
+                    No skills detected
+                </p>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Try uploading a more detailed resume.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    detectedBadge.textContent =
+        `${detectedSkills.length} skills`;
+
+
+    detectedBadge.classList.remove(
+        "hidden"
+    );
+
+
+    detectedSkillsContainer.innerHTML =
+        detectedSkills
+            .map(
+                skill => {
+
+                    const name =
+                        skill.skill_name ||
+                        skill.name ||
+                        "Unknown";
+
+
+                    const id =
+                        skill.resume_skill_id ||
+                        skill.id;
+
+
+                    let confidence =
+                        Number(
+                            skill.confidence_score ??
+                            skill.confidence ??
+                            0
+                        );
+
+
+                    if (
+                        confidence <= 1
+                    ) {
+
+                        confidence *= 100;
+
+                    }
+
+
+                    confidence =
+                        Math.round(
+                            confidence
+                        );
+
+
+                    return `
+
+                        <label
+                            class="skill-card flex cursor-pointer items-center gap-4 rounded-xl border border-slate-200 p-4"
+                        >
+
+                            <input
+                                type="checkbox"
+                                class="skillCheck h-4 w-4"
+                                value="${id}"
+                                checked
+                            >
+
+
+                            <div class="min-w-0 flex-1">
+
+                                <div class="flex justify-between gap-3">
+
+                                    <p class="font-black">
+                                        ${SB.esc(name)}
+                                    </p>
+
+                                    <span class="text-xs font-bold text-indigo-600">
+                                        ${confidence}%
+                                    </span>
+
+                                </div>
+
+
+                                <div class="mt-3 progress-track">
+
+                                    <div
+                                        class="progress-fill"
+                                        style="width:${confidence}%"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        </label>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    acceptArea.classList.remove(
+        "hidden"
+    );
+
+
+    document
+        .querySelectorAll(
+            ".skillCheck"
+        )
+        .forEach(
+            checkbox => {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateSelectedCount
+                );
+
+            }
+        );
+
+
+    updateSelectedCount();
+
+}
+
+
+
+/* ======================================================
+   SELECTED SKILL COUNT
+====================================================== */
+
+function updateSelectedCount() {
+
+    const count =
+        document
+            .querySelectorAll(
+                ".skillCheck:checked"
+            )
+            .length;
+
+
+    selectedCount.textContent =
+        `${count} skill${count === 1 ? "" : "s"} selected`;
+
+}
+
+
+
+/* ======================================================
+   ACCEPT RESUME SKILLS
+====================================================== */
+
+acceptBtn.addEventListener(
+    "click",
+    async function () {
+
+        const ids =
+            [
+                ...document.querySelectorAll(
+                    ".skillCheck:checked"
+                )
+            ]
+            .map(
+                input =>
+                    Number(
+                        input.value
+                    )
+            );
+
+
+        if (!ids.length) {
+
+            SB.toast(
+                "Select at least one skill."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            await SB.request(
+                `/resumes/${resumeId}/accept-skills`,
+                {
+
+                    method:
+                        "POST",
+
+                    body:
+                        JSON.stringify(
+                            ids
+                        ),
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    }
+
+                }
+            );
+
+
+            SB.toast(
+                `${ids.length} skills added to your profile.`
+            );
+
+
+            /*
+                Re-run analysis because profile skills
+                have now changed.
+            */
+
+            await loadCareerAnalysis();
+
+        }
+
+        catch (error) {
+
+            SB.toast(
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+
+/* ======================================================
+   LOAD CAREER READINESS
+====================================================== */
+
+async function loadCareerAnalysis() {
+
+    try {
+
+        const encodedRole =
+            encodeURIComponent(
+                selectedRole
+            );
+
+
+        const response =
+            await SB.get(
+                `/career/readiness?role=${encodedRole}`
+            );
+
+
+        /*
+            Handles either:
+
+            {
+                score: 70,
+                matched_skills: [],
+                missing_skills: []
+            }
+
+            OR
+
+            {
+                data: {...}
+            }
+        */
+
+        readinessData =
+            response.data ||
+            response;
+
+
+        renderCareerAnalysis(
+            readinessData
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Career readiness error:",
+            error
+        );
+
+
+        /*
+            Resume extraction still works even if
+            readiness API fails.
+        */
+
+        careerAnalysis.classList.remove(
+            "hidden"
+        );
+
+
+        readinessText.textContent =
+            "Career readiness could not be calculated.";
+
+    }
+
+}
+
+
+
+/* ======================================================
+   RENDER CAREER ANALYSIS
+====================================================== */
+
+function renderCareerAnalysis(
+    data
+) {
+
+    const score =
+        Number(
+            data.readiness_score ??
+            data.score ??
+            data.percentage ??
+            0
+        );
+
+
+    const matched =
+        data.matched_skills ||
+        data.matches ||
+        [];
+
+
+    const missing =
+        data.missing_skills ||
+        data.skill_gaps ||
+        data.missing ||
+        [];
+
+
+    readinessScore.textContent =
+        Math.round(
+            score
+        );
+
+
+    readinessBar.style.width =
+        `${Math.min(100, score)}%`;
+
+
+    if (score >= 80) {
+
+        readinessText.textContent =
+            "Strong readiness. Focus on advanced projects and real-world experience.";
+
+    }
+
+    else if (score >= 60) {
+
+        readinessText.textContent =
+            "Good foundation. Build the missing skills to become job-ready.";
+
+    }
+
+    else if (score >= 40) {
+
+        readinessText.textContent =
+            "Developing profile. Focus on the priority skills below.";
+
+    }
+
+    else {
+
+        readinessText.textContent =
+            "Early-stage readiness. Build strong fundamentals before advanced topics.";
+
+    }
+
+
+
+    /* MATCHED */
+
+    matchedSkills.innerHTML =
+        matched.length
+
+            ? matched
+                .map(
+                    skill => `
+                        <span
+                            class="rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700"
+                        >
+                            ✓ ${SB.esc(getSkillName(skill))}
+                        </span>
+                    `
+                )
+                .join("")
+
+            : `
+                <p class="text-sm text-slate-500">
+                    No role-matched skills found yet.
+                </p>
+            `;
+
+
+
+    /* MISSING */
+
+    missingSkills.innerHTML =
+        missing.length
+
+            ? missing
+                .map(
+                    skill => `
+                        <span
+                            class="rounded-full bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700"
+                        >
+                            ${SB.esc(getSkillName(skill))}
+                        </span>
+                    `
+                )
+                .join("")
+
+            : `
+                <p class="text-sm text-emerald-600">
+                    No major required skills missing.
+                </p>
+            `;
+
+
+
+    /* FOCUS LIST */
+
+    focusList.innerHTML =
+        missing.length
+
+            ? missing
+                .slice(
+                    0,
+                    5
+                )
+                .map(
+                    (skill, index) => `
+
+                        <div
+                            class="flex items-center gap-4 rounded-xl border border-slate-200 p-4"
+                        >
+
+                            <div
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 font-black text-indigo-600"
+                            >
+                                ${index + 1}
+                            </div>
+
+
+                            <div>
+
+                                <p class="font-black">
+                                    ${SB.esc(getSkillName(skill))}
+                                </p>
+
+                                <p class="mt-1 text-xs text-slate-500">
+                                    Recommended priority skill for ${SB.esc(selectedRole)}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    `
+                )
+                .join("")
+
+            : `
+
+                <div class="rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
+
+                    Your core target-role skills are already covered.
+                    Focus on advanced projects, system design and industry experience.
+
+                </div>
+
+            `;
+
+
+
+    /* RECOMMENDATION */
+
+    recommendation.innerHTML =
+        buildRecommendation(
+            score,
+            missing
+        );
+
+
+    careerAnalysis.classList.remove(
+        "hidden"
+    );
+
+
+    if (window.lucide) {
+
+        lucide.createIcons();
+
+    }
+
+}
+
+
+
+/* ======================================================
+   NORMALIZE SKILL NAME
+====================================================== */
+
+function getSkillName(
+    skill
+) {
+
+    if (
+        typeof skill === "string"
+    ) {
+
+        return skill;
+
+    }
+
+
+    return (
+        skill.name ||
+        skill.skill_name ||
+        skill.skill ||
+        "Skill"
+    );
+
+}
+
+
+
+/* ======================================================
+   BUILD RECOMMENDATION
+====================================================== */
+
+function buildRecommendation(
+    score,
+    missing
+) {
+
+    const role =
+        selectedRole;
+
+
+    if (
+        missing.length >= 3
+    ) {
+
+        const top =
+            missing
+                .slice(
+                    0,
+                    3
+                )
+                .map(
+                    getSkillName
+                )
+                .join(", ");
+
+
+        return `
+
+            For <strong>${SB.esc(role)}</strong>,
+            your current readiness is approximately
+            <strong>${Math.round(score)}%</strong>.
+
+            Your highest priority should be
+            <strong>${SB.esc(top)}</strong>.
+
+            Learn these skills and then build one
+            production-style project that combines them.
+            This will strengthen both your profile and
+            opportunity match score.
+
+        `;
+
+    }
+
+
+    if (
+        missing.length > 0
+    ) {
+
+        return `
+
+            You already have a strong foundation for
+            <strong>${SB.esc(role)}</strong>.
+
+            Complete the remaining skills:
+            <strong>
+                ${SB.esc(
+                    missing
+                        .map(getSkillName)
+                        .join(", ")
+                )}
+            </strong>.
+
+            After that, focus on advanced projects,
+            deployment and interview preparation.
+
+        `;
+
+    }
+
+
+    return `
+
+        Your core skill profile is well aligned with
+        <strong>${SB.esc(role)}</strong>.
+
+        Your next focus should be advanced projects,
+        real-world deployment, system design,
+        internships and interview preparation.
+
+    `;
+
+}
+
+
+
+/* ======================================================
+   GENERATE ROADMAP
+====================================================== */
+
+generateRoadmapBtn.addEventListener(
+    "click",
+    async function () {
+
+        this.disabled =
+            true;
+
+
+        this.innerHTML = `
+
+            <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-white/50 border-t-white"
+            ></span>
+
+            Generating...
+
+        `;
+
+
+        try {
+
+            const role =
+                encodeURIComponent(
+                    selectedRole
+                );
+
+
+            const response =
+                await SB.post(
+                    `/career/roadmap?role=${role}`,
+                    {}
+                );
+
+
+            const data =
+                response.data ||
+                response;
+
+
+            renderRoadmap(
+                data
+            );
+
+        }
+
+        catch (error) {
+
+            SB.toast(
+                error.message
+            );
+
+        }
+
+        finally {
+
+            this.disabled =
+                false;
+
+
+            this.innerHTML = `
+
+                <i
+                    data-lucide="route"
+                    class="h-4 w-4"
+                ></i>
+
+                Generate Roadmap
+
+            `;
+
+
+            if (window.lucide) {
+
+                lucide.createIcons();
+
+            }
+
+        }
+
+    }
+);
+
+
+
+/* ======================================================
+   RENDER ROADMAP
+====================================================== */
+
+function renderRoadmap(
+    data
+) {
+
+    /*
+       Different possible response shapes supported.
+    */
+
+    let steps =
+        data.steps ||
+        data.roadmap_steps ||
+        data.roadmap ||
+        [];
+
+
+    if (
+        !Array.isArray(steps)
+    ) {
+
+        steps = [];
+    }
+
+
+    roadmapEmpty.classList.add(
+        "hidden"
+    );
+
+
+    roadmapList.classList.remove(
+        "hidden"
+    );
+
+
+    if (!steps.length) {
+
+        roadmapList.innerHTML = `
+
+            <div class="rounded-xl border border-slate-200 p-5">
+
+                <p class="font-bold">
+                    Roadmap created
+                </p>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    No detailed roadmap steps were returned by the backend.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    roadmapList.innerHTML =
+        steps
+            .map(
+                (step, index) => {
+
+                    const title =
+                        typeof step === "string"
+                            ? step
+                            : (
+                                step.title ||
+                                step.skill ||
+                                step.name ||
+                                `Step ${index + 1}`
+                            );
+
+
+                    const description =
+                        typeof step === "object"
+                            ? (
+                                step.description ||
+                                step.action ||
+                                step.details ||
+                                ""
+                            )
+                            : "";
+
+
+                    return `
+
+                        <div class="flex gap-4">
+
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 font-black text-white"
+                            >
+                                ${index + 1}
+                            </div>
+
+
+                            <div
+                                class="flex-1 rounded-2xl border border-slate-200 p-4"
+                            >
+
+                                <h3 class="font-black">
+                                    ${SB.esc(title)}
+                                </h3>
+
+
+                                ${
+                                    description
+                                        ? `
+                                            <p class="mt-2 text-sm leading-6 text-slate-500">
+                                                ${SB.esc(description)}
+                                            </p>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+
+/* ======================================================
+   INITIALIZE
+====================================================== */
+
+if (window.lucide) {
+
+    lucide.createIcons();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

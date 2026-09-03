@@ -1,1 +1,176 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Login | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><div class="grid min-h-screen place-items-center bg-slate-950 px-4"><div class="card w-full max-w-md p-7"><a href="/" class="text-xl font-black text-indigo-600">SkillBridge AI</a><h1 class="mt-6 text-3xl font-black">Welcome back</h1><p class="mt-2 text-slate-500">Login to your role-based dashboard.</p><form id="loginForm" class="mt-6 space-y-4"><div><label class="label">Email</label><input class="input" name="email" type="email" required></div><div><label class="label">Password</label><input class="input" name="password" type="password" required></div><button class="btn btn-primary w-full">Login</button><p id="msg" class="text-sm text-rose-600"></p></form><p class="mt-5 text-sm text-slate-500">New here? <a class="font-bold text-indigo-600" href="/register.html">Create account</a></p></div></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script>document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');m.textContent='';try{const r=await SB.post('/auth/login',{email:f.get('email'),password:f.get('password')});Auth.save(r.access_token);const me=await Auth.me(true);location.href=Auth.home(me.role)}catch(err){m.textContent=err.message}}</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login — SkillBridge AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <title>Login | SkillBridge AI</title>
+  <style>
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+  <div class="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+
+    <!-- Navbar -->
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
+      <a href="/" class="text-xl font-black text-white">SkillBridge AI</a>
+      <a href="/register.html" class="btn border border-white/20 text-white">Create Account</a>
+    </nav>
+
+    <!-- Center Card -->
+    <div class="flex min-h-[calc(100vh-88px)] items-center justify-center px-4 pb-16">
+      <div class="w-full max-w-md">
+
+        <!-- Header -->
+        <div class="mb-8 text-center">
+          <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/20 ring-1 ring-indigo-400/30">
+            <i data-lucide="shield-check" class="h-7 w-7 text-indigo-400"></i>
+          </div>
+          <h1 class="text-3xl font-black text-white">Welcome back</h1>
+          <p class="mt-2 text-slate-400">Login to your role-based dashboard</p>
+        </div>
+
+        <!-- Card -->
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
+
+          <form id="loginForm" class="space-y-5">
+
+            <!-- Email -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-300">Email</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="mail" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <input 
+                  class="input w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-500" 
+                  name="email" 
+                  type="email" 
+                  placeholder="you@college.edu"
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+              <div class="mb-1.5 flex items-center justify-between">
+                <label class="block text-sm font-medium text-slate-300">Password</label>
+                <a href="/forgot-password.html" class="text-xs font-medium text-indigo-400 hover:text-indigo-300">Forgot password?</a>
+              </div>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="lock" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <input 
+                  id="password"
+                  class="input w-full rounded-xl border border-white/15 bg-white/5 py-3 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-500" 
+                  name="password" 
+                  type="password" 
+                  placeholder="••••••••"
+                  required
+                >
+                <!-- Eye Toggle -->
+                <button 
+                  type="button" 
+                  id="togglePassword"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 transition hover:text-slate-300"
+                >
+                  <i data-lucide="eye" class="h-4 w-4" id="eyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="btn btn-primary flex w-full items-center justify-center gap-2">
+              <span id="btnContent">
+                <span id="btnText">Login</span>
+              </span>
+            </button>
+
+            <!-- Error Message -->
+            <p id="msg" class="text-center text-sm text-rose-500"></p>
+          </form>
+
+          <p class="mt-6 text-center text-sm text-slate-400">
+            New here?
+            <a class="font-bold text-indigo-400 hover:text-indigo-300" href="/register.html">Create account</a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+
+    // Password show/hide
+    document.getElementById('togglePassword')?.addEventListener('click', () => {
+      const input = document.getElementById('password');
+      const icon = document.getElementById('eyeIcon');
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    });
+
+    // Login form
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+
+      const f = new FormData(e.target);
+      const msg = document.getElementById('msg');
+      const btn = document.getElementById('submitBtn');
+      const btnContent = document.getElementById('btnContent');
+
+      msg.textContent = '';
+      btn.disabled = true;
+
+      // Show loading state
+      btnContent.innerHTML = `
+        <div class="spinner"></div>
+        <span>Signing in...</span>
+      `;
+
+      try {
+        const r = await SB.post('/auth/login', {
+          email: f.get('email'),
+          password: f.get('password')
+        });
+
+        Auth.save(r.access_token);
+        const me = await Auth.me(true);
+        location.href = Auth.home(me.role);
+
+      } catch (err) {
+        msg.textContent = err.message || 'Login failed';
+        
+        // Restore button
+        btn.disabled = false;
+        btnContent.innerHTML = `<span id="btnText">Login</span>`;
+      }
+    };
+  </script>
+</body>
+</html>

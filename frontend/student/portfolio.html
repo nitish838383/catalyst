@@ -1,1 +1,305 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Projects & Certifications | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="student";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Projects & Certifications</h1><p class="mt-2 text-slate-500">Strengthen your profile with proof of work.</p></header><div class="grid gap-6 lg:grid-cols-2"><section class="card p-6"><h2 class="text-xl font-black">Projects</h2><form id="projectForm" class="mt-4 space-y-3"><input class="input" name="title" placeholder="Project title" required><textarea class="input" name="description" placeholder="Description"></textarea><input class="input" name="technologies" placeholder="Technologies, e.g. FastAPI, PostgreSQL"><input class="input" name="github_url" placeholder="GitHub URL"><button class="btn btn-primary">Add project</button></form><div id="projects" class="mt-5 space-y-3"></div></section><section class="card p-6"><h2 class="text-xl font-black">Certifications</h2><form id="certForm" class="mt-4 space-y-3"><input class="input" name="name" placeholder="Certificate name" required><input class="input" name="organization" placeholder="Organization / Issuer"><input class="input" name="credential_url" placeholder="Credential URL"><button class="btn btn-primary">Add certificate</button></form><div id="certs" class="mt-5 space-y-3"></div></section></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>async function loadPortfolio(){try{const p=await SB.get('/students/projects');projects.innerHTML=p.map(x=>`<div class="rounded-xl border p-4"><b>${SB.esc(x.title)}</b><p class="mt-1 text-sm text-slate-500">${SB.esc(x.description||'')}</p></div>`).join('')||'<p class="text-sm text-slate-500">No projects added.</p>'}catch(e){projects.innerHTML=`<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`}try{const c=await SB.get('/students/certifications');certs.innerHTML=c.map(x=>`<div class="rounded-xl border p-4"><b>${SB.esc(x.name)}</b><p class="text-sm text-slate-500">${SB.esc(x.organization||'')}</p></div>`).join('')||'<p class="text-sm text-slate-500">No certifications added.</p>'}catch(e){}}projectForm.onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await SB.post('/students/projects',{title:f.get('title'),description:f.get('description')||null,technologies:f.get('technologies')||null,github_url:f.get('github_url')||null,live_url:null,start_date:null,end_date:null});e.target.reset();loadPortfolio()}catch(err){SB.toast(err.message)}};certForm.onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await SB.post('/students/certifications',{name:f.get('name'),organization:f.get('organization')||null,issue_date:null,credential_url:f.get('credential_url')||null,credential_id:null});e.target.reset();loadPortfolio()}catch(err){SB.toast(err.message)}};loadPortfolio();</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Projects & Certifications — SkillBridge AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <title>Projects & Certifications | SkillBridge AI</title>
+  <style>
+    .card-hover {
+      transition: all 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+  <script>window.SKILLBRIDGE_ROLE = "student";</script>
+
+  <div id="app-shell">
+    <main class="min-h-screen lg:pl-72">
+      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <header class="mb-8">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p>
+              <h1 class="mt-1 text-3xl font-bold tracking-tight">Projects & Certifications</h1>
+              <p class="mt-2 text-slate-500">Strengthen your profile with proof of work and credentials.</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+            <p class="text-sm text-slate-500">Projects</p>
+            <p class="mt-1 text-2xl font-bold" id="projectCount">0</p>
+          </div>
+          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+            <p class="text-sm text-slate-500">Certifications</p>
+            <p class="mt-1 text-2xl font-bold" id="certCount">0</p>
+          </div>
+          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+            <p class="text-sm text-slate-500">Profile Strength</p>
+            <p class="mt-1 text-2xl font-bold text-indigo-600" id="strengthScore">—</p>
+          </div>
+          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+            <p class="text-sm text-slate-500">Last Updated</p>
+            <p class="mt-1 text-sm font-medium text-slate-700" id="lastUpdated">—</p>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid gap-6 lg:grid-cols-2">
+
+          <!-- ==================== PROJECTS ==================== -->
+          <section class="rounded-2xl border bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+                  <i data-lucide="folder-git-2" class="h-5 w-5 text-indigo-600"></i>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold">Projects</h2>
+                  <p class="text-sm text-slate-500">Showcase your work</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Project Form -->
+            <form id="projectForm" class="mt-6 space-y-3">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Project Title *</label>
+                <input class="input" name="title" placeholder="e.g. AI Resume Analyzer" required>
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Description</label>
+                <textarea class="input min-h-[80px]" name="description" placeholder="Briefly describe what you built..."></textarea>
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Technologies</label>
+                <input class="input" name="technologies" placeholder="e.g. FastAPI, PostgreSQL, React">
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-slate-700">GitHub URL</label>
+                  <input class="input" name="github_url" placeholder="https://github.com/...">
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-slate-700">Live URL</label>
+                  <input class="input" name="live_url" placeholder="https://...">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-full sm:w-auto">
+                <i data-lucide="plus" class="mr-1.5 h-4 w-4"></i>
+                Add Project
+              </button>
+            </form>
+
+            <!-- Projects List -->
+            <div id="projects" class="mt-6 space-y-3"></div>
+          </section>
+
+          <!-- ==================== CERTIFICATIONS ==================== -->
+          <section class="rounded-2xl border bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50">
+                  <i data-lucide="award" class="h-5 w-5 text-violet-600"></i>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold">Certifications</h2>
+                  <p class="text-sm text-slate-500">Add your credentials</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Certificate Form -->
+            <form id="certForm" class="mt-6 space-y-3">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Certificate Name *</label>
+                <input class="input" name="name" placeholder="e.g. AWS Cloud Practitioner" required>
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Organization / Issuer</label>
+                <input class="input" name="organization" placeholder="e.g. Amazon Web Services">
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Credential URL</label>
+                <input class="input" name="credential_url" placeholder="https://...">
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Credential ID</label>
+                <input class="input" name="credential_id" placeholder="Optional ID">
+              </div>
+
+              <button type="submit" class="btn btn-primary w-full sm:w-auto">
+                <i data-lucide="plus" class="mr-1.5 h-4 w-4"></i>
+                Add Certificate
+              </button>
+            </form>
+
+            <!-- Certifications List -->
+            <div id="certs" class="mt-6 space-y-3"></div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/shell.js"></script>
+
+  <script>
+    // Load portfolio data
+    async function loadPortfolio() {
+      // Projects
+      try {
+        const p = await SB.get('/students/projects');
+        document.getElementById('projectCount').textContent = p.length;
+
+        projects.innerHTML = p.length
+          ? p.map(x => `
+              <div class="card-hover rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-slate-900">${SB.esc(x.title)}</h3>
+                    ${x.description ? `<p class="mt-1 text-sm text-slate-500 line-clamp-2">${SB.esc(x.description)}</p>` : ''}
+                    ${x.technologies ? `
+                      <div class="mt-2 flex flex-wrap gap-1.5">
+                        ${x.technologies.split(',').map(t => 
+                          `<span class="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">${SB.esc(t.trim())}</span>`
+                        ).join('')}
+                      </div>` : ''}
+                    <div class="mt-3 flex flex-wrap gap-3 text-sm">
+                      ${x.github_url ? `<a href="${SB.esc(x.github_url)}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline">
+                        <i data-lucide="github" class="h-3.5 w-3.5"></i> GitHub
+                      </a>` : ''}
+                      ${x.live_url ? `<a href="${SB.esc(x.live_url)}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline">
+                        <i data-lucide="external-link" class="h-3.5 w-3.5"></i> Live
+                      </a>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')
+          : `<div class="rounded-xl border border-dashed border-slate-200 py-8 text-center">
+               <i data-lucide="folder-open" class="mx-auto h-8 w-8 text-slate-300"></i>
+               <p class="mt-2 text-sm text-slate-500">No projects added yet</p>
+             </div>`;
+
+        if (window.lucide) lucide.createIcons();
+      } catch (e) {
+        projects.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+      }
+
+      // Certifications
+      try {
+        const c = await SB.get('/students/certifications');
+        document.getElementById('certCount').textContent = c.length;
+
+        certs.innerHTML = c.length
+          ? c.map(x => `
+              <div class="card-hover rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100">
+                    <i data-lucide="award" class="h-4 w-4 text-violet-600"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-slate-900">${SB.esc(x.name)}</h3>
+                    ${x.organization ? `<p class="mt-0.5 text-sm text-slate-500">${SB.esc(x.organization)}</p>` : ''}
+                    ${x.credential_url ? `
+                      <a href="${SB.esc(x.credential_url)}" target="_blank" 
+                         class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-600 hover:underline">
+                        <i data-lucide="external-link" class="h-3.5 w-3.5"></i> View Credential
+                      </a>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')
+          : `<div class="rounded-xl border border-dashed border-slate-200 py-8 text-center">
+               <i data-lucide="award" class="mx-auto h-8 w-8 text-slate-300"></i>
+               <p class="mt-2 text-sm text-slate-500">No certifications added yet</p>
+             </div>`;
+
+        if (window.lucide) lucide.createIcons();
+      } catch (e) {
+        certs.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+      }
+
+      // Simple strength score
+      const total = (parseInt(projectCount.textContent) || 0) + (parseInt(certCount.textContent) || 0);
+      const score = Math.min(100, total * 15);
+      strengthScore.textContent = score + '%';
+      lastUpdated.textContent = new Date().toLocaleDateString();
+    }
+
+    // Add Project
+    projectForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      try {
+        await SB.post('/students/projects', {
+          title: f.get('title'),
+          description: f.get('description') || null,
+          technologies: f.get('technologies') || null,
+          github_url: f.get('github_url') || null,
+          live_url: f.get('live_url') || null,
+          start_date: null,
+          end_date: null
+        });
+        e.target.reset();
+        SB.toast?.('Project added successfully') || alert('Project added');
+        loadPortfolio();
+      } catch (err) {
+        SB.toast?.(err.message) || alert(err.message);
+      }
+    };
+
+    // Add Certificate
+    certForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      try {
+        await SB.post('/students/certifications', {
+          name: f.get('name'),
+          organization: f.get('organization') || null,
+          issue_date: null,
+          credential_url: f.get('credential_url') || null,
+          credential_id: f.get('credential_id') || null
+        });
+        e.target.reset();
+        SB.toast?.('Certificate added successfully') || alert('Certificate added');
+        loadPortfolio();
+      } catch (err) {
+        SB.toast?.(err.message) || alert(err.message);
+      }
+    };
+
+    // Initial load
+    loadPortfolio();
+  </script>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>

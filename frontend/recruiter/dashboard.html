@@ -1,1 +1,1702 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Recruiter Dashboard | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="recruiter";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Recruiter Dashboard</h1><p class="mt-2 text-slate-500">Publish opportunities and find best-fit students.</p></header><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><div class="card p-5"><p class="text-sm text-slate-500">Company Profile</p><p id="companyStatus" class="mt-2 text-xl font-black">Checking…</p></div><div class="card p-5"><p class="text-sm text-slate-500">Verification</p><p id="verified" class="mt-2 text-xl font-black">—</p></div><div class="card p-5"><p class="text-sm text-slate-500">Next Action</p><a href="opportunities.html" class="mt-2 inline-block font-black text-indigo-600">Create opportunity →</a></div></div></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>(async()=>{try{const c=await SB.get('/recruiters/company');companyStatus.textContent=c.name||'Complete';verified.textContent=c.is_verified?'Verified':'Pending verification'}catch(e){companyStatus.textContent='Not created';verified.textContent='—'}})();</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SkillBridge AI Recruiter Dashboard"
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
+
+    <title>
+        Recruiter Dashboard | SkillBridge AI
+    </title>
+</head>
+
+
+<body class="bg-slate-50 text-slate-900">
+
+<script>
+    window.SKILLBRIDGE_ROLE = "recruiter";
+</script>
+
+
+<div id="app-shell">
+
+    <main class="min-h-screen lg:pl-72">
+
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+
+            <!-- HEADER -->
+
+            <header class="mb-7">
+
+                <div class="flex flex-wrap items-start justify-between gap-4">
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-indigo-600">
+                            SkillBridge AI
+                        </p>
+
+                        <h1 class="mt-1 text-3xl font-black tracking-tight">
+                            Recruiter Dashboard
+                        </h1>
+
+                        <p class="mt-2 text-slate-500">
+                            Manage your company, opportunities,
+                            collaborations and industry challenges.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="opportunities.html"
+                        class="btn btn-primary"
+                    >
+                        <i
+                            data-lucide="plus"
+                            class="h-4 w-4"
+                        ></i>
+
+                        Create Opportunity
+                    </a>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ========================= -->
+            <!-- STAT CARDS -->
+            <!-- ========================= -->
+
+            <section
+                class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6"
+            >
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+                    >
+                        <i
+                            data-lucide="building-2"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Company
+                    </p>
+
+                    <p
+                        id="companyCount"
+                        class="mt-1 text-2xl font-black"
+                    >
+                        —
+                    </p>
+
+                </div>
+
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+                    >
+                        <i
+                            data-lucide="briefcase-business"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Opportunities
+                    </p>
+
+                    <p
+                        id="opportunityCount"
+                        class="mt-1 text-2xl font-black"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"
+                    >
+                        <i
+                            data-lucide="users"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Applications
+                    </p>
+
+                    <p
+                        id="applicationCount"
+                        class="mt-1 text-2xl font-black"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"
+                    >
+                        <i
+                            data-lucide="handshake"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Collaborations
+                    </p>
+
+                    <p
+                        id="collaborationCount"
+                        class="mt-1 text-2xl font-black"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+                    >
+                        <i
+                            data-lucide="trophy"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Challenges
+                    </p>
+
+                    <p
+                        id="challengeCount"
+                        class="mt-1 text-2xl font-black"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+
+                <div class="card p-5">
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600"
+                    >
+                        <i
+                            data-lucide="badge-check"
+                            class="h-5 w-5"
+                        ></i>
+                    </div>
+
+                    <p
+                        class="mt-4 text-sm text-slate-500"
+                    >
+                        Verification
+                    </p>
+
+                    <p
+                        id="verified"
+                        class="mt-1 text-base font-black"
+                    >
+                        —
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ========================= -->
+            <!-- COMPANY -->
+            <!-- ========================= -->
+
+            <section class="card mt-6 overflow-hidden">
+
+                <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-black">
+                            Company Profile
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-slate-500"
+                        >
+                            Your registered company information.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="company.html"
+                        class="btn btn-soft"
+                    >
+                        Manage Company
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="companySection"
+                    class="p-5"
+                >
+
+                    <p class="text-sm text-slate-500">
+                        Loading company...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ========================= -->
+            <!-- OPPORTUNITIES -->
+            <!-- ========================= -->
+
+            <section class="card mt-6 overflow-hidden">
+
+                <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-black">
+                            My Opportunities
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-slate-500"
+                        >
+                            Jobs and internships published by your company.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="opportunities.html"
+                        class="btn btn-primary"
+                    >
+                        <i
+                            data-lucide="plus"
+                            class="h-4 w-4"
+                        ></i>
+
+                        New Opportunity
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="opportunityList"
+                    class="p-5"
+                >
+
+                    <p class="text-sm text-slate-500">
+                        Loading opportunities...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ========================= -->
+            <!-- COLLABORATIONS -->
+            <!-- ========================= -->
+
+            <section class="card mt-6 overflow-hidden">
+
+                <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-black">
+                            Industry Collaborations
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-slate-500"
+                        >
+                            Workshops, mentorships, drives and industry partnerships.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="collaborations.html"
+                        class="btn btn-soft"
+                    >
+                        Manage
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="collaborationList"
+                    class="p-5"
+                >
+
+                    <p class="text-sm text-slate-500">
+                        Loading collaborations...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ========================= -->
+            <!-- CHALLENGES -->
+            <!-- ========================= -->
+
+            <section class="card mt-6 overflow-hidden">
+
+                <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-black">
+                            Industry Challenges
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-slate-500"
+                        >
+                            Real industry problem statements published for students.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="challenges.html"
+                        class="btn btn-soft"
+                    >
+                        Manage
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="challengeList"
+                    class="p-5"
+                >
+
+                    <p class="text-sm text-slate-500">
+                        Loading challenges...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- VIEW MODAL -->
+<!-- ========================= -->
+
+<div
+    id="viewModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
+>
+
+    <div
+        class="w-full max-w-2xl rounded-2xl bg-white shadow-2xl"
+    >
+
+        <div
+            class="flex items-center justify-between border-b p-5"
+        >
+
+            <h2
+                id="modalTitle"
+                class="text-xl font-black"
+            >
+                Details
+            </h2>
+
+
+            <button
+                onclick="closeModal()"
+                class="rounded-lg p-2 hover:bg-slate-100"
+            >
+                <i data-lucide="x"></i>
+            </button>
+
+        </div>
+
+
+        <div
+            id="modalContent"
+            class="p-6"
+        ></div>
+
+
+        <div
+            class="flex justify-end border-t p-5"
+        >
+
+            <button
+                onclick="closeModal()"
+                class="btn btn-soft"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+
+<script>
+
+/* =========================================
+   STATE
+========================================= */
+
+let company = null;
+let opportunities = [];
+let collaborations = [];
+let challenges = [];
+
+
+
+/* =========================================
+   COMPANY
+========================================= */
+
+async function loadCompany() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/recruiters/company"
+            );
+
+
+        company =
+            response.data ||
+            response;
+
+
+        companyCount.textContent =
+            "1";
+
+
+        verified.textContent =
+            company.is_verified
+                ? "Verified"
+                : "Pending";
+
+
+        companySection.innerHTML = `
+
+            <div
+                class="flex flex-col justify-between gap-5 md:flex-row md:items-center"
+            >
+
+                <div>
+
+                    <h3
+                        class="text-xl font-black"
+                    >
+                        ${SB.esc(
+                            company.name ||
+                            "Company"
+                        )}
+                    </h3>
+
+
+                    <div
+                        class="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500"
+                    >
+
+                        <span>
+                            ${SB.esc(
+                                company.industry ||
+                                "Industry not specified"
+                            )}
+                        </span>
+
+                        <span>
+                            ${SB.esc(
+                                company.location ||
+                                "Location not specified"
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <p
+                        class="mt-3 max-w-3xl text-sm leading-6 text-slate-600"
+                    >
+                        ${SB.esc(
+                            company.description ||
+                            "No description added."
+                        )}
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="flex flex-wrap gap-2"
+                >
+
+                    <button
+                        class="btn btn-soft"
+                        onclick="viewCompany()"
+                    >
+                        <i
+                            data-lucide="eye"
+                            class="h-4 w-4"
+                        ></i>
+                        View
+                    </button>
+
+
+                    <a
+                        href="company.html"
+                        class="btn btn-soft"
+                    >
+                        <i
+                            data-lucide="pencil"
+                            class="h-4 w-4"
+                        ></i>
+                        Update
+                    </a>
+
+
+                    <button
+                        class="btn btn-soft"
+                        onclick="downloadCompany()"
+                    >
+                        <i
+                            data-lucide="download"
+                            class="h-4 w-4"
+                        ></i>
+                        Download
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    catch (error) {
+
+        companyCount.textContent =
+            "0";
+
+
+        verified.textContent =
+            "—";
+
+
+        companySection.innerHTML = `
+
+            <div
+                class="rounded-xl bg-slate-50 p-6 text-center"
+            >
+
+                <p class="font-bold">
+                    Company profile not created
+                </p>
+
+                <a
+                    href="company.html"
+                    class="btn btn-primary mt-4"
+                >
+                    Create Company
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================
+   OPPORTUNITIES
+========================================= */
+
+async function loadOpportunities() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/recruiters/opportunities"
+            );
+
+
+        opportunities =
+            response.data ||
+            response ||
+            [];
+
+
+        opportunityCount.textContent =
+            opportunities.length;
+
+
+        renderOpportunities();
+
+    }
+
+    catch (error) {
+
+        opportunityCount.textContent =
+            "0";
+
+
+        opportunityList.innerHTML = `
+
+            <p class="text-sm text-slate-500">
+                Recruiter opportunity listing endpoint
+                is not available yet.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+function renderOpportunities() {
+
+    if (!opportunities.length) {
+
+        opportunityList.innerHTML = `
+
+            <div
+                class="rounded-xl bg-slate-50 p-8 text-center"
+            >
+
+                <p class="font-bold">
+                    No opportunities created
+                </p>
+
+                <a
+                    href="opportunities.html"
+                    class="btn btn-primary mt-4"
+                >
+                    Create Opportunity
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    opportunityList.innerHTML = `
+
+        <div class="overflow-x-auto">
+
+            <table
+                class="w-full min-w-[850px] text-left text-sm"
+            >
+
+                <thead>
+
+                    <tr
+                        class="border-b text-xs uppercase text-slate-400"
+                    >
+
+                        <th class="px-3 py-3">
+                            Opportunity
+                        </th>
+
+                        <th class="px-3 py-3">
+                            Type
+                        </th>
+
+                        <th class="px-3 py-3">
+                            Location
+                        </th>
+
+                        <th class="px-3 py-3">
+                            Status
+                        </th>
+
+                        <th class="px-3 py-3">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${opportunities.map(o => `
+
+                        <tr
+                            class="border-b border-slate-100"
+                        >
+
+                            <td class="px-3 py-4">
+
+                                <p class="font-bold">
+                                    ${SB.esc(o.title)}
+                                </p>
+
+                                <p
+                                    class="mt-1 text-xs text-slate-500"
+                                >
+                                    ID: ${o.id}
+                                </p>
+
+                            </td>
+
+
+                            <td class="px-3 py-4">
+
+                                ${SB.esc(
+                                    o.type ||
+                                    o.opportunity_type ||
+                                    "—"
+                                )}
+
+                            </td>
+
+
+                            <td class="px-3 py-4">
+
+                                ${SB.esc(
+                                    o.location ||
+                                    "Flexible"
+                                )}
+
+                            </td>
+
+
+                            <td class="px-3 py-4">
+
+                                <span
+                                    class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700"
+                                >
+                                    ${
+                                        o.is_active === false
+                                            ? "Inactive"
+                                            : "Active"
+                                    }
+                                </span>
+
+                            </td>
+
+
+                            <td class="px-3 py-4">
+
+                                <div class="flex gap-2">
+
+                                    <button
+                                        onclick="viewOpportunity(${o.id})"
+                                        class="btn btn-soft"
+                                    >
+                                        View
+                                    </button>
+
+
+                                    <a
+                                        href="applications.html?opportunity_id=${o.id}"
+                                        class="btn btn-soft"
+                                    >
+                                        Applicants
+                                    </a>
+
+
+                                    <button
+                                        onclick="downloadOpportunity(${o.id})"
+                                        class="btn btn-soft"
+                                    >
+                                        Download
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    `).join("")}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =========================================
+   COLLABORATIONS
+========================================= */
+
+async function loadCollaborations() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/recruiters/collaborations"
+            );
+
+
+        collaborations =
+            response.data ||
+            response ||
+            [];
+
+
+        collaborationCount.textContent =
+            collaborations.length;
+
+
+        collaborationList.innerHTML =
+            collaborations.length
+                ? collaborations.map(c => `
+
+                    <div
+                        class="flex flex-col justify-between gap-4 border-b border-slate-100 py-4 md:flex-row md:items-center"
+                    >
+
+                        <div>
+
+                            <p class="font-bold">
+                                ${SB.esc(c.title)}
+                            </p>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                ${SB.esc(
+                                    c.collaboration_type ||
+                                    "Collaboration"
+                                )}
+                                •
+                                ${SB.esc(
+                                    c.status ||
+                                    "Proposed"
+                                )}
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex gap-2">
+
+                            <button
+                                onclick="viewRecord(
+                                    'Collaboration',
+                                    ${c.id},
+                                    collaborations
+                                )"
+                                class="btn btn-soft"
+                            >
+                                View
+                            </button>
+
+
+                            <button
+                                onclick="downloadRecord(
+                                    'Collaboration',
+                                    ${c.id},
+                                    collaborations
+                                )"
+                                class="btn btn-soft"
+                            >
+                                Download
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `).join("")
+
+                : `
+
+                    <p class="text-sm text-slate-500">
+                        No collaborations created yet.
+                    </p>
+
+                `;
+
+    }
+
+    catch (error) {
+
+        collaborationCount.textContent =
+            "0";
+
+
+        collaborationList.innerHTML = `
+
+            <p class="text-sm text-slate-500">
+                Recruiter collaboration listing endpoint
+                is not available yet.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================
+   CHALLENGES
+========================================= */
+
+async function loadChallenges() {
+
+    try {
+
+        const response =
+            await SB.get(
+                "/recruiters/challenges"
+            );
+
+
+        challenges =
+            response.data ||
+            response ||
+            [];
+
+
+        challengeCount.textContent =
+            challenges.length;
+
+
+        challengeList.innerHTML =
+            challenges.length
+                ? challenges.map(c => `
+
+                    <div
+                        class="flex flex-col justify-between gap-4 border-b border-slate-100 py-4 md:flex-row md:items-center"
+                    >
+
+                        <div>
+
+                            <p class="font-bold">
+                                ${SB.esc(c.title)}
+                            </p>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                Status:
+                                ${SB.esc(
+                                    c.status ||
+                                    "Open"
+                                )}
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex gap-2">
+
+                            <button
+                                onclick="viewRecord(
+                                    'Challenge',
+                                    ${c.id},
+                                    challenges
+                                )"
+                                class="btn btn-soft"
+                            >
+                                View
+                            </button>
+
+
+                            <button
+                                onclick="downloadRecord(
+                                    'Challenge',
+                                    ${c.id},
+                                    challenges
+                                )"
+                                class="btn btn-soft"
+                            >
+                                Download
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `).join("")
+
+                : `
+
+                    <p class="text-sm text-slate-500">
+                        No industry challenges created yet.
+                    </p>
+
+                `;
+
+    }
+
+    catch (error) {
+
+        challengeCount.textContent =
+            "0";
+
+
+        challengeList.innerHTML = `
+
+            <p class="text-sm text-slate-500">
+                Recruiter challenge listing endpoint
+                is not available yet.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================
+   COMPANY ACTIONS
+========================================= */
+
+window.viewCompany =
+function () {
+
+    if (!company) return;
+
+
+    openModal(
+        company.name,
+        `
+
+            <div class="space-y-4">
+
+                <p>
+                    <b>Industry:</b>
+                    ${SB.esc(
+                        company.industry ||
+                        "—"
+                    )}
+                </p>
+
+                <p>
+                    <b>Location:</b>
+                    ${SB.esc(
+                        company.location ||
+                        "—"
+                    )}
+                </p>
+
+                <p>
+                    <b>Website:</b>
+                    ${SB.esc(
+                        company.website ||
+                        "—"
+                    )}
+                </p>
+
+                <p>
+                    <b>Verification:</b>
+                    ${
+                        company.is_verified
+                            ? "Verified"
+                            : "Pending"
+                    }
+                </p>
+
+                <div>
+                    <b>Description:</b>
+
+                    <p class="mt-2 text-slate-600">
+                        ${SB.esc(
+                            company.description ||
+                            "—"
+                        )}
+                    </p>
+                </div>
+
+            </div>
+
+        `
+    );
+
+};
+
+
+
+window.downloadCompany =
+function () {
+
+    if (!company) return;
+
+
+    downloadHTML(
+        `${company.name}-company-profile`,
+        `
+            <h1>${escapePrint(company.name)}</h1>
+
+            <p>
+                <strong>Industry:</strong>
+                ${escapePrint(company.industry)}
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                ${escapePrint(company.location)}
+            </p>
+
+            <p>
+                <strong>Website:</strong>
+                ${escapePrint(company.website)}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                ${escapePrint(company.description)}
+            </p>
+        `
+    );
+
+};
+
+
+
+/* =========================================
+   OPPORTUNITY ACTIONS
+========================================= */
+
+window.viewOpportunity =
+function (id) {
+
+    const opportunity =
+        opportunities.find(
+            o =>
+                Number(o.id) === Number(id)
+        );
+
+
+    if (!opportunity) return;
+
+
+    openModal(
+        opportunity.title,
+        `
+
+            <div class="space-y-4">
+
+                <p>
+                    <b>Opportunity ID:</b>
+                    ${opportunity.id}
+                </p>
+
+                <p>
+                    <b>Type:</b>
+                    ${SB.esc(
+                        opportunity.type ||
+                        opportunity.opportunity_type ||
+                        "—"
+                    )}
+                </p>
+
+                <p>
+                    <b>Location:</b>
+                    ${SB.esc(
+                        opportunity.location ||
+                        "—"
+                    )}
+                </p>
+
+                <p>
+                    <b>Stipend:</b>
+                    ${
+                        opportunity.stipend
+                            ? "₹" + SB.esc(
+                                opportunity.stipend
+                            )
+                            : "Not specified"
+                    }
+                </p>
+
+                <p>
+                    <b>Experience:</b>
+                    ${SB.esc(
+                        opportunity.experience_required ||
+                        "—"
+                    )}
+                </p>
+
+                <div>
+
+                    <b>Description:</b>
+
+                    <p
+                        class="mt-2 text-slate-600"
+                    >
+                        ${SB.esc(
+                            opportunity.description ||
+                            "—"
+                        )}
+                    </p>
+
+                </div>
+
+            </div>
+
+        `
+    );
+
+};
+
+
+
+window.downloadOpportunity =
+function (id) {
+
+    const o =
+        opportunities.find(
+            item =>
+                Number(item.id) === Number(id)
+        );
+
+
+    if (!o) return;
+
+
+    downloadHTML(
+        `opportunity-${o.id}`,
+        `
+
+            <h1>
+                ${escapePrint(o.title)}
+            </h1>
+
+            <p>
+                <strong>Opportunity ID:</strong>
+                ${o.id}
+            </p>
+
+            <p>
+                <strong>Type:</strong>
+                ${escapePrint(
+                    o.type ||
+                    o.opportunity_type
+                )}
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                ${escapePrint(o.location)}
+            </p>
+
+            <p>
+                <strong>Stipend:</strong>
+                ${escapePrint(o.stipend)}
+            </p>
+
+            <p>
+                <strong>Experience:</strong>
+                ${escapePrint(
+                    o.experience_required
+                )}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                ${escapePrint(
+                    o.description
+                )}
+            </p>
+
+        `
+    );
+
+};
+
+
+
+/* =========================================
+   GENERIC RECORD
+========================================= */
+
+window.viewRecord =
+function (
+    title,
+    id,
+    records
+) {
+
+    const record =
+        records.find(
+            item =>
+                Number(item.id) === Number(id)
+        );
+
+
+    if (!record) return;
+
+
+    openModal(
+        title,
+        `
+
+            <pre
+                class="whitespace-pre-wrap rounded-xl bg-slate-50 p-4 text-sm"
+            >${SB.esc(
+                JSON.stringify(
+                    record,
+                    null,
+                    2
+                )
+            )}</pre>
+
+        `
+    );
+
+};
+
+
+
+window.downloadRecord =
+function (
+    title,
+    id,
+    records
+) {
+
+    const record =
+        records.find(
+            item =>
+                Number(item.id) === Number(id)
+        );
+
+
+    if (!record) return;
+
+
+    downloadHTML(
+        `${title}-${id}`,
+        `
+
+            <h1>
+                ${escapePrint(title)}
+            </h1>
+
+            <pre>
+${escapePrint(
+    JSON.stringify(
+        record,
+        null,
+        2
+    )
+)}
+            </pre>
+
+        `
+    );
+
+};
+
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function openModal(
+    title,
+    content
+) {
+
+    modalTitle.textContent =
+        title;
+
+
+    modalContent.innerHTML =
+        content;
+
+
+    viewModal.classList.remove(
+        "hidden"
+    );
+
+
+    viewModal.classList.add(
+        "flex"
+    );
+
+
+    lucide.createIcons();
+
+}
+
+
+
+window.closeModal =
+function () {
+
+    viewModal.classList.add(
+        "hidden"
+    );
+
+
+    viewModal.classList.remove(
+        "flex"
+    );
+
+};
+
+
+
+/* =========================================
+   DOWNLOAD / PRINT
+========================================= */
+
+function downloadHTML(
+    title,
+    content
+) {
+
+    const win =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    win.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>
+                ${escapePrint(title)}
+            </title>
+
+            <style>
+
+                body {
+                    font-family:
+                        Arial,
+                        sans-serif;
+
+                    padding: 40px;
+
+                    color: #0f172a;
+                }
+
+                h1 {
+                    margin-bottom: 25px;
+                }
+
+                p {
+                    line-height: 1.7;
+                }
+
+                pre {
+                    white-space: pre-wrap;
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            ${content}
+
+            <script>
+
+                window.onload = function() {
+                    window.print();
+                };
+
+            <\/script>
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    win.document.close();
+
+}
+
+
+
+/* =========================================
+   SAFE PRINT
+========================================= */
+
+function escapePrint(
+    value
+) {
+
+    return String(
+        value ?? "—"
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    );
+
+}
+
+
+
+/* =========================================
+   INIT
+========================================= */
+
+async function init() {
+
+    await Promise.all([
+        loadCompany(),
+        loadOpportunities(),
+        loadCollaborations(),
+        loadChallenges()
+    ]);
+
+
+    lucide.createIcons();
+
+}
+
+
+init();
+
+</script>
+
+
+</body>
+</html>

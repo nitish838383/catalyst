@@ -1,1 +1,278 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Company Profile | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="recruiter";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Company Profile</h1><p class="mt-2 text-slate-500">Create your industry identity before publishing opportunities.</p></header><section class="card max-w-3xl p-6"><h2 class="text-xl font-black">Company profile</h2><form id="form" class="mt-5 grid gap-4 sm:grid-cols-2"><div><label class="label">Company name</label><input class="input" name="name" required></div><div><label class="label">Industry</label><input class="input" name="industry"></div><div><label class="label">Website</label><input class="input" name="website"></div><div><label class="label">Location</label><input class="input" name="location"></div><div class="sm:col-span-2"><label class="label">Description</label><textarea class="input" name="description"></textarea></div><button class="btn btn-primary sm:col-span-2">Create company profile</button><p id="msg" class="text-sm sm:col-span-2"></p></form></section></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>let exists=false;(async()=>{try{const c=await SB.get('/recruiters/company');exists=true;for(const[k,v]of Object.entries(c)){if(form.elements[k]&&v!=null)form.elements[k].value=v}form.querySelector('button').disabled=true;msg.textContent='Company profile already exists. Backend currently exposes create/get only.'}catch(e){}})();form.onsubmit=async e=>{e.preventDefault();if(exists)return;const f=new FormData(e.target),b={};for(const[k,v]of f)if(v!=='')b[k]=v;try{await SB.post('/recruiters/company',b);msg.className='text-sm text-emerald-600';msg.textContent='Company profile created.'}catch(err){msg.className='text-sm text-rose-600';msg.textContent=err.message}};</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="/assets/css/app.css">
+
+    <title>Company Profile | SkillBridge AI</title>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+
+    <script>
+        window.SKILLBRIDGE_ROLE = "recruiter";
+    </script>
+
+    <div id="app-shell">
+
+        <main class="min-h-screen lg:pl-72">
+
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+                <header class="mb-7">
+
+                    <p class="text-sm font-semibold text-indigo-600">
+                        SkillBridge AI
+                    </p>
+
+                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
+                        Company Profile
+                    </h1>
+
+                    <p class="mt-2 text-slate-500">
+                        Create your industry identity before publishing opportunities.
+                    </p>
+
+                </header>
+
+
+                <section class="card max-w-3xl p-6">
+
+                    <h2 class="text-xl font-black">
+                        Company profile
+                    </h2>
+
+
+                    <form
+                        id="form"
+                        class="mt-5 grid gap-4 sm:grid-cols-2"
+                    >
+
+                        <div>
+
+                            <label class="label">
+                                Company name
+                            </label>
+
+                            <input
+                                class="input"
+                                name="name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="label">
+                                Industry
+                            </label>
+
+                            <input
+                                class="input"
+                                name="industry"
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="label">
+                                Website
+                            </label>
+
+                            <input
+                                class="input"
+                                name="website"
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label class="label">
+                                Location
+                            </label>
+
+                            <input
+                                class="input"
+                                name="location"
+                            >
+
+                        </div>
+
+
+                        <div class="sm:col-span-2">
+
+                            <label class="label">
+                                Description
+                            </label>
+
+                            <textarea
+                                class="input"
+                                name="description"
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            class="btn btn-primary sm:col-span-2"
+                        >
+                            Create company profile
+                        </button>
+
+
+                        <p
+                            id="msg"
+                            class="text-sm sm:col-span-2"
+                        ></p>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/shell.js"></script>
+
+
+    <script>
+
+        let exists = false;
+
+
+        (async () => {
+
+            try {
+
+                const c =
+                    await SB.get(
+                        '/recruiters/company'
+                    );
+
+
+                exists = true;
+
+
+                for (const [k, v] of Object.entries(c)) {
+
+                    if (
+                        form.elements[k] &&
+                        v != null
+                    ) {
+
+                        form.elements[k].value = v;
+
+                    }
+
+                }
+
+
+                form
+                    .querySelector('button')
+                    .disabled = true;
+
+
+                msg.textContent =
+                    'Company profile already exists. Backend currently exposes create/get only.';
+
+            }
+
+            catch (e) {
+
+            }
+
+        })();
+
+
+        form.onsubmit = async e => {
+
+            e.preventDefault();
+
+
+            if (exists) {
+                return;
+            }
+
+
+            const f =
+                new FormData(
+                    e.target
+                );
+
+
+            const b = {};
+
+
+            for (const [k, v] of f) {
+
+                if (v !== '') {
+                    b[k] = v;
+                }
+
+            }
+
+
+            try {
+
+                await SB.post(
+                    '/recruiters/company',
+                    b
+                );
+
+
+                msg.className =
+                    'text-sm text-emerald-600';
+
+
+                msg.textContent =
+                    'Company profile created.';
+
+            }
+
+            catch (err) {
+
+                msg.className =
+                    'text-sm text-rose-600';
+
+
+                msg.textContent =
+                    err.message;
+
+            }
+
+        };
+
+    </script>
+
+
+    <script>
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    </script>
+
+</body>
+
+</html>

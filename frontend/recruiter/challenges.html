@@ -1,1 +1,191 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Industry Challenges | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><script>window.SKILLBRIDGE_ROLE="recruiter";</script><div id="app-shell"><main class="min-h-screen lg:pl-72"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"><header class="mb-7"><p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p><h1 class="mt-1 text-3xl font-bold tracking-tight">Industry Challenges</h1><p class="mt-2 text-slate-500">Publish real-world challenges for students.</p></header><section class="card p-6"><h2 class="text-xl font-black">Publish industry challenge</h2><form id="form" class="mt-5 grid gap-4"><input class="input" name="title" placeholder="Challenge title" required><textarea class="input" name="problem_statement" placeholder="Problem statement" required></textarea><textarea class="input" name="expected_solution" placeholder="Expected solution (optional)"></textarea><input class="input" name="eligibility" placeholder="Eligibility (optional)"><input class="input" name="deadline" type="datetime-local"><button class="btn btn-primary">Publish challenge</button><p id="msg" class="text-sm"></p></form></section></div></main></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/shell.js"></script><script>form.onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{const r=await SB.post('/challenges',{title:f.get('title'),problem_statement:f.get('problem_statement'),expected_solution:f.get('expected_solution')||null,eligibility:f.get('eligibility')||null,deadline:f.get('deadline')||null,status:'open'});msg.className='text-sm text-emerald-600';msg.textContent=`Challenge published${r.data?.id?' #'+r.data.id:''}.`;e.target.reset()}catch(err){msg.className='text-sm text-rose-600';msg.textContent=err.message}};</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="/assets/css/app.css">
+
+    <title>Industry Challenges | SkillBridge AI</title>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+
+    <script>
+        window.SKILLBRIDGE_ROLE = "recruiter";
+    </script>
+
+    <div id="app-shell">
+
+        <main class="min-h-screen lg:pl-72">
+
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+                <header class="mb-7">
+
+                    <p class="text-sm font-semibold text-indigo-600">
+                        SkillBridge AI
+                    </p>
+
+                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
+                        Industry Challenges
+                    </h1>
+
+                    <p class="mt-2 text-slate-500">
+                        Publish real-world challenges for students.
+                    </p>
+
+                </header>
+
+
+                <section class="card p-6">
+
+                    <h2 class="text-xl font-black">
+                        Publish industry challenge
+                    </h2>
+
+
+                    <form
+                        id="form"
+                        class="mt-5 grid gap-4"
+                    >
+
+                        <input
+                            class="input"
+                            name="title"
+                            placeholder="Challenge title"
+                            required
+                        >
+
+                        <textarea
+                            class="input"
+                            name="problem_statement"
+                            placeholder="Problem statement"
+                            required
+                        ></textarea>
+
+                        <textarea
+                            class="input"
+                            name="expected_solution"
+                            placeholder="Expected solution (optional)"
+                        ></textarea>
+
+                        <input
+                            class="input"
+                            name="eligibility"
+                            placeholder="Eligibility (optional)"
+                        >
+
+                        <input
+                            class="input"
+                            name="deadline"
+                            type="datetime-local"
+                        >
+
+                        <button class="btn btn-primary">
+                            Publish challenge
+                        </button>
+
+                        <p
+                            id="msg"
+                            class="text-sm"
+                        ></p>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/shell.js"></script>
+
+
+    <script>
+
+        form.onsubmit = async e => {
+
+            e.preventDefault();
+
+            const f =
+                new FormData(
+                    e.target
+                );
+
+            try {
+
+                const r =
+                    await SB.post(
+                        '/challenges',
+                        {
+                            title:
+                                f.get('title'),
+
+                            problem_statement:
+                                f.get('problem_statement'),
+
+                            expected_solution:
+                                f.get('expected_solution') || null,
+
+                            eligibility:
+                                f.get('eligibility') || null,
+
+                            deadline:
+                                f.get('deadline') || null,
+
+                            status:
+                                'open'
+                        }
+                    );
+
+
+                msg.className =
+                    'text-sm text-emerald-600';
+
+                msg.textContent =
+                    `Challenge published${
+                        r.data?.id
+                            ? ' #' + r.data.id
+                            : ''
+                    }.`;
+
+                e.target.reset();
+
+            }
+
+            catch (err) {
+
+                msg.className =
+                    'text-sm text-rose-600';
+
+                msg.textContent =
+                    err.message;
+
+            }
+
+        };
+
+    </script>
+
+
+    <script>
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    </script>
+
+</body>
+</html>
