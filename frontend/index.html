@@ -1700,7 +1700,7 @@
 
 
 
-  <!-- ===================================================== -->
+    <!-- ===================================================== -->
   <!-- JavaScript -->
   <!-- ===================================================== -->
 
@@ -1713,6 +1713,69 @@
 
   <script>
 
+    async function loadPlatformStats() {
+
+      try {
+
+        const response = await SB.get(
+          '/opportunities/platform/stats'
+        );
+
+        const data = response.data || {};
+
+
+        // Registered Students
+        document.getElementById(
+          'statStudents'
+        ).textContent = data.students ?? 0;
+
+
+        // Registered Colleges
+        document.getElementById(
+          'statColleges'
+        ).textContent = data.colleges ?? 0;
+
+
+        // Registered Industry / Recruiters
+        document.getElementById(
+          'statCompanies'
+        ).textContent = data.companies ?? 0;
+
+
+        // Active Opportunities
+        document.getElementById(
+          'statOpportunities'
+        ).textContent = data.opportunities ?? 0;
+
+
+        // Skills Tracked
+        document.getElementById(
+          'statSkills'
+        ).textContent = data.skills ?? 0;
+
+
+        // Total Applications
+        document.getElementById(
+          'statApplications'
+        ).textContent = data.applications ?? 0;
+
+      } catch (error) {
+
+        console.error(
+          'Platform stats error:',
+          error
+        );
+
+      }
+
+    }
+
+
+    // Load real platform statistics
+    loadPlatformStats();
+
+
+    // Load Lucide icons
     if (window.lucide) {
       lucide.createIcons();
     }
