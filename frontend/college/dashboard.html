@@ -1,17 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"
+    >
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
 
     <title>College / TPO Dashboard | SkillBridge AI</title>
 </head>
+
 
 <body class="bg-slate-50 text-slate-900">
 
@@ -19,112 +32,647 @@
         window.SKILLBRIDGE_ROLE = "college";
     </script>
 
+
     <div id="app-shell">
 
         <main class="min-h-screen lg:pl-72">
 
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div
+                class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
+            >
+
+
+                <!-- ============================================= -->
+                <!-- Header -->
+                <!-- ============================================= -->
 
                 <header class="mb-7">
 
-                    <p class="text-sm font-semibold text-indigo-600">
+                    <p
+                        class="text-sm font-semibold text-indigo-600"
+                    >
                         SkillBridge AI
                     </p>
 
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
+                    <h1
+                        class="mt-1 text-3xl font-bold tracking-tight"
+                    >
                         College / TPO Dashboard
                     </h1>
 
-                    <p class="mt-2 text-slate-500">
-                        See student skill supply, industry demand and collaboration activity.
+                    <p
+                        class="mt-2 text-slate-500"
+                    >
+                        Manage your college profile, students,
+                        departments, skill analytics and industry
+                        collaborations.
                     </p>
 
                 </header>
 
 
+
+                <!-- ============================================= -->
+                <!-- Profile Required -->
+                <!-- ============================================= -->
+
                 <div
                     id="onboarding"
-                    class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800"
+                    class="hidden mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"
                 >
 
-                    Create your college profile first.
-
-                    <a
-                        href="profile.html"
-                        class="font-bold underline"
+                    <div
+                        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
                     >
-                        Open College Profile
-                    </a>
 
-                </div>
+                        <div class="flex items-start gap-3">
+
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100"
+                            >
+                                <i
+                                    data-lucide="circle-alert"
+                                    class="h-5 w-5 text-amber-700"
+                                ></i>
+                            </div>
+
+                            <div>
+
+                                <h2
+                                    class="font-bold text-amber-900"
+                                >
+                                    Complete your college profile
+                                </h2>
+
+                                <p
+                                    class="mt-1 text-sm text-amber-700"
+                                >
+                                    Create your college profile to
+                                    activate departments, analytics
+                                    and industry collaborations.
+                                </p>
+
+                            </div>
+
+                        </div>
 
 
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-                    <div class="card p-5">
-
-                        <p class="text-sm text-slate-500">
-                            Students
-                        </p>
-
-                        <p
-                            id="students"
-                            class="mt-2 text-3xl font-black"
+                        <a
+                            href="profile.html"
+                            class="btn btn-primary whitespace-nowrap"
                         >
-                            —
-                        </p>
-
-                    </div>
-
-
-                    <div class="card p-5">
-
-                        <p class="text-sm text-slate-500">
-                            Departments
-                        </p>
-
-                        <p
-                            id="departments"
-                            class="mt-2 text-3xl font-black"
-                        >
-                            —
-                        </p>
-
-                    </div>
-
-
-                    <div class="card p-5">
-
-                        <p class="text-sm text-slate-500">
-                            Skill Gaps
-                        </p>
-
-                        <p
-                            id="gaps"
-                            class="mt-2 text-3xl font-black"
-                        >
-                            —
-                        </p>
-
-                    </div>
-
-
-                    <div class="card p-5">
-
-                        <p class="text-sm text-slate-500">
-                            Collaborations
-                        </p>
-
-                        <p
-                            id="collabs"
-                            class="mt-2 text-3xl font-black"
-                        >
-                            —
-                        </p>
+                            Create Profile
+                        </a>
 
                     </div>
 
                 </div>
+
+
+
+                <!-- ============================================= -->
+                <!-- College Profile Summary -->
+                <!-- ============================================= -->
+
+                <section
+                    id="collegeProfileCard"
+                    class="card mb-6 hidden overflow-hidden"
+                >
+
+                    <div
+                        class="border-b border-slate-100 p-5 sm:p-6"
+                    >
+
+                        <div
+                            class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"
+                        >
+
+
+                            <!-- College -->
+                            <div
+                                class="flex items-start gap-4"
+                            >
+
+                                <div
+                                    class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100"
+                                >
+                                    <i
+                                        data-lucide="graduation-cap"
+                                        class="h-7 w-7 text-indigo-600"
+                                    ></i>
+                                </div>
+
+
+                                <div>
+
+                                    <p
+                                        class="text-xs font-bold uppercase tracking-wider text-indigo-600"
+                                    >
+                                        College Profile
+                                    </p>
+
+                                    <h2
+                                        id="collegeName"
+                                        class="mt-1 text-xl font-black text-slate-900"
+                                    >
+                                        —
+                                    </h2>
+
+                                    <p
+                                        id="collegeUniversity"
+                                        class="mt-1 text-sm text-slate-500"
+                                    >
+                                        —
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- ID -->
+                            <div
+                                class="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3"
+                            >
+
+                                <p
+                                    class="text-xs font-semibold uppercase tracking-wide text-indigo-500"
+                                >
+                                    College ID
+                                </p>
+
+                                <p
+                                    id="collegeId"
+                                    class="mt-1 text-xl font-black text-indigo-700"
+                                >
+                                    —
+                                </p>
+
+                                <p
+                                    class="mt-1 text-xs text-indigo-500"
+                                >
+                                    Auto-generated
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- College Information -->
+                    <div
+                        class="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3 sm:p-6"
+                    >
+
+
+                        <!-- City -->
+                        <div>
+
+                            <p
+                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+                            >
+                                City
+                            </p>
+
+                            <p
+                                id="collegeCity"
+                                class="mt-1 font-semibold text-slate-800"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <!-- State -->
+                        <div>
+
+                            <p
+                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+                            >
+                                State
+                            </p>
+
+                            <p
+                                id="collegeState"
+                                class="mt-1 font-semibold text-slate-800"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <!-- Website -->
+                        <div>
+
+                            <p
+                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+                            >
+                                Website
+                            </p>
+
+                            <a
+                                id="collegeWebsite"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="mt-1 block truncate font-semibold text-indigo-600 hover:underline"
+                            >
+                                —
+                            </a>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- Actions -->
+                    <div
+                        class="flex flex-wrap gap-3 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6"
+                    >
+
+                        <a
+                            href="profile.html"
+                            class="btn btn-primary flex items-center gap-2"
+                        >
+
+                            <i
+                                data-lucide="pencil"
+                                class="h-4 w-4"
+                            ></i>
+
+                            Edit Profile
+
+                        </a>
+
+
+                        <button
+                            type="button"
+                            onclick="downloadCollegeProfile()"
+                            class="btn btn-soft flex items-center gap-2"
+                        >
+
+                            <i
+                                data-lucide="download"
+                                class="h-4 w-4"
+                            ></i>
+
+                            Download Profile
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ============================================= -->
+                <!-- Dashboard Statistics -->
+                <!-- ============================================= -->
+
+                <section
+                    class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                >
+
+
+                    <!-- Students -->
+                    <div class="card p-5">
+
+                        <div
+                            class="flex items-center justify-between"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-sm text-slate-500"
+                                >
+                                    Students
+                                </p>
+
+                                <p
+                                    id="students"
+                                    class="mt-2 text-3xl font-black"
+                                >
+                                    —
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-100"
+                            >
+
+                                <i
+                                    data-lucide="users"
+                                    class="h-5 w-5 text-indigo-600"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Departments -->
+                    <div class="card p-5">
+
+                        <div
+                            class="flex items-center justify-between"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-sm text-slate-500"
+                                >
+                                    Departments
+                                </p>
+
+                                <p
+                                    id="departments"
+                                    class="mt-2 text-3xl font-black"
+                                >
+                                    —
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100"
+                            >
+
+                                <i
+                                    data-lucide="building-2"
+                                    class="h-5 w-5 text-violet-600"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Skill Gaps -->
+                    <div class="card p-5">
+
+                        <div
+                            class="flex items-center justify-between"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-sm text-slate-500"
+                                >
+                                    Skill Gaps
+                                </p>
+
+                                <p
+                                    id="gaps"
+                                    class="mt-2 text-3xl font-black"
+                                >
+                                    —
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100"
+                            >
+
+                                <i
+                                    data-lucide="triangle-alert"
+                                    class="h-5 w-5 text-amber-600"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Collaborations -->
+                    <div class="card p-5">
+
+                        <div
+                            class="flex items-center justify-between"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-sm text-slate-500"
+                                >
+                                    Collaborations
+                                </p>
+
+                                <p
+                                    id="collabs"
+                                    class="mt-2 text-3xl font-black"
+                                >
+                                    —
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100"
+                            >
+
+                                <i
+                                    data-lucide="handshake"
+                                    class="h-5 w-5 text-emerald-600"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- ============================================= -->
+                <!-- Quick Actions -->
+                <!-- ============================================= -->
+
+                <section class="mt-7">
+
+                    <h2
+                        class="text-lg font-bold text-slate-900"
+                    >
+                        Quick Actions
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-slate-500"
+                    >
+                        Manage important college activities.
+                    </p>
+
+
+                    <div
+                        class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                    >
+
+
+                        <!-- Profile -->
+                        <a
+                            href="profile.html"
+                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100"
+                            >
+
+                                <i
+                                    data-lucide="school"
+                                    class="h-5 w-5 text-indigo-600"
+                                ></i>
+
+                            </div>
+
+                            <h3
+                                class="mt-4 font-bold"
+                            >
+                                College Profile
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                View and update college information.
+                            </p>
+
+                        </a>
+
+
+
+                        <!-- Departments -->
+                        <a
+                            href="departments.html"
+                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100"
+                            >
+
+                                <i
+                                    data-lucide="network"
+                                    class="h-5 w-5 text-violet-600"
+                                ></i>
+
+                            </div>
+
+                            <h3
+                                class="mt-4 font-bold"
+                            >
+                                Departments
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                Manage academic departments.
+                            </p>
+
+                        </a>
+
+
+
+                        <!-- Analytics -->
+                        <a
+                            href="analytics.html"
+                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100"
+                            >
+
+                                <i
+                                    data-lucide="chart-no-axes-combined"
+                                    class="h-5 w-5 text-amber-600"
+                                ></i>
+
+                            </div>
+
+                            <h3
+                                class="mt-4 font-bold"
+                            >
+                                Skill Analytics
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                Review student skills and industry gaps.
+                            </p>
+
+                        </a>
+
+
+
+                        <!-- Collaborations -->
+                        <a
+                            href="collaborations.html"
+                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100"
+                            >
+
+                                <i
+                                    data-lucide="handshake"
+                                    class="h-5 w-5 text-emerald-600"
+                                ></i>
+
+                            </div>
+
+                            <h3
+                                class="mt-4 font-bold"
+                            >
+                                Collaborations
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                Review industry collaboration requests.
+                            </p>
+
+                        </a>
+
+
+                    </div>
+
+                </section>
+
 
             </div>
 
@@ -132,6 +680,11 @@
 
     </div>
 
+
+
+    <!-- ===================================================== -->
+    <!-- Scripts -->
+    <!-- ===================================================== -->
 
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/api.js"></script>
@@ -141,77 +694,358 @@
 
     <script>
 
-        (async () => {
+        let currentCollege = null;
+
+
+        // =====================================================
+        // Load College Profile
+        // =====================================================
+
+        async function loadCollegeProfile() {
 
             try {
 
-                const r =
+                /*
+                 * This assumes your college profile GET endpoint is:
+                 *
+                 * GET /colleges/profile
+                 *
+                 * If your endpoint has another path,
+                 * only change the path below.
+                 */
+
+                const response =
                     await SB.get(
-                        '/colleges/dashboard/summary'
+                        "/colleges/profile"
                     );
 
-                const d =
-                    r.data || r;
+                const college =
+                    response.data || response;
+
+                if (!college || !college.id) {
+                    throw new Error(
+                        "College profile not found"
+                    );
+                }
 
 
-                students.textContent =
-                    d.total_students ??
-                    d.students ??
-                    0;
+                currentCollege = college;
 
 
-                departments.textContent =
-                    d.total_departments ??
-                    d.departments ??
-                    0;
+                document
+                    .getElementById(
+                        "collegeProfileCard"
+                    )
+                    .classList.remove(
+                        "hidden"
+                    );
 
 
-                collabs.textContent =
-                    d.total_collaborations ??
-                    d.collaborations ??
-                    0;
+                document
+                    .getElementById(
+                        "onboarding"
+                    )
+                    .classList.add(
+                        "hidden"
+                    );
 
 
-                try {
+                document.getElementById(
+                    "collegeId"
+                ).textContent =
+                    college.id ?? "—";
 
-                    const g =
-                        await SB.get(
-                            '/colleges/analytics/skill-gap'
-                        );
 
-                    gaps.textContent =
-                        (g.data || []).length;
+                document.getElementById(
+                    "collegeName"
+                ).textContent =
+                    college.name ??
+                    "College";
+
+
+                document.getElementById(
+                    "collegeUniversity"
+                ).textContent =
+                    college.university ??
+                    "University not specified";
+
+
+                document.getElementById(
+                    "collegeCity"
+                ).textContent =
+                    college.city ??
+                    "Not specified";
+
+
+                document.getElementById(
+                    "collegeState"
+                ).textContent =
+                    college.state ??
+                    "Not specified";
+
+
+                const website =
+                    document.getElementById(
+                        "collegeWebsite"
+                    );
+
+
+                if (college.website) {
+
+                    website.textContent =
+                        college.website;
+
+                    website.href =
+                        college.website;
 
                 }
 
-                catch {
+                else {
 
-                    gaps.textContent = '0';
+                    website.textContent =
+                        "Not provided";
+
+                    website.removeAttribute(
+                        "href"
+                    );
 
                 }
 
             }
 
-            catch (e) {
+            catch (error) {
 
-                onboarding.classList.remove(
-                    'hidden'
-                );
+                currentCollege = null;
+
+
+                document
+                    .getElementById(
+                        "collegeProfileCard"
+                    )
+                    .classList.add(
+                        "hidden"
+                    );
+
+
+                document
+                    .getElementById(
+                        "onboarding"
+                    )
+                    .classList.remove(
+                        "hidden"
+                    );
 
             }
 
-        })();
-
-    </script>
-
-
-    <script>
-
-        if (window.lucide) {
-            lucide.createIcons();
         }
 
+
+
+        // =====================================================
+        // Load Dashboard Summary
+        // =====================================================
+
+        async function loadDashboardSummary() {
+
+            try {
+
+                const response =
+                    await SB.get(
+                        "/colleges/dashboard/summary"
+                    );
+
+                const data =
+                    response.data ||
+                    response;
+
+
+                document.getElementById(
+                    "students"
+                ).textContent =
+                    data.total_students ??
+                    data.students ??
+                    0;
+
+
+                document.getElementById(
+                    "departments"
+                ).textContent =
+                    data.total_departments ??
+                    data.departments ??
+                    0;
+
+
+                document.getElementById(
+                    "collabs"
+                ).textContent =
+                    data.total_collaborations ??
+                    data.collaborations ??
+                    0;
+
+            }
+
+            catch (error) {
+
+                document.getElementById(
+                    "students"
+                ).textContent = "0";
+
+
+                document.getElementById(
+                    "departments"
+                ).textContent = "0";
+
+
+                document.getElementById(
+                    "collabs"
+                ).textContent = "0";
+
+            }
+
+        }
+
+
+
+        // =====================================================
+        // Load Skill Gaps
+        // =====================================================
+
+        async function loadSkillGaps() {
+
+            try {
+
+                const response =
+                    await SB.get(
+                        "/colleges/analytics/skill-gap"
+                    );
+
+
+                const data =
+                    response.data || [];
+
+
+                document.getElementById(
+                    "gaps"
+                ).textContent =
+                    Array.isArray(data)
+                        ? data.length
+                        : 0;
+
+            }
+
+            catch (error) {
+
+                document.getElementById(
+                    "gaps"
+                ).textContent = "0";
+
+            }
+
+        }
+
+
+
+        // =====================================================
+        // Download College Profile
+        // =====================================================
+
+        window.downloadCollegeProfile =
+            function () {
+
+                if (!currentCollege) {
+
+                    SB.toast(
+                        "College profile not available."
+                    );
+
+                    return;
+
+                }
+
+
+                const content = `
+SKILLBRIDGE AI
+COLLEGE PROFILE
+
+College ID: ${currentCollege.id ?? ""}
+College Name: ${currentCollege.name ?? ""}
+University: ${currentCollege.university ?? ""}
+City: ${currentCollege.city ?? ""}
+State: ${currentCollege.state ?? ""}
+Website: ${currentCollege.website ?? ""}
+                `.trim();
+
+
+                const blob =
+                    new Blob(
+                        [content],
+                        {
+                            type: "text/plain"
+                        }
+                    );
+
+
+                const url =
+                    URL.createObjectURL(
+                        blob
+                    );
+
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                link.href = url;
+
+                link.download =
+                    `college-profile-${currentCollege.id}.txt`;
+
+
+                document.body.appendChild(
+                    link
+                );
+
+
+                link.click();
+
+                link.remove();
+
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            };
+
+
+
+        // =====================================================
+        // Initial Load
+        // =====================================================
+
+        async function initDashboard() {
+
+            await Promise.all([
+                loadCollegeProfile(),
+                loadDashboardSummary(),
+                loadSkillGaps()
+            ]);
+
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+        }
+
+
+        initDashboard();
+
     </script>
 
+
 </body>
+
 </html>

@@ -1,17 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"
+    >
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
 
     <title>College Profile | SkillBridge AI</title>
 </head>
+
 
 <body class="bg-slate-50 text-slate-900">
 
@@ -19,86 +32,387 @@
         window.SKILLBRIDGE_ROLE = "college";
     </script>
 
+
     <div id="app-shell">
 
         <main class="min-h-screen lg:pl-72">
 
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div
+                class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
+            >
+
+
+                <!-- ========================================= -->
+                <!-- Header -->
+                <!-- ========================================= -->
 
                 <header class="mb-7">
 
-                    <p class="text-sm font-semibold text-indigo-600">
+                    <p
+                        class="text-sm font-semibold text-indigo-600"
+                    >
                         SkillBridge AI
                     </p>
 
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
+                    <h1
+                        class="mt-1 text-3xl font-bold tracking-tight"
+                    >
                         College Profile
                     </h1>
 
-                    <p class="mt-2 text-slate-500">
-                        Complete TPO/college onboarding before using analytics.
+                    <p
+                        class="mt-2 max-w-2xl text-slate-500"
+                    >
+                        Manage your college information used for
+                        departments, analytics and industry collaborations.
                     </p>
 
                 </header>
 
 
+
+                <!-- ========================================= -->
+                <!-- College ID / Profile Status -->
+                <!-- ========================================= -->
+
+                <section
+                    id="profileSummary"
+                    class="mb-6 hidden max-w-3xl rounded-2xl border border-indigo-100 bg-indigo-50 p-5"
+                >
+
+                    <div
+                        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                    >
+
+                        <div class="flex items-center gap-4">
+
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100"
+                            >
+                                <i
+                                    data-lucide="school"
+                                    class="h-6 w-6 text-indigo-600"
+                                ></i>
+                            </div>
+
+
+                            <div>
+
+                                <p
+                                    class="text-xs font-bold uppercase tracking-wide text-indigo-500"
+                                >
+                                    College Profile
+                                </p>
+
+                                <h2
+                                    id="savedCollegeName"
+                                    class="mt-1 font-black text-slate-900"
+                                >
+                                    —
+                                </h2>
+
+                                <p
+                                    class="mt-1 flex items-center gap-1.5 text-xs font-semibold text-emerald-600"
+                                >
+
+                                    <i
+                                        data-lucide="circle-check"
+                                        class="h-4 w-4"
+                                    ></i>
+
+                                    Profile Active
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="rounded-xl border border-indigo-200 bg-white px-5 py-3"
+                        >
+
+                            <p
+                                class="text-xs font-bold uppercase tracking-wide text-slate-400"
+                            >
+                                College ID
+                            </p>
+
+                            <p
+                                id="collegeId"
+                                class="mt-1 text-2xl font-black text-indigo-600"
+                            >
+                                —
+                            </p>
+
+                            <p
+                                class="mt-1 text-xs text-slate-400"
+                            >
+                                Auto-generated
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ========================================= -->
+                <!-- College Form -->
+                <!-- ========================================= -->
+
                 <section class="card max-w-3xl p-6">
 
-                    <h2 class="text-xl font-black">
-                        College profile
-                    </h2>
+                    <div
+                        class="flex items-center justify-between gap-4"
+                    >
+
+                        <div>
+
+                            <h2
+                                id="formTitle"
+                                class="text-xl font-black"
+                            >
+                                Create College Profile
+                            </h2>
+
+                            <p
+                                id="formDescription"
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                Enter your college information to complete
+                                the onboarding process.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="hidden h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 sm:flex"
+                        >
+                            <i
+                                data-lucide="building-2"
+                                class="h-5 w-5 text-indigo-600"
+                            ></i>
+                        </div>
+
+                    </div>
+
 
 
                     <form
                         id="form"
-                        class="mt-5 grid gap-4 sm:grid-cols-2"
+                        class="mt-6 grid gap-5 sm:grid-cols-2"
                     >
 
-                        <input
-                            class="input"
-                            name="name"
-                            placeholder="College name"
-                            required
+
+                        <!-- College Name -->
+                        <div class="sm:col-span-2">
+
+                            <label
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                College Name
+                                <span class="text-rose-500">*</span>
+                            </label>
+
+                            <input
+                                class="input w-full"
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="e.g. MGM College of Engineering & Technology"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- University -->
+                        <div class="sm:col-span-2">
+
+                            <label
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                Affiliated University
+                            </label>
+
+                            <input
+                                class="input w-full"
+                                id="university"
+                                name="university"
+                                type="text"
+                                placeholder="e.g. Dr. A.P.J. Abdul Kalam Technical University"
+                            >
+
+                        </div>
+
+
+
+                        <!-- City -->
+                        <div>
+
+                            <label
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                City
+                            </label>
+
+                            <input
+                                class="input w-full"
+                                id="city"
+                                name="city"
+                                type="text"
+                                placeholder="e.g. Noida"
+                            >
+
+                        </div>
+
+
+
+                        <!-- State -->
+                        <div>
+
+                            <label
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                State
+                            </label>
+
+                            <input
+                                class="input w-full"
+                                id="state"
+                                name="state"
+                                type="text"
+                                placeholder="e.g. Uttar Pradesh"
+                            >
+
+                        </div>
+
+
+
+                        <!-- Website -->
+                        <div class="sm:col-span-2">
+
+                            <label
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                College Website
+                            </label>
+
+                            <input
+                                class="input w-full"
+                                id="website"
+                                name="website"
+                                type="url"
+                                placeholder="https://college-website.com"
+                            >
+
+                        </div>
+
+
+
+                        <!-- Save Button -->
+                        <div
+                            class="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5 sm:col-span-2"
                         >
 
-                        <input
-                            class="input"
-                            name="university"
-                            placeholder="Affiliated university"
-                        >
+                            <button
+                                id="saveButton"
+                                type="submit"
+                                class="btn btn-primary flex items-center gap-2"
+                            >
 
-                        <input
-                            class="input"
-                            name="city"
-                            placeholder="City"
-                        >
+                                <i
+                                    data-lucide="save"
+                                    class="h-4 w-4"
+                                ></i>
 
-                        <input
-                            class="input"
-                            name="state"
-                            placeholder="State"
-                        >
+                                <span id="saveButtonText">
+                                    Create Profile
+                                </span>
 
-                        <input
-                            class="input sm:col-span-2"
-                            name="website"
-                            placeholder="Website"
-                        >
+                            </button>
 
-                        <button
-                            class="btn btn-primary sm:col-span-2"
-                        >
-                            Create profile
-                        </button>
 
+                            <a
+                                id="dashboardButton"
+                                href="dashboard.html"
+                                class="btn btn-soft hidden items-center gap-2"
+                            >
+
+                                <i
+                                    data-lucide="layout-dashboard"
+                                    class="h-4 w-4"
+                                ></i>
+
+                                Dashboard
+
+                            </a>
+
+                        </div>
+
+
+
+                        <!-- Message -->
                         <p
                             id="msg"
-                            class="sm:col-span-2 text-sm"
+                            class="hidden sm:col-span-2 rounded-xl px-4 py-3 text-sm"
                         ></p>
+
 
                     </form>
 
                 </section>
+
+
+                <!-- ========================================= -->
+                <!-- College ID Information -->
+                <!-- ========================================= -->
+
+                <section
+                    class="mt-6 max-w-3xl rounded-2xl border border-slate-200 bg-white p-5"
+                >
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100"
+                        >
+
+                            <i
+                                data-lucide="badge-info"
+                                class="h-4 w-4 text-violet-600"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h3 class="text-sm font-bold text-slate-800">
+                                About College ID
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm leading-relaxed text-slate-500"
+                            >
+                                Your College ID is automatically generated
+                                after the profile is created. It is used
+                                internally for departments, student records,
+                                analytics and industry collaboration requests.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
 
             </div>
 
@@ -106,6 +420,11 @@
 
     </div>
 
+
+
+    <!-- ========================================= -->
+    <!-- JavaScript -->
+    <!-- ========================================= -->
 
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/api.js"></script>
@@ -115,58 +434,371 @@
 
     <script>
 
-        form.onsubmit = async e => {
+        const form =
+            document.getElementById("form");
 
-            e.preventDefault();
+        const msg =
+            document.getElementById("msg");
 
-            const f =
-                new FormData(
-                    e.target
+        const profileSummary =
+            document.getElementById("profileSummary");
+
+        const collegeId =
+            document.getElementById("collegeId");
+
+        const savedCollegeName =
+            document.getElementById("savedCollegeName");
+
+        const formTitle =
+            document.getElementById("formTitle");
+
+        const formDescription =
+            document.getElementById("formDescription");
+
+        const saveButton =
+            document.getElementById("saveButton");
+
+        const saveButtonText =
+            document.getElementById("saveButtonText");
+
+        const dashboardButton =
+            document.getElementById("dashboardButton");
+
+
+        let existingProfile = null;
+
+
+
+        // =========================================
+        // Show Message
+        // =========================================
+
+        function showMessage(
+            message,
+            type = "success"
+        ) {
+
+            msg.classList.remove(
+                "hidden",
+                "bg-emerald-50",
+                "text-emerald-700",
+                "border",
+                "border-emerald-200",
+                "bg-rose-50",
+                "text-rose-700",
+                "border-rose-200"
+            );
+
+
+            if (type === "success") {
+
+                msg.classList.add(
+                    "bg-emerald-50",
+                    "text-emerald-700",
+                    "border",
+                    "border-emerald-200"
                 );
 
-            const b = {};
+            }
+
+            else {
+
+                msg.classList.add(
+                    "bg-rose-50",
+                    "text-rose-700",
+                    "border",
+                    "border-rose-200"
+                );
+
+            }
 
 
-            for (const [k, v] of f) {
+            msg.textContent = message;
 
-                if (v !== '') {
-                    b[k] = v;
+        }
+
+
+
+        // =========================================
+        // Fill Existing Profile
+        // =========================================
+
+        function fillProfile(college) {
+
+            existingProfile = college;
+
+
+            document.getElementById(
+                "name"
+            ).value =
+                college.name || "";
+
+
+            document.getElementById(
+                "university"
+            ).value =
+                college.university || "";
+
+
+            document.getElementById(
+                "city"
+            ).value =
+                college.city || "";
+
+
+            document.getElementById(
+                "state"
+            ).value =
+                college.state || "";
+
+
+            document.getElementById(
+                "website"
+            ).value =
+                college.website || "";
+
+
+            collegeId.textContent =
+                college.id ?? "—";
+
+
+            savedCollegeName.textContent =
+                college.name || "College";
+
+
+            profileSummary.classList.remove(
+                "hidden"
+            );
+
+
+            formTitle.textContent =
+                "Update College Profile";
+
+
+            formDescription.textContent =
+                "Review or update your saved college information.";
+
+
+            saveButtonText.textContent =
+                "Save Changes";
+
+
+            dashboardButton.classList.remove(
+                "hidden"
+            );
+
+            dashboardButton.classList.add(
+                "flex"
+            );
+
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+        }
+
+
+
+        // =========================================
+        // Load Existing College Profile
+        // =========================================
+
+        async function loadProfile() {
+
+            try {
+
+                const response =
+                    await SB.get(
+                        "/colleges/profile"
+                    );
+
+
+                const college =
+                    response.data ||
+                    response;
+
+
+                if (
+                    college &&
+                    college.id
+                ) {
+
+                    fillProfile(
+                        college
+                    );
+
                 }
 
             }
 
+            catch (error) {
 
-            try {
+                /*
+                 * Profile does not exist yet.
+                 * Keep page in Create Profile mode.
+                 */
 
-                await SB.post(
-                    '/colleges/profile',
-                    b
-                );
-
-                msg.className =
-                    'sm:col-span-2 text-sm text-emerald-600';
-
-                msg.textContent =
-                    'College profile created.';
+                existingProfile = null;
 
             }
 
-            catch (err) {
+        }
 
-                msg.className =
-                    'sm:col-span-2 text-sm text-rose-600';
 
-                msg.textContent =
-                    err.message;
+
+        // =========================================
+        // Submit Profile
+        // =========================================
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const formData =
+                    new FormData(form);
+
+
+                const body = {};
+
+
+                for (
+                    const [key, value]
+                    of formData.entries()
+                ) {
+
+                    const cleaned =
+                        String(value).trim();
+
+
+                    if (cleaned !== "") {
+                        body[key] = cleaned;
+                    }
+
+                }
+
+
+                saveButton.disabled = true;
+
+
+                saveButtonText.textContent =
+                    existingProfile
+                        ? "Saving..."
+                        : "Creating...";
+
+
+                try {
+
+                    let response;
+
+
+                    // =====================================
+                    // Create New Profile
+                    // =====================================
+
+                    if (!existingProfile) {
+
+                        response =
+                            await SB.post(
+                                "/colleges/profile",
+                                body
+                            );
+
+                    }
+
+
+                    // =====================================
+                    // Update Existing Profile
+                    // =====================================
+
+                    else {
+
+                        response =
+                            await SB.patch(
+                                "/colleges/profile",
+                                body
+                            );
+
+                    }
+
+
+                    const college =
+                        response.data ||
+                        response;
+
+
+                    /*
+                     * If create/update response contains
+                     * complete college data, use it.
+                     *
+                     * Otherwise reload GET /colleges/profile.
+                     */
+
+                    if (
+                        college &&
+                        college.id
+                    ) {
+
+                        fillProfile(
+                            college
+                        );
+
+                    }
+
+                    else {
+
+                        await loadProfile();
+
+                    }
+
+
+                    showMessage(
+                        existingProfile
+                            ? "College profile saved successfully."
+                            : "College profile created successfully."
+                    );
+
+
+                    saveButtonText.textContent =
+                        "Save Changes";
+
+                }
+
+                catch (error) {
+
+                    showMessage(
+                        error.message,
+                        "error"
+                    );
+
+
+                    saveButtonText.textContent =
+                        existingProfile
+                            ? "Save Changes"
+                            : "Create Profile";
+
+                }
+
+                finally {
+
+                    saveButton.disabled = false;
+
+                }
 
             }
-
-        };
-
-    </script>
+        );
 
 
-    <script>
+
+        // =========================================
+        // Initial Load
+        // =========================================
+
+        loadProfile();
+
 
         if (window.lucide) {
             lucide.createIcons();
@@ -174,5 +806,7 @@
 
     </script>
 
+
 </body>
+
 </html>
