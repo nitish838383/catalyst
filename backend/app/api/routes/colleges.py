@@ -478,3 +478,82 @@ def update_collaboration_status(
             "college_note": row.college_note,
         },
     }
+
+# ============================================================
+# STUDENT COLLEGE DIRECTORY
+# ============================================================
+
+@router.get("/student-directory")
+def student_college_directory(
+    db: Session = Depends(get_db),
+    user: User = Depends(
+        require_roles(UserRole.student)
+    ),
+):
+    rows = (
+        db.query(College)
+        .order_by(College.name.asc())
+        .all()
+    )
+
+    return {
+        "success": True,
+        "data": [
+            {
+                "id": row.id,
+                "name": row.name,
+                "university": row.university,
+                "city": row.city,
+                "state": row.state,
+                "is_verified": row.is_verified,
+            }
+            for row in rows
+        ],
+    }
+
+
+# ============================================================
+# STUDENT DEPARTMENTS BY COLLEGE
+# ============================================================
+
+@router.get("/{college_id}/student-departments")
+def student_college_departments(
+    college_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(
+        require_roles(UserRole.student)
+    ),
+):
+    college_row = (
+        db.query(College)
+        .filter(College.id == college_id)
+        .first()
+    )
+
+    if not college_row:
+        raise HTTPException(
+            status_code=404,
+            detail="College not found"
+        )
+
+    rows = (
+        db.query(Department)
+        .filter(
+            Department.college_id == college_id
+        )
+        .order_by(Department.name.asc())
+        .all()
+    )
+
+    return {
+        "success": True,
+        "data": [
+            {
+                "id": row.id,
+                "name": row.name,
+                "code": row.code,
+                "college_id": row.college_id,
+            }
+            for row in rows
+        ],
+    }
