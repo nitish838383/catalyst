@@ -1,1306 +1,718 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Projects & Certifications — SkillBridge AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <title>Projects & Certifications | SkillBridge AI</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background:
+        radial-gradient(circle at 8% 0%, rgba(99,102,241,.09), transparent 28%),
+        radial-gradient(circle at 92% 12%, rgba(14,165,233,.07), transparent 30%),
+        #f8fafc;
+    }
 
-    <meta name="description"
-          content="SkillBridge AI — Student Profile and Skills">
+    .portfolio-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.75rem;
+      padding: 2rem;
+      color: #fff;
+      background:
+        radial-gradient(circle at 82% 14%, rgba(255,255,255,.16), transparent 26%),
+        radial-gradient(circle at 8% 120%, rgba(34,211,238,.20), transparent 34%),
+        linear-gradient(135deg, #1e1b4b 0%, #4338ca 44%, #2563eb 100%);
+      box-shadow: 0 24px 60px rgba(37,99,235,.20);
+    }
 
-    <title>Profile & Skills | SkillBridge AI</title>
+    .portfolio-hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: .10;
+      background-image:
+        linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    .premium-card {
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,.96);
+      border-radius: 1.5rem;
+      box-shadow: 0 14px 42px rgba(15,23,42,.055);
+    }
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    .stat-card {
+      border: 1px solid #e2e8f0;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      border-radius: 1.25rem;
+      box-shadow: 0 12px 30px rgba(15,23,42,.045);
+      transition: all .22s ease;
+    }
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet"
-          href="/assets/css/app.css">
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 38px rgba(15,23,42,.08);
+      border-color: #c7d2fe;
+    }
+
+    .card-hover {
+      transition: all .2s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -6px rgba(15,23,42,.1);
+      border-color: #c7d2fe;
+    }
+
+    .credential-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.125rem;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(124,58,237,.08), transparent 28%),
+        linear-gradient(180deg, #fff, #fbfdff);
+    }
+
+    .credential-card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: -45px;
+      bottom: -52px;
+      border-radius: 999px;
+      background: rgba(99,102,241,.06);
+    }
+
+    .modal-backdrop {
+      background: rgba(15,23,42,.64);
+      backdrop-filter: blur(6px);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid rgba(255,255,255,.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .portfolio-hero {
+        border-radius: 1.25rem;
+        padding: 1.25rem;
+      }
+      .premium-card, .stat-card {
+        border-radius: 1rem;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
 
-<script>
-    window.SKILLBRIDGE_ROLE = "student";
-</script>
+  <script>window.SKILLBRIDGE_ROLE = "student";</script>
 
-
-<div id="app-shell">
-
+  <div id="app-shell">
     <main class="min-h-screen lg:pl-72">
-
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-
-            <!-- ================= HEADER ================= -->
-
-            <header class="mb-7">
-
-                <p class="text-sm font-semibold text-indigo-600">
-                    SkillBridge AI
-                </p>
-
-                <h1 class="mt-1 text-3xl font-bold tracking-tight">
-                    Profile & Skills
-                </h1>
-
-                <p class="mt-2 text-slate-500">
-                    Manage your academic profile and skills.
-                </p>
-
-            </header>
-
-
-            <!-- ================= MAIN GRID ================= -->
-
-            <div class="grid gap-6 lg:grid-cols-2">
-
-
-                <!-- ================================================= -->
-                <!-- STUDENT PROFILE -->
-                <!-- ================================================= -->
-
-                <section class="card p-6">
-
-                    <div class="flex items-center gap-3">
-
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
-
-                            <i data-lucide="user"></i>
-
-                        </div>
-
-                        <div>
-
-                            <h2 class="text-xl font-black">
-                                Student Profile
-                            </h2>
-
-                            <p class="text-sm text-slate-500">
-                                Academic and career information
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <form id="profileForm"
-                          class="mt-6 grid gap-4 sm:grid-cols-2">
-
-
-                        <!-- Student Name -->
-
-                        <div>
-
-                            <label class="label">
-                                Student Name
-                            </label>
-
-                            <input
-                                id="studentName"
-                                class="input bg-slate-100"
-                                type="text"
-                                readonly
-                            >
-
-                        </div>
-
-
-                        <!-- Email -->
-
-                        <div>
-
-                            <label class="label">
-                                Email
-                            </label>
-
-                            <input
-                                id="studentEmail"
-                                class="input bg-slate-100"
-                                type="email"
-                                readonly
-                            >
-
-                        </div>
-
-
-                        <!-- College -->
-
-                        <div>
-
-                            <label class="label">
-                                College
-                            </label>
-
-                            <select
-                                id="collegeSelect"
-                                class="input"
-                                name="college_id"
-                            >
-
-                                <option value="">
-                                    Select College
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- Department -->
-
-                        <div>
-
-                            <label class="label">
-                                Department
-                            </label>
-
-                            <select
-                                id="departmentSelect"
-                                class="input"
-                                name="department_id"
-                                disabled
-                            >
-
-                                <option value="">
-                                    Select Department
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- Branch -->
-
-                        <div>
-
-                            <label class="label">
-                                Branch
-                            </label>
-
-                            <select
-                                class="input"
-                                name="branch"
-                            >
-
-                                <option value="">
-                                    Select Branch
-                                </option>
-
-                                <option value="cse core">
-                                    CSE Core
-                                </option>
-
-                                <option value="cse ai ml">
-                                    CSE AI & ML
-                                </option>
-
-                                <option value="cse data science">
-                                    CSE Data Science
-                                </option>
-
-                                <option value="information technology">
-                                    Information Technology
-                                </option>
-
-                                <option value="ece">
-                                    Electronics & Communication
-                                </option>
-
-                                <option value="eee">
-                                    Electrical Engineering
-                                </option>
-
-                                <option value="mechanical">
-                                    Mechanical Engineering
-                                </option>
-
-                                <option value="civil">
-                                    Civil Engineering
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- Year -->
-
-                        <div>
-
-                            <label class="label">
-                                Year
-                            </label>
-
-                            <select
-                                class="input"
-                                name="year"
-                            >
-
-                                <option value="">
-                                    Select Year
-                                </option>
-
-                                <option value="1">
-                                    1st Year
-                                </option>
-
-                                <option value="2">
-                                    2nd Year
-                                </option>
-
-                                <option value="3">
-                                    3rd Year
-                                </option>
-
-                                <option value="4">
-                                    4th Year
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- Semester -->
-
-                        <div>
-
-                            <label class="label">
-                                Semester
-                            </label>
-
-                            <select
-                                class="input"
-                                name="semester"
-                            >
-
-                                <option value="">
-                                    Select Semester
-                                </option>
-
-                                <option value="1">
-                                    Semester 1
-                                </option>
-
-                                <option value="2">
-                                    Semester 2
-                                </option>
-
-                                <option value="3">
-                                    Semester 3
-                                </option>
-
-                                <option value="4">
-                                    Semester 4
-                                </option>
-
-                                <option value="5">
-                                    Semester 5
-                                </option>
-
-                                <option value="6">
-                                    Semester 6
-                                </option>
-
-                                <option value="7">
-                                    Semester 7
-                                </option>
-
-                                <option value="8">
-                                    Semester 8
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- CGPA -->
-
-                        <div>
-
-                            <label class="label">
-                                CGPA
-                            </label>
-
-                            <input
-                                class="input"
-                                type="number"
-                                name="cgpa"
-                                min="0"
-                                max="10"
-                                step="0.01"
-                                placeholder="e.g. 8.50"
-                            >
-
-                        </div>
-
-
-                        <!-- Career Goal -->
-
-                        <div class="sm:col-span-2">
-
-                            <label class="label">
-                                Career Interest
-                            </label>
-
-                            <select
-                                class="input"
-                                name="career_goal"
-                            >
-
-                                <option value="">
-                                    Select Career Goal
-                                </option>
-
-                                <option value="backend developer">
-                                    Backend Developer
-                                </option>
-
-                                <option value="frontend developer">
-                                    Frontend Developer
-                                </option>
-
-                                <option value="full stack developer">
-                                    Full Stack Developer
-                                </option>
-
-                                <option value="ai ml engineer">
-                                    AI / ML Engineer
-                                </option>
-
-                                <option value="data analyst">
-                                    Data Analyst
-                                </option>
-
-                                <option value="data scientist">
-                                    Data Scientist
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- GitHub -->
-
-                        <div>
-
-                            <label class="label">
-                                GitHub URL
-                            </label>
-
-                            <input
-                                class="input"
-                                name="github_url"
-                                type="url"
-                                placeholder="https://github.com/username"
-                            >
-
-                        </div>
-
-
-                        <!-- LinkedIn -->
-
-                        <div>
-
-                            <label class="label">
-                                LinkedIn URL
-                            </label>
-
-                            <input
-                                class="input"
-                                name="linkedin_url"
-                                type="url"
-                                placeholder="https://linkedin.com/in/username"
-                            >
-
-                        </div>
-
-
-                        <!-- Save Button -->
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary sm:col-span-2"
-                        >
-
-                            Save Profile
-
-                        </button>
-
-
-                        <p
-                            id="profileMsg"
-                            class="text-sm sm:col-span-2"
-                        ></p>
-
-
-                    </form>
-
-                </section>
-
-
-
-                <!-- ================================================= -->
-                <!-- SKILLS -->
-                <!-- ================================================= -->
-
-                <section class="card p-6">
-
-
-                    <div class="flex items-center gap-3">
-
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
-
-                            <i data-lucide="brain"></i>
-
-                        </div>
-
-                        <div>
-
-                            <h2 class="text-xl font-black">
-                                Skills
-                            </h2>
-
-                            <p class="text-sm text-slate-500">
-                                Add your technical and professional skills
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Add Skill Form -->
-
-                    <form
-                        id="skillForm"
-                        class="mt-6 grid gap-3 sm:grid-cols-3"
-                    >
-
-
-                        <input
-                            class="input sm:col-span-2"
-                            name="name"
-                            placeholder="e.g. FastAPI"
-                            required
-                        >
-
-
-                        <select
-                            class="input"
-                            name="level"
-                        >
-
-                            <option value="beginner">
-                                Beginner
-                            </option>
-
-                            <option value="intermediate">
-                                Intermediate
-                            </option>
-
-                            <option value="advanced">
-                                Advanced
-                            </option>
-
-                        </select>
-
-
-                        <input
-                            class="input sm:col-span-2"
-                            name="category"
-                            placeholder="Category (optional)"
-                        >
-
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                        >
-
-                            Add Skill
-
-                        </button>
-
-
-                    </form>
-
-
-                    <!-- Skills List -->
-
-                    <div
-                        id="skills"
-                        class="mt-6 space-y-3"
-                    >
-
-                        <p class="text-sm text-slate-500">
-                            Loading skills...
-                        </p>
-
-                    </div>
-
-
-                </section>
-
-
+      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+        <!-- ==================== HERO ==================== -->
+        <header class="portfolio-hero mb-8">
+          <div class="portfolio-hero-grid"></div>
+          <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div class="max-w-3xl">
+              <p class="text-sm font-semibold text-indigo-100 tracking-wide">SkillBridge AI</p>
+              <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                Projects & Certifications
+              </h1>
+              <p class="mt-3 max-w-2xl text-sm leading-relaxed text-indigo-100 sm:text-base">
+                Build proof of work, showcase real projects and maintain a structured record of your professional certifications.
+              </p>
             </div>
 
+            <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
+              <p class="text-xs font-bold uppercase tracking-[0.14em] text-indigo-200">
+                Portfolio Strength
+              </p>
+              <p id="heroStrength" class="mt-1 text-3xl font-black">0%</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- ==================== STATS ==================== -->
+        <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="stat-card p-5">
+            <p class="text-sm text-slate-500">Projects</p>
+            <p class="mt-1.5 text-2xl font-black text-slate-900" id="projectCount">0</p>
+          </div>
+          <div class="stat-card p-5">
+            <p class="text-sm text-slate-500">Certifications</p>
+            <p class="mt-1.5 text-2xl font-black text-slate-900" id="certCount">0</p>
+          </div>
+          <div class="stat-card p-5">
+            <p class="text-sm text-slate-500">Profile Strength</p>
+            <p class="mt-1.5 text-2xl font-black text-indigo-600" id="strengthScore">—</p>
+          </div>
+          <div class="stat-card p-5">
+            <p class="text-sm text-slate-500">Last Updated</p>
+            <p class="mt-1.5 text-sm font-semibold text-slate-700" id="lastUpdated">—</p>
+          </div>
         </div>
 
-    </main>
-
-</div>
-
-
-
-<!-- ================================================= -->
-<!-- COMMON JS -->
-<!-- ================================================= -->
-
-<script src="/assets/js/config.js"></script>
-
-<script src="/assets/js/api.js"></script>
-
-<script src="/assets/js/auth.js"></script>
-
-<script src="/assets/js/shell.js"></script>
-
-
-
-<!-- ================================================= -->
-<!-- PAGE LOGIC -->
-<!-- ================================================= -->
-
-<script>
-
-let hasProfile = false;
-
-let existingProfile = null;
-
-
-/* =====================================================
-   LOAD LOGGED IN USER
-===================================================== */
-
-async function loadUser() {
-
-    try {
-
-        const me = await Auth.me();
-
-        document.getElementById("studentName").value =
-            me.full_name || "";
-
-        document.getElementById("studentEmail").value =
-            me.email || "";
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Unable to load user:",
-            error
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   LOAD COLLEGES
-===================================================== */
-
-async function loadColleges() {
-
-    const select =
-        document.getElementById("collegeSelect");
-
-    try {
-
-        /*
-            Expected backend response:
-
-            {
-                "success": true,
-                "data": [
-                    {
-                        "id": 1,
-                        "name": "MGM College"
-                    }
-                ]
-            }
-        */
-
-        const response =
-            await SB.get("/colleges");
-
-        const colleges =
-            response.data || response || [];
-
-
-        select.innerHTML =
-            '<option value="">Select College</option>';
-
-
-        colleges.forEach(college => {
-
-            const option =
-                document.createElement("option");
-
-            option.value =
-                college.id;
-
-            option.textContent =
-                college.name ||
-                college.college_name ||
-                `College ${college.id}`;
-
-            select.appendChild(option);
-
-        });
-
-
-        if (
-            existingProfile &&
-            existingProfile.college_id
-        ) {
-
-            select.value =
-                existingProfile.college_id;
-
-            await loadDepartments(
-                existingProfile.college_id
-            );
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.warn(
-            "College list API unavailable:",
-            error.message
-        );
-
-
-        select.innerHTML = `
-            <option value="">
-                College list unavailable
-            </option>
-        `;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   LOAD DEPARTMENTS
-===================================================== */
-
-async function loadDepartments(collegeId) {
-
-    const select =
-        document.getElementById("departmentSelect");
-
-
-    select.innerHTML =
-        '<option value="">Select Department</option>';
-
-
-    if (!collegeId) {
-
-        select.disabled = true;
-
-        return;
-
-    }
-
-
-    select.disabled = true;
-
-
-    try {
-
-        /*
-            Expected endpoint:
-
-            /colleges/{college_id}/departments
-        */
-
-        const response =
-            await SB.get(
-                `/colleges/${collegeId}/departments`
-            );
-
-
-        const departments =
-            response.data || response || [];
-
-
-        departments.forEach(department => {
-
-            const option =
-                document.createElement("option");
-
-            option.value =
-                department.id;
-
-            option.textContent =
-                department.name ||
-                department.department_name ||
-                `Department ${department.id}`;
-
-            select.appendChild(option);
-
-        });
-
-
-        select.disabled = false;
-
-
-        if (
-            existingProfile &&
-            existingProfile.department_id
-        ) {
-
-            select.value =
-                existingProfile.department_id;
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.warn(
-            "Department API unavailable:",
-            error.message
-        );
-
-
-        select.innerHTML = `
-            <option value="">
-                Department list unavailable
-            </option>
-        `;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   COLLEGE CHANGE
-===================================================== */
-
-document
-    .getElementById("collegeSelect")
-    .addEventListener(
-        "change",
-        async function () {
-
-            existingProfile = null;
-
-            await loadDepartments(
-                this.value
-            );
-
-        }
-    );
-
-
-
-/* =====================================================
-   LOAD STUDENT PROFILE
-===================================================== */
-
-async function loadProfile() {
-
-    try {
-
-        const profile =
-            await SB.get(
-                "/students/profile"
-            );
-
-
-        hasProfile = true;
-
-        existingProfile = profile;
-
-
-        for (
-            const [key, value]
-            of Object.entries(profile)
-        ) {
-
-            const element =
-                profileForm.elements[key];
-
-
-            if (
-                element &&
-                value !== null &&
-                value !== undefined
-            ) {
-
-                element.value =
-                    Array.isArray(value)
-                        ? value.join(", ")
-                        : value;
-
-            }
-
-        }
-
-    }
-
-    catch (error) {
-
-        hasProfile = false;
-
-        existingProfile = null;
-
-        console.log(
-            "Student profile not created yet."
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   LOAD SKILLS
-===================================================== */
-
-async function loadSkills() {
-
-    const container =
-        document.getElementById("skills");
-
-
-    if (!hasProfile) {
-
-        container.innerHTML = `
-
-            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-
-                <p class="text-sm text-amber-700">
-
-                    Create your profile before adding skills.
-
-                </p>
-
+        <!-- ==================== MAIN GRID ==================== -->
+        <div class="grid gap-7 lg:grid-cols-2">
+
+          <!-- ==================== PROJECTS ==================== -->
+          <section class="premium-card overflow-hidden">
+            <div class="border-b border-slate-100 p-6">
+              <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+                  <i data-lucide="folder-git-2" class="h-6 w-6"></i>
+                </div>
+                <div>
+                  <h2 class="text-xl font-black text-slate-900">Projects</h2>
+                  <p class="text-sm text-slate-500">Showcase your work and proof of skills</p>
+                </div>
+              </div>
             </div>
 
-        `;
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await SB.get(
-                "/students/skills"
-            );
-
-
-        const skillList =
-            response.data || [];
-
-
-        if (!skillList.length) {
-
-            container.innerHTML = `
-
-                <div class="rounded-xl border p-4">
-
-                    <p class="text-sm text-slate-500">
-
-                        No skills added yet.
-
-                    </p>
-
+            <div class="p-6">
+              <!-- Add Project Form -->
+              <form id="projectForm" class="space-y-4">
+                <div>
+                  <label class="label">Project Title *</label>
+                  <input class="input" name="title" placeholder="e.g. AI Resume Analyzer" required>
                 </div>
 
-            `;
+                <div>
+                  <label class="label">Description</label>
+                  <textarea class="input min-h-[90px]" name="description" placeholder="Briefly describe what you built, the problem it solves, and your role..."></textarea>
+                </div>
 
-            return;
+                <div>
+                  <label class="label">Technologies</label>
+                  <input class="input" name="technologies" placeholder="e.g. FastAPI, PostgreSQL, React, Docker">
+                </div>
 
-        }
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label class="label">Start Date</label>
+                    <input class="input" type="date" name="start_date">
+                  </div>
+                  <div>
+                    <label class="label">End Date</label>
+                    <input class="input" type="date" name="end_date">
+                  </div>
+                </div>
 
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label class="label">GitHub URL</label>
+                    <input class="input" name="github_url" placeholder="https://github.com/...">
+                  </div>
+                  <div>
+                    <label class="label">Live URL</label>
+                    <input class="input" name="live_url" placeholder="https://...">
+                  </div>
+                </div>
 
-        container.innerHTML =
-            skillList
-                .map(
-                    skill => `
+                <button type="submit" id="addProjectBtn" class="btn btn-primary w-full sm:w-auto">
+                  <i data-lucide="plus" class="h-4 w-4"></i>
+                  Add Project
+                </button>
+              </form>
 
-                    <div
-                        class="flex items-center justify-between rounded-xl border border-slate-200 p-4"
-                    >
+              <!-- Projects List -->
+              <div id="projects" class="mt-8 space-y-4"></div>
+            </div>
+          </section>
 
-                        <div>
+          <!-- ==================== CERTIFICATIONS ==================== -->
+          <section class="premium-card overflow-hidden">
+            <div class="border-b border-slate-100 p-6">
+              <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
+                  <i data-lucide="award" class="h-6 w-6"></i>
+                </div>
+                <div>
+                  <h2 class="text-xl font-black text-slate-900">Certifications</h2>
+                  <p class="text-sm text-slate-500">Add and manage your credentials</p>
+                </div>
+              </div>
+            </div>
 
-                            <p class="font-bold text-slate-900">
+            <div class="p-6">
+              <!-- Add Certificate Form -->
+              <form id="certForm" class="space-y-4">
+                <div>
+                  <label class="label">Certificate Name *</label>
+                  <input class="input" name="name" placeholder="e.g. AWS Cloud Practitioner" required>
+                </div>
 
-                                ${SB.esc(skill.name)}
+                <div>
+                  <label class="label">Organization / Issuer</label>
+                  <input class="input" name="organization" placeholder="e.g. Amazon Web Services">
+                </div>
 
-                            </p>
+                <div>
+                  <label class="label">Issue Date</label>
+                  <input class="input" type="date" name="issue_date">
+                </div>
 
+                <div>
+                  <label class="label">Credential URL</label>
+                  <input class="input" name="credential_url" placeholder="https://...">
+                </div>
 
-                            <p class="mt-1 text-xs text-slate-500">
+                <div>
+                  <label class="label">Credential ID</label>
+                  <input class="input" name="credential_id" placeholder="Optional ID">
+                </div>
 
-                                ${SB.esc(skill.level)}
+                <button type="submit" id="addCertBtn" class="btn btn-primary w-full sm:w-auto">
+                  <i data-lucide="plus" class="h-4 w-4"></i>
+                  Add Certificate
+                </button>
+              </form>
 
-                                ·
+              <!-- Certifications List -->
+              <div id="certs" class="mt-8 space-y-4"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
 
-                                ${
-                                    skill.verified
-                                        ? "Verified"
-                                        : "Unverified"
-                                }
+  <!-- ==================== DETAILS MODAL ==================== -->
+  <div id="detailsModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 p-5 sm:p-6">
+        <div>
+          <p id="modalEyebrow" class="text-xs font-black uppercase tracking-[0.14em] text-indigo-600">Details</p>
+          <h2 id="modalTitle" class="mt-1 text-2xl font-black text-slate-950">Details</h2>
+        </div>
+        <button type="button" onclick="closeDetailsModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <div id="modalBody" class="p-5 sm:p-6"></div>
+      <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 p-5">
+        <button type="button" onclick="closeDetailsModal()" class="btn btn-soft">Close</button>
+      </div>
+    </div>
+  </div>
 
-                            </p>
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/shell.js"></script>
 
-                        </div>
+  <script>
+    let currentProjects = [];
+    let currentCertifications = [];
 
+    // Load portfolio data
+    async function loadPortfolio() {
+      // Projects
+      try {
+        const p = await SB.get('/students/projects');
+        currentProjects = Array.isArray(p) ? p : (p.data || []);
+        document.getElementById('projectCount').textContent = currentProjects.length;
 
-                        <button
-                            type="button"
-                            class="btn btn-danger"
-                            onclick="removeSkill(${skill.id})"
-                        >
-
-                            Remove
-
-                        </button>
-
-
+        projects.innerHTML = currentProjects.length
+          ? currentProjects.map(x => `
+              <div class="card-hover rounded-2xl border border-slate-200 bg-white p-5">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="font-black text-slate-900">${SB.esc(x.title)}</h3>
+                      <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
+                        Project
+                      </span>
                     </div>
+                    ${x.description ? `<p class="mt-2 text-sm leading-6 text-slate-500 line-clamp-2">${SB.esc(x.description)}</p>` : ''}
+                    ${x.technologies ? `
+                      <div class="mt-3 flex flex-wrap gap-1.5">
+                        ${x.technologies.split(',').map(t =>
+                          `<span class="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">${SB.esc(t.trim())}</span>`
+                        ).join('')}
+                      </div>` : ''}
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      <button type="button" onclick="viewProject(${x.id})" class="btn btn-soft">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                        View
+                      </button>
+                      <button type="button" onclick="downloadProject(${x.id})" class="btn btn-soft">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Download
+                      </button>
+                      ${x.github_url ? `<a href="${SB.esc(x.github_url)}" target="_blank" class="btn btn-soft">
+                        <i data-lucide="github" class="h-4 w-4"></i>
+                        GitHub
+                      </a>` : ''}
+                      ${x.live_url ? `<a href="${SB.esc(x.live_url)}" target="_blank" class="btn btn-soft">
+                        <i data-lucide="external-link" class="h-4 w-4"></i>
+                        Live
+                      </a>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')
+          : `<div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
+               <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
+                 <i data-lucide="folder-open" class="h-6 w-6 text-slate-400"></i>
+               </div>
+               <p class="mt-3 font-medium text-slate-600">No projects added yet</p>
+               <p class="mt-1 text-sm text-slate-400">Add your first project using the form above</p>
+             </div>`;
 
-                `
-                )
-                .join("");
+        if (window.lucide) lucide.createIcons();
+      } catch (e) {
+        projects.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+      }
 
+      // Certifications
+      try {
+        const c = await SB.get('/students/certifications');
+        currentCertifications = Array.isArray(c) ? c : (c.data || []);
+        document.getElementById('certCount').textContent = currentCertifications.length;
+
+        certs.innerHTML = currentCertifications.length
+          ? currentCertifications.map(x => `
+              <div class="credential-card card-hover p-5">
+                <div class="relative z-10 flex items-start gap-4">
+                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+                    <i data-lucide="badge-check" class="h-5 w-5 text-violet-600"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="font-black text-slate-900">${SB.esc(x.name)}</h3>
+                      <span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
+                        Credential
+                      </span>
+                    </div>
+                    <p class="mt-1 text-sm text-slate-500">
+                      ${SB.esc(x.organization || 'Issuer not specified')}
+                    </p>
+                    <div class="mt-3 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
+                      <p><span class="font-bold text-slate-700">Credential ID:</span> ${SB.esc(x.credential_id || '—')}</p>
+                      <p><span class="font-bold text-slate-700">Issue Date:</span> ${SB.esc(x.issue_date || '—')}</p>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      <button type="button" onclick="viewCertificate(${x.id})" class="btn btn-soft">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                        View
+                      </button>
+                      <button type="button" onclick="downloadCertificate(${x.id})" class="btn btn-soft">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Download Record
+                      </button>
+                      ${x.credential_url ? `
+                        <a href="${SB.esc(x.credential_url)}" target="_blank" class="btn btn-soft">
+                          <i data-lucide="external-link" class="h-4 w-4"></i>
+                          Verify Credential
+                        </a>
+                      ` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')
+          : `<div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
+               <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
+                 <i data-lucide="award" class="h-6 w-6 text-slate-400"></i>
+               </div>
+               <p class="mt-3 font-medium text-slate-600">No certifications added yet</p>
+               <p class="mt-1 text-sm text-slate-400">Add your first certificate using the form above</p>
+             </div>`;
+
+        if (window.lucide) lucide.createIcons();
+      } catch (e) {
+        certs.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+      }
+
+      // Simple strength score
+      const total = (parseInt(projectCount.textContent) || 0) + (parseInt(certCount.textContent) || 0);
+      const score = Math.min(100, total * 15);
+      strengthScore.textContent = score + '%';
+      heroStrength.textContent = score + '%';
+      lastUpdated.textContent = new Date().toLocaleDateString();
     }
 
-    catch (error) {
-
-        container.innerHTML = `
-
-            <p class="text-sm text-rose-600">
-
-                ${SB.esc(error.message)}
-
-            </p>
-
-        `;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   SAVE PROFILE
-===================================================== */
-
-profileForm.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        const formData =
-            new FormData(this);
-
-
-        const body = {};
-
-
-        for (
-            const [key, value]
-            of formData.entries()
-        ) {
-
-            if (value === "") {
-
-                body[key] = null;
-
-                continue;
-
-            }
-
-
-            if (
-                [
-                    "college_id",
-                    "department_id",
-                    "year",
-                    "semester"
-                ].includes(key)
-            ) {
-
-                body[key] =
-                    Number(value);
-
-            }
-
-            else if (
-                key === "cgpa"
-            ) {
-
-                body[key] =
-                    Number(value);
-
-            }
-
-            else {
-
-                body[key] =
-                    value;
-
-            }
-
-        }
-
-
-        const message =
-            document.getElementById(
-                "profileMsg"
-            );
-
-
-        message.textContent =
-            "Saving profile...";
-
-
-        message.className =
-            "text-sm text-slate-500 sm:col-span-2";
-
-
-        try {
-
-            if (hasProfile) {
-
-                await SB.patch(
-                    "/students/profile",
-                    body
-                );
-
-            }
-
-            else {
-
-                await SB.post(
-                    "/students/profile",
-                    body
-                );
-
-            }
-
-
-            hasProfile = true;
-
-
-            message.textContent =
-                "Profile saved successfully.";
-
-
-            message.className =
-                "text-sm text-emerald-600 sm:col-span-2";
-
-
-            await loadProfile();
-
-            await loadSkills();
-
-        }
-
-        catch (error) {
-
-            message.textContent =
-                error.message;
-
-
-            message.className =
-                "text-sm text-rose-600 sm:col-span-2";
-
-        }
-
-    }
-);
-
-
-
-/* =====================================================
-   ADD SKILL
-===================================================== */
-
-skillForm.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        if (!hasProfile) {
-
-            SB.toast(
-                "Please create your profile first."
-            );
-
-            return;
-
-        }
-
-
-        const formData =
-            new FormData(this);
-
-
-        const payload = {
-
-            name:
-                formData.get("name"),
-
-            level:
-                formData.get("level"),
-
-            category:
-                formData.get("category")
-                || null
-
-        };
-
-
-        try {
-
-            await SB.post(
-                "/students/skills",
-                payload
-            );
-
-
-            this.reset();
-
-
-            SB.toast(
-                "Skill added successfully."
-            );
-
-
-            await loadSkills();
-
-        }
-
-        catch (error) {
-
-            SB.toast(
-                error.message
-            );
-
-        }
-
-    }
-);
-
-
-
-/* =====================================================
-   REMOVE SKILL
-===================================================== */
-
-window.removeSkill =
-    async function (skillId) {
-
-        try {
-
-            await SB.del(
-                `/students/skills/${skillId}`
-            );
-
-
-            SB.toast(
-                "Skill removed."
-            );
-
-
-            await loadSkills();
-
-        }
-
-        catch (error) {
-
-            SB.toast(
-                error.message
-            );
-
-        }
-
+    // Add Project
+    projectForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const btn = document.getElementById('addProjectBtn');
+      const original = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Adding...`;
+
+      try {
+        await SB.post('/students/projects', {
+          title: f.get('title'),
+          description: f.get('description') || null,
+          technologies: f.get('technologies') || null,
+          github_url: f.get('github_url') || null,
+          live_url: f.get('live_url') || null,
+          start_date: f.get('start_date') || null,
+          end_date: f.get('end_date') || null
+        });
+        e.target.reset();
+        SB.toast?.('Project added successfully') || alert('Project added');
+        loadPortfolio();
+      } catch (err) {
+        SB.toast?.(err.message) || alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+        if (window.lucide) lucide.createIcons();
+      }
     };
 
+    // Add Certificate
+    certForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const btn = document.getElementById('addCertBtn');
+      const original = btn.innerHTML;
 
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Adding...`;
 
-/* =====================================================
-   INITIALIZE PAGE
-===================================================== */
+      try {
+        await SB.post('/students/certifications', {
+          name: f.get('name'),
+          organization: f.get('organization') || null,
+          issue_date: f.get('issue_date') || null,
+          credential_url: f.get('credential_url') || null,
+          credential_id: f.get('credential_id') || null
+        });
+        e.target.reset();
+        SB.toast?.('Certificate added successfully') || alert('Certificate added');
+        loadPortfolio();
+      } catch (err) {
+        SB.toast?.(err.message) || alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+        if (window.lucide) lucide.createIcons();
+      }
+    };
 
-async function init() {
-
-    await loadUser();
-
-    await loadProfile();
-
-    await loadColleges();
-
-    await loadSkills();
-
-}
-
-
-init();
-
-</script>
-
-
-
-<!-- Lucide -->
-
-<script>
-
-    if (window.lucide) {
-
-        lucide.createIcons();
-
+    function openDetailsModal(eyebrow, title, body) {
+      modalEyebrow.textContent = eyebrow;
+      modalTitle.textContent = title;
+      modalBody.innerHTML = body;
+      detailsModal.classList.remove('hidden');
+      detailsModal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
     }
 
-</script>
+    window.closeDetailsModal = function () {
+      detailsModal.classList.add('hidden');
+      detailsModal.classList.remove('flex');
+    };
 
+    window.viewProject = function (id) {
+      const p = currentProjects.find(x => Number(x.id) === Number(id));
+      if (!p) return;
 
+      openDetailsModal(
+        'Project Details',
+        p.title,
+        `
+          <div class="space-y-5">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Description</p>
+              <p class="mt-2 leading-7 text-slate-700">${SB.esc(p.description || 'No description added.')}</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Technologies</p>
+                <p class="mt-2 font-semibold text-slate-800">${SB.esc(p.technologies || '—')}</p>
+              </div>
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Duration</p>
+                <p class="mt-2 font-semibold text-slate-800">${SB.esc(p.start_date || '—')} → ${SB.esc(p.end_date || '—')}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${p.github_url ? `<a href="${SB.esc(p.github_url)}" target="_blank" class="btn btn-soft">GitHub</a>` : ''}
+              ${p.live_url ? `<a href="${SB.esc(p.live_url)}" target="_blank" class="btn btn-soft">Live Demo</a>` : ''}
+            </div>
+          </div>
+        `
+      );
+    };
+
+    window.downloadProject = function (id) {
+      const p = currentProjects.find(x => Number(x.id) === Number(id));
+      if (!p) return;
+
+      printDocument(
+        `${p.title} - Project Summary`,
+        `
+          <h1>${escapePrint(p.title)}</h1>
+          <p class="subtitle">SkillBridge AI • Project Record</p>
+          <div class="grid">
+            <div class="field"><span>Technologies</span><b>${escapePrint(p.technologies)}</b></div>
+            <div class="field"><span>Start Date</span><b>${escapePrint(p.start_date)}</b></div>
+            <div class="field"><span>End Date</span><b>${escapePrint(p.end_date)}</b></div>
+            <div class="field"><span>GitHub</span><b>${escapePrint(p.github_url)}</b></div>
+            <div class="field"><span>Live URL</span><b>${escapePrint(p.live_url)}</b></div>
+          </div>
+          <h2>Description</h2>
+          <p>${escapePrint(p.description)}</p>
+        `
+      );
+    };
+
+    window.viewCertificate = function (id) {
+      const c = currentCertifications.find(x => Number(x.id) === Number(id));
+      if (!c) return;
+
+      openDetailsModal(
+        'Certification Record',
+        c.name,
+        `
+          <div class="space-y-5">
+            <div class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 to-indigo-50 p-6 text-center">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <i data-lucide="award" class="h-7 w-7 text-violet-600"></i>
+              </div>
+              <p class="mt-4 text-xs font-black uppercase tracking-[0.18em] text-violet-600">Credential Record</p>
+              <h3 class="mt-2 text-2xl font-black text-slate-950">${SB.esc(c.name)}</h3>
+              <p class="mt-2 text-slate-600">${SB.esc(c.organization || 'Issuer not specified')}</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Credential ID</p>
+                <p class="mt-2 font-bold text-slate-800">${SB.esc(c.credential_id || '—')}</p>
+              </div>
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Issue Date</p>
+                <p class="mt-2 font-bold text-slate-800">${SB.esc(c.issue_date || '—')}</p>
+              </div>
+            </div>
+            ${c.credential_url ? `
+              <a href="${SB.esc(c.credential_url)}" target="_blank" class="btn btn-primary">
+                <i data-lucide="external-link" class="h-4 w-4"></i>
+                Open Official Credential
+              </a>
+            ` : `
+              <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                No external credential URL was provided.
+              </div>
+            `}
+          </div>
+        `
+      );
+    };
+
+    window.downloadCertificate = function (id) {
+      const c = currentCertifications.find(x => Number(x.id) === Number(id));
+      if (!c) return;
+
+      printDocument(
+        `${c.name} - Credential Record`,
+        `
+          <div class="certificate">
+            <div class="seal">✓</div>
+            <div class="eyebrow">SKILLBRIDGE AI • CREDENTIAL RECORD</div>
+            <h1>${escapePrint(c.name)}</h1>
+            <p class="issuer">Issued by ${escapePrint(c.organization || 'Issuer not specified')}</p>
+            <div class="certificate-grid">
+              <div>
+                <span>Credential ID</span>
+                <strong>${escapePrint(c.credential_id)}</strong>
+              </div>
+              <div>
+                <span>Issue Date</span>
+                <strong>${escapePrint(c.issue_date)}</strong>
+              </div>
+              <div class="wide">
+                <span>Verification URL</span>
+                <strong>${escapePrint(c.credential_url)}</strong>
+              </div>
+            </div>
+            <div class="note">
+              This document is a SkillBridge portfolio record generated from the student's saved credential details.
+              It is not a replacement for the certificate issued by the original organization.
+            </div>
+          </div>
+        `
+      );
+    };
+
+    function printDocument(title, content) {
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${escapePrint(title)}</title>
+          <style>
+            body{font-family:Arial,sans-serif;max-width:900px;margin:40px auto;padding:30px;color:#0f172a;background:#fff}
+            h1{font-size:30px;margin:0;color:#312e81}
+            h2{margin-top:30px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}
+            .subtitle{color:#64748b;margin-top:8px}
+            .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:25px}
+            .field{border:1px solid #e2e8f0;border-radius:12px;padding:14px}
+            .field span,.certificate-grid span{display:block;font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700}
+            .field b,.certificate-grid strong{display:block;margin-top:6px}
+            .certificate{border:2px solid #c7d2fe;border-radius:24px;padding:50px;text-align:center;background:linear-gradient(135deg,#ffffff,#eef2ff)}
+            .seal{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#4f46e5;color:#fff;font-size:28px;font-weight:bold}
+            .eyebrow{font-size:12px;letter-spacing:2px;font-weight:bold;color:#6366f1}
+            .issuer{font-size:17px;color:#475569}
+            .certificate-grid{margin-top:35px;display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
+            .certificate-grid>div{border:1px solid #dbeafe;border-radius:14px;padding:16px;background:#fff}
+            .certificate-grid .wide{grid-column:1/-1}
+            .note{margin-top:35px;padding-top:18px;border-top:1px solid #cbd5e1;font-size:12px;line-height:1.6;color:#64748b}
+            @media print{body{margin:0;padding:0}.certificate{break-inside:avoid}}
+          </style>
+        </head>
+        <body>${content}</body>
+        </html>
+      `);
+      win.document.close();
+      setTimeout(() => {
+        win.focus();
+        win.print();
+      }, 350);
+    }
+
+    function escapePrint(value) {
+      return String(value ?? '—')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    // Initial load
+    loadPortfolio();
+  </script>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
 </body>
-
 </html>

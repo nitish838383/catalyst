@@ -43,30 +43,85 @@
 
 
                 <!-- ============================================= -->
-                <!-- Header -->
+                <!-- Premium Dashboard Header -->
                 <!-- ============================================= -->
 
-                <header class="mb-7">
+                <header class="dashboard-hero mb-7">
 
-                    <p
-                        class="text-sm font-semibold text-indigo-600"
-                    >
-                        SkillBridge AI
-                    </p>
+                    <div class="dashboard-hero-grid"></div>
 
-                    <h1
-                        class="mt-1 text-3xl font-bold tracking-tight"
-                    >
-                        College / TPO Dashboard
-                    </h1>
+                    <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-                    <p
-                        class="mt-2 text-slate-500"
-                    >
-                        Manage your college profile, students,
-                        departments, skill analytics and industry
-                        collaborations.
-                    </p>
+                        <div>
+
+                            <div class="mb-3 flex flex-wrap items-center gap-2">
+
+                                <span class="dashboard-status-badge">
+                                    <span class="dashboard-status-dot"></span>
+                                    College Portal
+                                </span>
+
+                                <span
+                                    id="verificationBadge"
+                                    class="dashboard-status-badge dashboard-status-badge-soft"
+                                >
+                                    Verification status
+                                </span>
+
+                            </div>
+
+                            <p class="text-sm font-semibold text-indigo-100">
+                                Welcome back
+                            </p>
+
+                            <h1
+                                id="heroCollegeName"
+                                class="mt-1 max-w-4xl text-3xl font-black tracking-tight text-white sm:text-4xl"
+                            >
+                                College
+                            </h1>
+
+                            <p class="mt-2 text-sm font-bold uppercase tracking-[0.15em] text-indigo-200">
+                                College / TPO Dashboard
+                            </p>
+
+                            <p class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100 sm:text-base">
+                                Manage your college profile, students, departments,
+                                skill analytics and industry collaborations from one
+                                intelligent command center.
+                            </p>
+
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 lg:w-[320px]">
+
+                            <a
+                                href="analytics.html"
+                                class="dashboard-hero-action"
+                            >
+                                <i
+                                    data-lucide="chart-spline"
+                                    class="h-5 w-5"
+                                ></i>
+
+                                <span>Analytics</span>
+                            </a>
+
+                            <a
+                                href="collaborations.html"
+                                class="dashboard-hero-action"
+                            >
+                                <i
+                                    data-lucide="handshake"
+                                    class="h-5 w-5"
+                                ></i>
+
+                                <span>Collaborations</span>
+                            </a>
+
+                        </div>
+
+                    </div>
 
                 </header>
 
@@ -136,7 +191,7 @@
 
                 <section
                     id="collegeProfileCard"
-                    class="card mb-6 hidden overflow-hidden"
+                    class="card dashboard-profile-card mb-6 hidden overflow-hidden"
                 >
 
                     <div
@@ -344,7 +399,7 @@
 
 
                     <!-- Students -->
-                    <div class="card p-5">
+                    <div class="card dashboard-stat p-5">
 
                         <div
                             class="flex items-center justify-between"
@@ -386,7 +441,7 @@
 
 
                     <!-- Departments -->
-                    <div class="card p-5">
+                    <div class="card dashboard-stat p-5">
 
                         <div
                             class="flex items-center justify-between"
@@ -428,7 +483,7 @@
 
 
                     <!-- Skill Gaps -->
-                    <div class="card p-5">
+                    <div class="card dashboard-stat p-5">
 
                         <div
                             class="flex items-center justify-between"
@@ -470,7 +525,7 @@
 
 
                     <!-- Collaborations -->
-                    <div class="card p-5">
+                    <div class="card dashboard-stat p-5">
 
                         <div
                             class="flex items-center justify-between"
@@ -541,7 +596,7 @@
                         <!-- Profile -->
                         <a
                             href="profile.html"
-                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                            class="card dashboard-action p-5"
                         >
 
                             <div
@@ -574,7 +629,7 @@
                         <!-- Departments -->
                         <a
                             href="departments.html"
-                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                            class="card dashboard-action p-5"
                         >
 
                             <div
@@ -607,7 +662,7 @@
                         <!-- Analytics -->
                         <a
                             href="analytics.html"
-                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                            class="card dashboard-action p-5"
                         >
 
                             <div
@@ -640,7 +695,7 @@
                         <!-- Collaborations -->
                         <a
                             href="collaborations.html"
-                            class="card p-5 transition hover:-translate-y-1 hover:shadow-md"
+                            class="card dashboard-action p-5"
                         >
 
                             <div
@@ -762,6 +817,12 @@
                     college.name ??
                     "College";
 
+                document.getElementById(
+                    "heroCollegeName"
+                ).textContent =
+                    college.name ??
+                    "College";
+
 
                 document.getElementById(
                     "collegeUniversity"
@@ -782,6 +843,26 @@
                 ).textContent =
                     college.state ??
                     "Not specified";
+
+
+                const verificationBadge =
+                    document.getElementById(
+                        "verificationBadge"
+                    );
+
+                if (verificationBadge) {
+
+                    verificationBadge.textContent =
+                        college.is_verified
+                            ? "Verified College"
+                            : "Verification Pending";
+
+                    verificationBadge.classList.toggle(
+                        "is-verified",
+                        Boolean(college.is_verified)
+                    );
+
+                }
 
 
                 const website =
@@ -816,6 +897,16 @@
             catch (error) {
 
                 currentCollege = null;
+
+
+                const heroName =
+                    document.getElementById(
+                        "heroCollegeName"
+                    );
+
+                if (heroName) {
+                    heroName.textContent = "College";
+                }
 
 
                 document

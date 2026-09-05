@@ -3,15 +3,61 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <link rel="stylesheet" href="/assets/css/app.css">
 
     <title>Career Readiness | SkillBridge AI</title>
+
+    <style>
+        body {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(99, 102, 241, 0.09), transparent 28%),
+                radial-gradient(circle at 92% 12%, rgba(14, 165, 233, 0.07), transparent 30%),
+                #f8fafc;
+        }
+
+        .progress-track {
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.7s ease;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+            border-color: #c7d2fe;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
@@ -26,281 +72,360 @@
 
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-                <header class="mb-7">
+                <!-- Header -->
+                <header class="mb-8">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-indigo-600 tracking-wide">
+                                SkillBridge AI
+                            </p>
+                            <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                                Career Readiness
+                            </h1>
+                            <p class="mt-2 max-w-2xl text-slate-500">
+                                Measure role readiness and generate a personalized learning roadmap.
+                            </p>
+                        </div>
 
-                    <p class="text-sm font-semibold text-indigo-600">
-                        SkillBridge AI
-                    </p>
-
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
-                        Career Readiness
-                    </h1>
-
-                    <p class="mt-2 text-slate-500">
-                        Measure role readiness and generate a personalized learning roadmap.
-                    </p>
-
+                        <button id="downloadBtn" class="btn btn-soft hidden items-center gap-2">
+                            <i data-lucide="download" class="h-4 w-4"></i>
+                            Download Report
+                        </button>
+                    </div>
                 </header>
 
+                <div class="grid gap-7 lg:grid-cols-2">
 
-                <div class="grid gap-6 lg:grid-cols-2">
+                    <!-- ==================== READINESS ==================== -->
+                    <section class="card overflow-hidden">
+                        <div class="border-b border-slate-100 p-6">
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+                                    <i data-lucide="gauge" class="h-6 w-6"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-black text-slate-900">Career Readiness</h2>
+                                    <p class="text-sm text-slate-500">Check how ready you are for a role</p>
+                                </div>
+                            </div>
+                        </div>
 
-                    <section class="card p-6">
+                        <div class="p-6">
+                            <label class="label">Target Role</label>
+                            <select id="role" class="input">
+                                <option value="backend developer">Backend Developer</option>
+                                <option value="frontend developer">Frontend Developer</option>
+                                <option value="full stack developer">Full Stack Developer</option>
+                                <option value="ai ml engineer">AI / ML Engineer</option>
+                            </select>
 
-                        <h2 class="text-xl font-black">
-                            Career readiness
-                        </h2>
+                            <button id="checkBtn" class="btn btn-primary mt-5 w-full sm:w-auto flex items-center justify-center gap-2">
+                                <i data-lucide="search" class="h-4 w-4"></i>
+                                Check Readiness
+                            </button>
 
-
-                        <label class="label mt-5">
-                            Target role
-                        </label>
-
-
-                        <select
-                            id="role"
-                            class="input"
-                        >
-
-                            <option value="backend developer">
-                                Backend Developer
-                            </option>
-
-                            <option value="frontend developer">
-                                Frontend Developer
-                            </option>
-
-                            <option value="full stack developer">
-                                Full Stack Developer
-                            </option>
-
-                            <option value="ai ml engineer">
-                                AI/ML Engineer
-                            </option>
-
-                        </select>
-
-
-                        <button
-                            id="checkBtn"
-                            class="btn btn-primary mt-4"
-                        >
-                            Check readiness
-                        </button>
-
-
-                        <div
-                            id="readiness"
-                            class="mt-6"
-                        ></div>
-
+                            <div id="readiness" class="mt-7"></div>
+                        </div>
                     </section>
 
+                    <!-- ==================== ROADMAP ==================== -->
+                    <section class="card overflow-hidden">
+                        <div class="border-b border-slate-100 p-6">
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
+                                    <i data-lucide="route" class="h-6 w-6"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-black text-slate-900">Personalized Roadmap</h2>
+                                    <p class="text-sm text-slate-500">Your recommended learning path</p>
+                                </div>
+                            </div>
+                        </div>
 
-                    <section class="card p-6">
+                        <div class="p-6">
+                            <button id="roadmapBtn" class="btn btn-soft w-full sm:w-auto flex items-center justify-center gap-2">
+                                <i data-lucide="sparkles" class="h-4 w-4"></i>
+                                Generate Roadmap
+                            </button>
 
-                        <h2 class="text-xl font-black">
-                            Personalized roadmap
-                        </h2>
-
-
-                        <button
-                            id="roadmapBtn"
-                            class="btn btn-soft mt-5"
-                        >
-                            Generate roadmap
-                        </button>
-
-
-                        <div
-                            id="roadmap"
-                            class="mt-5 space-y-3"
-                        ></div>
-
+                            <div id="roadmap" class="mt-6 space-y-3"></div>
+                        </div>
                     </section>
 
                 </div>
-
             </div>
-
         </main>
-
     </div>
-
 
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/shell.js"></script>
 
-
     <script>
+        let lastReadinessData = null;
+        let lastRole = "backend developer";
 
+        const checkBtn = document.getElementById("checkBtn");
+        const roadmapBtn = document.getElementById("roadmapBtn");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const readiness = document.getElementById("readiness");
+        const roadmap = document.getElementById("roadmap");
+        const roleSelect = document.getElementById("role");
+
+        // ==================== CHECK READINESS ====================
         checkBtn.onclick = async () => {
+            const role = roleSelect.value;
+            lastRole = role;
+
+            checkBtn.disabled = true;
+            checkBtn.innerHTML = `<span class="spinner"></span> Checking...`;
+
+            readiness.innerHTML = `
+                <div class="flex items-center justify-center py-10 text-slate-400">
+                    <i data-lucide="loader-2" class="h-5 w-5 animate-spin mr-2"></i>
+                    Calculating readiness...
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
 
             try {
+                const r = await SB.get('/career/readiness?role=' + encodeURIComponent(role));
+                const d = r.data || r;
+                lastReadinessData = d;
 
-                const r =
-                    await SB.get(
-                        '/career/readiness?role=' +
-                        encodeURIComponent(role.value)
-                    );
+                const score = Number(d.readiness_score ?? d.score ?? d.percentage ?? 0);
+                const matched = d.matched_skills || d.matches || [];
+                const missing = d.missing_skills || d.skill_gaps || d.missing || [];
 
+                let statusText = "";
+                let statusColor = "text-slate-500";
 
-                const d =
-                    r.data || r;
-
+                if (score >= 80) {
+                    statusText = "Strong readiness. Focus on advanced projects and real-world experience.";
+                    statusColor = "text-emerald-600";
+                } else if (score >= 60) {
+                    statusText = "Good foundation. Build the missing skills to become job-ready.";
+                    statusColor = "text-indigo-600";
+                } else if (score >= 40) {
+                    statusText = "Developing profile. Focus on the priority skills below.";
+                    statusColor = "text-amber-600";
+                } else {
+                    statusText = "Early-stage readiness. Build strong fundamentals first.";
+                    statusColor = "text-rose-600";
+                }
 
                 readiness.innerHTML = `
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
+                        <div class="flex items-end gap-2">
+                            <span class="text-5xl font-black text-indigo-600">${Math.round(score)}</span>
+                            <span class="mb-1.5 text-xl font-bold text-slate-400">%</span>
+                        </div>
 
-                    <div class="text-5xl font-black text-indigo-600">
-                        ${d.readiness_score ?? d.score ?? 0}%
+                        <div class="mt-4 progress-track">
+                            <div class="progress-fill" style="width: ${Math.min(100, score)}%"></div>
+                        </div>
+
+                        <p class="mt-4 text-sm ${statusColor}">${statusText}</p>
                     </div>
 
-                    <p class="mt-3 text-sm">
+                    <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+                            <p class="text-xs font-bold uppercase tracking-wide text-emerald-700">Matched Skills</p>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                ${matched.length
+                                    ? matched.map(s => `
+                                        <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+                                            ✓ ${SB.esc(typeof s === 'string' ? s : (s.name || s.skill_name || s))}
+                                        </span>
+                                    `).join('')
+                                    : '<span class="text-sm text-slate-500">None yet</span>'
+                                }
+                            </div>
+                        </div>
 
-                        <b>
-                            Matched:
-                        </b>
-
-                        ${
-                            (d.matched_skills || [])
-                                .map(SB.esc)
-                                .join(', ') ||
-                            '—'
-                        }
-
-                    </p>
-
-                    <p class="mt-2 text-sm">
-
-                        <b>
-                            Missing:
-                        </b>
-
-                        ${
-                            (d.missing_skills || [])
-                                .map(SB.esc)
-                                .join(', ') ||
-                            '—'
-                        }
-
-                    </p>
-
+                        <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
+                            <p class="text-xs font-bold uppercase tracking-wide text-amber-700">Missing Skills</p>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                ${missing.length
+                                    ? missing.map(s => `
+                                        <span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">
+                                            ${SB.esc(typeof s === 'string' ? s : (s.name || s.skill_name || s))}
+                                        </span>
+                                    `).join('')
+                                    : '<span class="text-sm text-emerald-600">No major gaps</span>'
+                                }
+                            </div>
+                        </div>
+                    </div>
                 `;
 
-            }
+                downloadBtn.classList.remove("hidden");
+                downloadBtn.classList.add("inline-flex");
 
-            catch (e) {
-
+            } catch (e) {
                 readiness.innerHTML = `
-
-                    <p class="text-rose-600">
-                        ${SB.esc(e.message)}
-                    </p>
-
+                    <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+                        <p class="font-semibold text-rose-700">Failed to check readiness</p>
+                        <p class="mt-1 text-sm text-rose-600">${SB.esc(e.message)}</p>
+                    </div>
                 `;
-
+            } finally {
+                checkBtn.disabled = false;
+                checkBtn.innerHTML = `
+                    <i data-lucide="search" class="h-4 w-4"></i>
+                    Check Readiness
+                `;
+                if (window.lucide) lucide.createIcons();
             }
-
         };
 
-
+        // ==================== GENERATE ROADMAP ====================
         roadmapBtn.onclick = async () => {
+            const role = roleSelect.value;
+
+            roadmapBtn.disabled = true;
+            roadmapBtn.innerHTML = `<span class="spinner"></span> Generating...`;
+
+            roadmap.innerHTML = `
+                <div class="flex items-center justify-center py-10 text-slate-400">
+                    <i data-lucide="loader-2" class="h-5 w-5 animate-spin mr-2"></i>
+                    Generating roadmap...
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
 
             try {
+                const r = await SB.request('/career/roadmap?role=' + encodeURIComponent(role), {
+                    method: 'POST'
+                });
 
-                const r =
-                    await SB.request(
-                        '/career/roadmap?role=' +
-                        encodeURIComponent(role.value),
-                        {
-                            method: 'POST'
-                        }
-                    );
+                const d = r.data || r;
+                const steps = d.roadmap || d.steps || d.roadmap_steps || [];
 
+                if (!steps.length) {
+                    roadmap.innerHTML = `
+                        <div class="rounded-xl border border-slate-200 p-5 text-center">
+                            <p class="font-medium text-slate-600">Roadmap generated</p>
+                            <p class="mt-1 text-sm text-slate-400">No detailed steps returned.</p>
+                        </div>
+                    `;
+                    return;
+                }
 
-                const d =
-                    r.data || r;
+                roadmap.innerHTML = steps.map((s, i) => {
+                    const title = s.title || s.skill || s.name || `Step ${i + 1}`;
+                    const desc = s.description || s.action || s.details || '';
 
+                    return `
+                        <div class="card-hover flex gap-4 rounded-xl border border-slate-200 bg-white p-4">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 font-black text-white">
+                                ${i + 1}
+                            </div>
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-slate-900">${SB.esc(title)}</h3>
+                                ${desc ? `<p class="mt-1.5 text-sm leading-relaxed text-slate-500">${SB.esc(desc)}</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
-                const steps =
-                    d.roadmap ||
-                    d.steps ||
-                    d.roadmap_steps ||
-                    [];
-
-
-                roadmap.innerHTML =
-                    steps
-                        .map(
-                            (s, i) => `
-
-                                <div class="rounded-xl border p-4">
-
-                                    <span class="badge">
-                                        Step ${i + 1}
-                                    </span>
-
-                                    <h3 class="mt-2 font-bold">
-
-                                        ${
-                                            SB.esc(
-                                                s.title ||
-                                                s.skill ||
-                                                s.name ||
-                                                'Learning step'
-                                            )
-                                        }
-
-                                    </h3>
-
-                                    <p class="mt-1 text-sm text-slate-500">
-
-                                        ${
-                                            SB.esc(
-                                                s.description ||
-                                                s.action ||
-                                                ''
-                                            )
-                                        }
-
-                                    </p>
-
-                                </div>
-
-                            `
-                        )
-                        .join('') ||
-                    '<p class="text-slate-500">Roadmap generated.</p>';
-
-            }
-
-            catch (e) {
-
+            } catch (e) {
                 roadmap.innerHTML = `
-
-                    <p class="text-rose-600">
-                        ${SB.esc(e.message)}
-                    </p>
-
+                    <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+                        <p class="font-semibold text-rose-700">Failed to generate roadmap</p>
+                        <p class="mt-1 text-sm text-rose-600">${SB.esc(e.message)}</p>
+                    </div>
                 `;
-
+            } finally {
+                roadmapBtn.disabled = false;
+                roadmapBtn.innerHTML = `
+                    <i data-lucide="sparkles" class="h-4 w-4"></i>
+                    Generate Roadmap
+                `;
+                if (window.lucide) lucide.createIcons();
             }
-
         };
 
-    </script>
+        // ==================== DOWNLOAD REPORT ====================
+        downloadBtn.onclick = () => {
+            if (!lastReadinessData) {
+                SB.toast("Please check readiness first.");
+                return;
+            }
 
+            const d = lastReadinessData;
+            const score = Math.round(Number(d.readiness_score ?? d.score ?? d.percentage ?? 0));
+            const matched = d.matched_skills || d.matches || [];
+            const missing = d.missing_skills || d.skill_gaps || d.missing || [];
 
-    <script>
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Career Readiness Report — SkillBridge AI</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 30px; color: #0f172a; }
+                        .hero { background: linear-gradient(135deg, #312e81, #4f46e5); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px; }
+                        h1 { margin: 0; font-size: 28px; }
+                        .score { font-size: 48px; font-weight: 900; margin: 20px 0 10px; }
+                        .section { margin-top: 28px; }
+                        .section h2 { border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; font-size: 18px; }
+                        .chip { display: inline-block; padding: 6px 12px; margin: 4px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+                        .matched { background: #ecfdf5; color: #047857; }
+                        .missing { background: #fffbeb; color: #b45309; }
+                        .footer { margin-top: 40px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="hero">
+                        <div style="font-size:12px; letter-spacing:1px; opacity:.8;">SKILLBRIDGE AI</div>
+                        <h1>Career Readiness Report</h1>
+                        <p style="opacity:.9; margin-top:8px;">Target Role: ${escapeHtml(lastRole)}</p>
+                        <div class="score">${score}%</div>
+                    </div>
 
-        if (window.lucide) {
-            lucide.createIcons();
+                    <div class="section">
+                        <h2>Matched Skills</h2>
+                        <div>
+                            ${matched.length
+                                ? matched.map(s => `<span class="chip matched">✓ ${escapeHtml(typeof s === 'string' ? s : (s.name || s.skill_name || s))}</span>`).join('')
+                                : '<p>No matched skills found.</p>'
+                            }
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Missing Skills</h2>
+                        <div>
+                            ${missing.length
+                                ? missing.map(s => `<span class="chip missing">${escapeHtml(typeof s === 'string' ? s : (s.name || s.skill_name || s))}</span>`).join('')
+                                : '<p>No major skill gaps.</p>'
+                            }
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Generated by SkillBridge AI · This report is for career guidance purposes.
+                    </div>
+
+                    <script>window.onload = () => window.print();<\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        };
+
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;');
         }
 
+        if (window.lucide) lucide.createIcons();
     </script>
 
 </body>
-
 </html>

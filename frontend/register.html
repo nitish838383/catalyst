@@ -1,1 +1,267 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link rel="stylesheet" href="/assets/css/app.css"><title>Register | SkillBridge AI</title></head><body class="bg-slate-50 text-slate-900"><div class="grid min-h-screen place-items-center bg-slate-950 px-4 py-10"><div class="card w-full max-w-lg p-7"><a href="/" class="text-xl font-black text-indigo-600">SkillBridge AI</a><h1 class="mt-6 text-3xl font-black">Create your account</h1><form id="registerForm" class="mt-6 grid gap-4"><div><label class="label">Full name</label><input class="input" name="full_name" required></div><div><label class="label">Email</label><input class="input" type="email" name="email" required></div><div><label class="label">Password</label><input class="input" type="password" name="password" minlength="8" required></div><div><label class="label">Role</label><select class="input" name="role"><option value="student">Student</option><option value="recruiter">Recruiter / Industry</option><option value="college">College / TPO</option></select></div><button class="btn btn-primary">Register</button><p id="msg" class="text-sm text-rose-600"></p></form><p class="mt-5 text-sm text-slate-500">Already registered? <a class="font-bold text-indigo-600" href="/login.html">Login</a></p></div></div><script src="/assets/js/config.js"></script><script src="/assets/js/api.js"></script><script src="/assets/js/auth.js"></script><script>document.getElementById('registerForm').onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),m=document.getElementById('msg');try{const r=await SB.post('/auth/register',{full_name:f.get('full_name'),email:f.get('email'),password:f.get('password'),role:f.get('role')});Auth.save(r.access_token);const me=await Auth.me(true);location.href=Auth.home(me.role)}catch(err){m.textContent=err.message}}</script><script>if(window.lucide) lucide.createIcons();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register — SkillBridge AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <title>Register | SkillBridge AI</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .input-focus:focus {
+      border-color: #818cf8 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Custom select arrow */
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+  <div class="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 overflow-hidden">
+
+    <!-- Ambient Glow -->
+    <div class="pointer-events-none fixed inset-0 overflow-hidden">
+      <div class="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full bg-indigo-600/20 blur-[120px]"></div>
+      <div class="absolute -right-24 bottom-10 h-[360px] w-[360px] rounded-full bg-violet-600/15 blur-[100px]"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
+      <a href="/" class="flex items-center gap-2 text-xl font-black text-white">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20">
+          <i data-lucide="sparkles" class="h-4 w-4 text-indigo-300"></i>
+        </span>
+        SkillBridge AI
+      </a>
+      <a href="/login.html" class="btn border border-white/15 bg-white/5 text-white hover:bg-white/10 transition">
+        Login
+      </a>
+    </nav>
+
+    <!-- Center Card -->
+    <div class="relative z-10 flex min-h-[calc(100vh-88px)] items-center justify-center px-4 pb-16">
+      <div class="w-full max-w-md">
+
+        <!-- Header -->
+        <div class="mb-9 text-center">
+          <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/20 ring-1 ring-indigo-400/30 shadow-lg shadow-indigo-500/10">
+            <i data-lucide="user-plus" class="h-8 w-8 text-indigo-300"></i>
+          </div>
+          <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Create your account</h1>
+          <p class="mt-2.5 text-slate-400">Join SkillBridge AI as a student, college or industry partner</p>
+        </div>
+
+        <!-- Card -->
+        <div class="glass-card rounded-3xl border border-white/10 p-8 shadow-2xl sm:p-9">
+
+          <form id="registerForm" class="space-y-5">
+
+            <!-- Full Name -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-300">Full name</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="user" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <input
+                  class="input input-focus w-full rounded-xl border border-white/15 bg-white/5 py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-none transition"
+                  name="full_name"
+                  type="text"
+                  placeholder="Your full name"
+                  required
+                  autocomplete="name"
+                >
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-300">Email</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="mail" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <input
+                  class="input input-focus w-full rounded-xl border border-white/15 bg-white/5 py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-none transition"
+                  name="email"
+                  type="email"
+                  placeholder="you@college.edu"
+                  required
+                  autocomplete="email"
+                >
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-300">Password</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="lock" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <input
+                  id="password"
+                  class="input input-focus w-full rounded-xl border border-white/15 bg-white/5 py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-none transition"
+                  name="password"
+                  type="password"
+                  placeholder="Minimum 8 characters"
+                  minlength="8"
+                  required
+                  autocomplete="new-password"
+                >
+                <button
+                  type="button"
+                  id="togglePassword"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 transition hover:text-slate-300"
+                  aria-label="Toggle password visibility"
+                >
+                  <i data-lucide="eye" class="h-4 w-4" id="eyeIcon"></i>
+                </button>
+              </div>
+              <p class="mt-1.5 text-xs text-slate-500">Must be at least 8 characters</p>
+            </div>
+
+            <!-- Role -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-300">I am a</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <i data-lucide="users" class="h-4 w-4 text-slate-500"></i>
+                </div>
+                <select
+                  class="input input-focus w-full rounded-xl border border-white/15 bg-white/5 py-3.5 pl-11 text-sm text-white outline-none transition"
+                  name="role"
+                  required
+                >
+                  <option value="student" class="bg-slate-900 text-white">Student</option>
+                  <option value="college" class="bg-slate-900 text-white">College / TPO</option>
+                  <option value="recruiter" class="bg-slate-900 text-white">Recruiter / Industry</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              id="submitBtn"
+              class="btn btn-primary mt-2 flex w-full items-center justify-center gap-2 py-3.5 text-base shadow-lg shadow-indigo-500/25"
+            >
+              <span id="btnContent">
+                <span id="btnText">Create account</span>
+              </span>
+            </button>
+
+            <!-- Error / Success -->
+            <p id="msg" class="min-h-[20px] text-center text-sm text-rose-400"></p>
+          </form>
+
+          <div class="mt-7 border-t border-white/10 pt-6 text-center">
+            <p class="text-sm text-slate-400">
+              Already registered?
+              <a class="font-semibold text-indigo-400 transition hover:text-indigo-300" href="/login.html">
+                Login
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Trust line -->
+        <p class="mt-8 text-center text-xs text-slate-500">
+          Free to join • Role-based dashboards • Secure authentication
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+
+    // Password show/hide
+    document.getElementById('togglePassword')?.addEventListener('click', () => {
+      const input = document.getElementById('password');
+      const icon = document.getElementById('eyeIcon');
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    });
+
+    // Register form
+    document.getElementById('registerForm').onsubmit = async (e) => {
+      e.preventDefault();
+
+      const f = new FormData(e.target);
+      const msg = document.getElementById('msg');
+      const btn = document.getElementById('submitBtn');
+      const btnContent = document.getElementById('btnContent');
+
+      msg.textContent = '';
+      btn.disabled = true;
+
+      btnContent.innerHTML = `
+        <div class="spinner"></div>
+        <span>Creating account...</span>
+      `;
+
+      try {
+        const r = await SB.post('/auth/register', {
+          full_name: f.get('full_name'),
+          email: f.get('email'),
+          password: f.get('password'),
+          role: f.get('role')
+        });
+
+        Auth.save(r.access_token);
+        const me = await Auth.me(true);
+        location.href = Auth.home(me.role);
+
+      } catch (err) {
+        msg.textContent = err.message || 'Registration failed';
+        btn.disabled = false;
+        btnContent.innerHTML = `<span id="btnText">Create account</span>`;
+      }
+    };
+  </script>
+</body>
+</html>

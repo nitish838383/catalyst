@@ -3,15 +3,42 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <link rel="stylesheet" href="/assets/css/app.css">
 
     <title>Notifications | SkillBridge AI</title>
+
+    <style>
+        body {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(99, 102, 241, 0.09), transparent 28%),
+                radial-gradient(circle at 92% 12%, rgba(14, 165, 233, 0.07), transparent 30%),
+                #f8fafc;
+        }
+
+        .notif-card {
+            transition: all 0.2s ease;
+        }
+
+        .notif-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+            border-color: #c7d2fe;
+        }
+
+        .notif-unread {
+            border-left: 4px solid #4f46e5;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.04), transparent);
+        }
+
+        .notif-read {
+            opacity: 0.75;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
@@ -26,176 +53,181 @@
 
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-                <header class="mb-7">
+                <!-- Header -->
+                <header class="mb-8">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-indigo-600 tracking-wide">
+                                SkillBridge AI
+                            </p>
+                            <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                                Notifications
+                            </h1>
+                            <p class="mt-2 text-slate-500 max-w-2xl">
+                                Application, interview and collaboration updates.
+                            </p>
+                        </div>
 
-                    <p class="text-sm font-semibold text-indigo-600">
-                        SkillBridge AI
-                    </p>
-
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
-                        Notifications
-                    </h1>
-
-                    <p class="mt-2 text-slate-500">
-                        Application, interview and collaboration updates.
-                    </p>
-
+                        <button id="readAll" class="btn btn-soft flex items-center gap-2">
+                            <i data-lucide="check-check" class="h-4 w-4"></i>
+                            Mark all read
+                        </button>
+                    </div>
                 </header>
 
-
-                <div class="mb-4 flex justify-end">
-
-                    <button
-                        id="readAll"
-                        class="btn btn-soft"
-                    >
-                        Mark all read
-                    </button>
-
+                <!-- Stats / Quick Info -->
+                <div class="mb-6 flex flex-wrap items-center gap-3">
+                    <div class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        <span class="font-semibold text-slate-700" id="totalCount">0</span>
+                        <span class="text-slate-500"> total</span>
+                    </div>
+                    <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2.5 text-sm">
+                        <span class="font-semibold text-indigo-700" id="unreadCount">0</span>
+                        <span class="text-indigo-600"> unread</span>
+                    </div>
                 </div>
 
-
-                <div
-                    id="list"
-                    class="space-y-3"
-                ></div>
+                <!-- Notifications List -->
+                <div id="list" class="space-y-3">
+                    <!-- Loading state -->
+                    <div class="flex items-center justify-center py-16 text-slate-400">
+                        <i data-lucide="loader-2" class="h-6 w-6 animate-spin mr-2"></i>
+                        Loading notifications...
+                    </div>
+                </div>
 
             </div>
-
         </main>
-
     </div>
-
 
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/shell.js"></script>
 
-
     <script>
-
         async function load() {
-
             try {
+                const r = await SB.get('/notifications');
+                const a = r.data || r || [];
 
-                const r =
-                    await SB.get(
-                        '/notifications'
-                    );
+                // Update counts
+                document.getElementById('totalCount').textContent = a.length;
+                document.getElementById('unreadCount').textContent = a.filter(n => !n.is_read).length;
 
+                if (!a.length) {
+                    list.innerHTML = `
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+                                <i data-lucide="bell-off" class="h-7 w-7 text-slate-400"></i>
+                            </div>
+                            <h3 class="mt-4 font-bold text-slate-700">No notifications yet</h3>
+                            <p class="mt-1 text-sm text-slate-500">
+                                You'll see application, interview and collaboration updates here.
+                            </p>
+                        </div>
+                    `;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
 
-                const a =
-                    r.data ||
-                    r ||
-                    [];
+                list.innerHTML = a.map(n => {
+                    const isRead = n.is_read;
+                    const time = n.created_at 
+                        ? new Date(n.created_at).toLocaleString() 
+                        : '';
 
+                    // Choose icon based on type (optional)
+                    let icon = 'bell';
+                    let iconBg = 'bg-indigo-50 text-indigo-600';
 
-                list.innerHTML =
-                    a
-                        .map(
-                            n => `
+                    if (n.type === 'application' || n.title?.toLowerCase().includes('application')) {
+                        icon = 'briefcase';
+                        iconBg = 'bg-emerald-50 text-emerald-600';
+                    } else if (n.type === 'interview' || n.title?.toLowerCase().includes('interview')) {
+                        icon = 'calendar';
+                        iconBg = 'bg-amber-50 text-amber-600';
+                    } else if (n.type === 'collaboration' || n.title?.toLowerCase().includes('collaborat')) {
+                        icon = 'handshake';
+                        iconBg = 'bg-violet-50 text-violet-600';
+                    }
 
-                                <button
-                                    onclick="markRead(${n.id})"
-                                    class="card w-full p-4 text-left ${n.is_read ? 'opacity-60' : ''}"
-                                >
+                    return `
+                        <button
+                            onclick="markRead(${n.id})"
+                            class="notif-card card w-full p-5 text-left ${isRead ? 'notif-read' : 'notif-unread'}"
+                        >
+                            <div class="flex items-start gap-4">
+                                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${iconBg}">
+                                    <i data-lucide="${icon}" class="h-5 w-5"></i>
+                                </div>
 
-                                    <div class="font-bold">
-                                        ${SB.esc(n.title)}
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h3 class="font-bold text-slate-900 ${isRead ? '' : 'text-indigo-950'}">
+                                            ${SB.esc(n.title)}
+                                        </h3>
+                                        ${!isRead ? `
+                                            <span class="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-bold text-indigo-700">
+                                                New
+                                            </span>
+                                        ` : ''}
                                     </div>
 
-                                    <p class="mt-1 text-sm text-slate-500">
+                                    <p class="mt-1.5 text-sm leading-relaxed text-slate-500">
                                         ${SB.esc(n.message || '')}
                                     </p>
 
-                                </button>
+                                    ${time ? `
+                                        <p class="mt-2 text-xs text-slate-400">
+                                            ${time}
+                                        </p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </button>
+                    `;
+                }).join('');
 
-                            `
-                        )
-                        .join('') ||
-                    '<p class="text-slate-500">No notifications.</p>';
+                if (window.lucide) lucide.createIcons();
 
-            }
-
-            catch (e) {
-
+            } catch (e) {
                 list.innerHTML = `
-
-                    <p class="text-rose-600">
-                        ${SB.esc(e.message)}
-                    </p>
-
+                    <div class="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center">
+                        <p class="font-semibold text-rose-700">Failed to load notifications</p>
+                        <p class="mt-1 text-sm text-rose-600">${SB.esc(e.message)}</p>
+                    </div>
                 `;
-
             }
-
         }
 
-
-        window.markRead = async id => {
-
+        window.markRead = async (id) => {
             try {
-
-                await SB.patch(
-                    `/notifications/${id}/read`,
-                    {}
-                );
-
-
+                await SB.patch(`/notifications/${id}/read`, {});
                 load();
-
+            } catch (e) {
+                SB.toast(e.message);
             }
-
-            catch (e) {
-
-                SB.toast(
-                    e.message
-                );
-
-            }
-
         };
 
-
-        readAll.onclick = async () => {
-
+        document.getElementById('readAll').onclick = async () => {
             try {
-
-                await SB.patch(
-                    '/notifications/read-all',
-                    {}
-                );
-
-
+                await SB.patch('/notifications/read-all', {});
+                SB.toast('All notifications marked as read');
                 load();
-
+            } catch (e) {
+                SB.toast(e.message);
             }
-
-            catch (e) {
-
-                SB.toast(
-                    e.message
-                );
-
-            }
-
         };
-
 
         load();
-
     </script>
 
-
     <script>
-
         if (window.lucide) {
             lucide.createIcons();
         }
-
     </script>
 
 </body>
-
 </html>

@@ -8,15 +8,105 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/assets/css/app.css">
   <title>Projects & Certifications | SkillBridge AI</title>
-  <style>
-    .card-hover {
-      transition: all 0.2s ease;
+  
+<style>
+    body{
+        background:
+            radial-gradient(circle at 8% 0%, rgba(99,102,241,.10), transparent 28%),
+            radial-gradient(circle at 92% 12%, rgba(14,165,233,.08), transparent 30%),
+            #f8fafc;
     }
-    .card-hover:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+
+    .portfolio-hero{
+        position:relative;
+        overflow:hidden;
+        border-radius:28px;
+        padding:2rem;
+        color:#fff;
+        background:
+            radial-gradient(circle at 82% 14%, rgba(255,255,255,.16), transparent 26%),
+            radial-gradient(circle at 8% 120%, rgba(34,211,238,.20), transparent 34%),
+            linear-gradient(135deg,#1e1b4b 0%,#4338ca 44%,#2563eb 100%);
+        box-shadow:0 24px 60px rgba(37,99,235,.20);
     }
-  </style>
+
+    .portfolio-hero-grid{
+        position:absolute;
+        inset:0;
+        opacity:.10;
+        background-image:
+            linear-gradient(rgba(255,255,255,.2) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(255,255,255,.2) 1px,transparent 1px);
+        background-size:30px 30px;
+    }
+
+    .premium-card{
+        border:1px solid #e2e8f0;
+        background:rgba(255,255,255,.94);
+        border-radius:24px;
+        box-shadow:0 14px 42px rgba(15,23,42,.055);
+    }
+
+    .stat-card{
+        border:1px solid #e2e8f0;
+        background:linear-gradient(180deg,#fff,#fbfdff);
+        border-radius:20px;
+        box-shadow:0 12px 30px rgba(15,23,42,.045);
+        transition:.22s;
+    }
+
+    .stat-card:hover{
+        transform:translateY(-4px);
+        box-shadow:0 18px 38px rgba(15,23,42,.08);
+        border-color:#c7d2fe;
+    }
+
+    .card-hover{
+        transition:all .2s ease;
+    }
+
+    .card-hover:hover{
+        transform:translateY(-2px);
+        box-shadow:0 10px 25px -5px rgba(0,0,0,.08);
+        border-color:#c7d2fe;
+    }
+
+    .level-beginner{background:#fef3c7;color:#92400e}
+    .level-intermediate{background:#e0e7ff;color:#3730a3}
+    .level-advanced{background:#d1fae5;color:#065f46}
+
+    .credential-card{
+        position:relative;
+        overflow:hidden;
+        border:1px solid #e2e8f0;
+        border-radius:18px;
+        background:
+            radial-gradient(circle at 100% 0%, rgba(124,58,237,.10), transparent 28%),
+            linear-gradient(180deg,#fff,#fbfdff);
+    }
+
+    .credential-card::after{
+        content:"";
+        position:absolute;
+        width:100px;
+        height:100px;
+        right:-45px;
+        bottom:-52px;
+        border-radius:999px;
+        background:rgba(99,102,241,.06);
+    }
+
+    .modal-backdrop{
+        background:rgba(15,23,42,.64);
+        backdrop-filter:blur(4px);
+    }
+
+    @media (max-width:640px){
+        .portfolio-hero{border-radius:20px;padding:1.25rem}
+        .premium-card,.stat-card{border-radius:16px}
+    }
+</style>
+
 </head>
 <body class="bg-slate-50 text-slate-900">
 
@@ -27,31 +117,47 @@
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
         <!-- Header -->
-        <header class="mb-8">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p class="text-sm font-semibold text-indigo-600">SkillBridge AI</p>
-              <h1 class="mt-1 text-3xl font-bold tracking-tight">Projects & Certifications</h1>
-              <p class="mt-2 text-slate-500">Strengthen your profile with proof of work and credentials.</p>
+        <header class="portfolio-hero mb-8">
+          <div class="portfolio-hero-grid"></div>
+
+          <div class="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div class="max-w-3xl">
+              <p class="text-sm font-semibold text-indigo-100">SkillBridge AI</p>
+
+              <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                Projects & Certifications
+              </h1>
+
+              <p class="mt-3 max-w-2xl text-sm leading-6 text-indigo-100 sm:text-base">
+                Build proof of work, showcase real projects and maintain a structured record
+                of your professional certifications.
+              </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-4">
+              <p class="text-xs font-bold uppercase tracking-[0.14em] text-indigo-200">
+                Portfolio Strength
+              </p>
+              <p id="heroStrength" class="mt-1 text-3xl font-black">0%</p>
             </div>
           </div>
         </header>
 
         <!-- Stats -->
         <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+          <div class="stat-card p-4">
             <p class="text-sm text-slate-500">Projects</p>
             <p class="mt-1 text-2xl font-bold" id="projectCount">0</p>
           </div>
-          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+          <div class="stat-card p-4">
             <p class="text-sm text-slate-500">Certifications</p>
             <p class="mt-1 text-2xl font-bold" id="certCount">0</p>
           </div>
-          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+          <div class="stat-card p-4">
             <p class="text-sm text-slate-500">Profile Strength</p>
             <p class="mt-1 text-2xl font-bold text-indigo-600" id="strengthScore">—</p>
           </div>
-          <div class="rounded-2xl border bg-white p-4 shadow-sm">
+          <div class="stat-card p-4">
             <p class="text-sm text-slate-500">Last Updated</p>
             <p class="mt-1 text-sm font-medium text-slate-700" id="lastUpdated">—</p>
           </div>
@@ -61,7 +167,7 @@
         <div class="grid gap-6 lg:grid-cols-2">
 
           <!-- ==================== PROJECTS ==================== -->
-          <section class="rounded-2xl border bg-white p-6 shadow-sm">
+          <section class="premium-card p-6">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
@@ -93,6 +199,17 @@
 
               <div class="grid gap-3 sm:grid-cols-2">
                 <div>
+                  <label class="mb-1 block text-sm font-medium text-slate-700">Start Date</label>
+                  <input class="input" type="date" name="start_date">
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-slate-700">End Date</label>
+                  <input class="input" type="date" name="end_date">
+                </div>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
                   <label class="mb-1 block text-sm font-medium text-slate-700">GitHub URL</label>
                   <input class="input" name="github_url" placeholder="https://github.com/...">
                 </div>
@@ -113,7 +230,7 @@
           </section>
 
           <!-- ==================== CERTIFICATIONS ==================== -->
-          <section class="rounded-2xl border bg-white p-6 shadow-sm">
+          <section class="premium-card p-6">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50">
@@ -136,6 +253,11 @@
               <div>
                 <label class="mb-1 block text-sm font-medium text-slate-700">Organization / Issuer</label>
                 <input class="input" name="organization" placeholder="e.g. Amazon Web Services">
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Issue Date</label>
+                <input class="input" type="date" name="issue_date">
               </div>
 
               <div>
@@ -163,38 +285,88 @@
     </main>
   </div>
 
+
+  <!-- ==================== DETAILS MODAL ==================== -->
+  <div id="detailsModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 p-5 sm:p-6">
+        <div>
+          <p id="modalEyebrow" class="text-xs font-black uppercase tracking-[0.14em] text-indigo-600">Details</p>
+          <h2 id="modalTitle" class="mt-1 text-2xl font-black text-slate-950">Details</h2>
+        </div>
+        <button type="button" onclick="closeDetailsModal()" class="rounded-xl p-2 hover:bg-slate-100">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div id="modalBody" class="p-5 sm:p-6"></div>
+
+      <div class="flex flex-wrap justify-end gap-3 border-t border-slate-200 p-5">
+        <button type="button" onclick="closeDetailsModal()" class="btn btn-soft">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/assets/js/config.js"></script>
   <script src="/assets/js/api.js"></script>
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/shell.js"></script>
 
   <script>
+    let currentProjects = [];
+    let currentCertifications = [];
+
     // Load portfolio data
     async function loadPortfolio() {
       // Projects
       try {
         const p = await SB.get('/students/projects');
-        document.getElementById('projectCount').textContent = p.length;
+        
 
-        projects.innerHTML = p.length
-          ? p.map(x => `
-              <div class="card-hover rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-                <div class="flex items-start justify-between gap-3">
+        currentProjects = Array.isArray(p) ? p : (p.data || []);
+
+        document.getElementById('projectCount').textContent = currentProjects.length;
+
+        projects.innerHTML = currentProjects.length
+          ? currentProjects.map(x => `
+              <div class="card-hover rounded-2xl border border-slate-200 bg-white p-4">
+                <div class="flex items-start justify-between gap-4">
                   <div class="min-w-0 flex-1">
-                    <h3 class="font-semibold text-slate-900">${SB.esc(x.title)}</h3>
-                    ${x.description ? `<p class="mt-1 text-sm text-slate-500 line-clamp-2">${SB.esc(x.description)}</p>` : ''}
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="font-black text-slate-900">${SB.esc(x.title)}</h3>
+                      <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
+                        Project
+                      </span>
+                    </div>
+
+                    ${x.description ? `<p class="mt-2 text-sm leading-6 text-slate-500 line-clamp-2">${SB.esc(x.description)}</p>` : ''}
+
                     ${x.technologies ? `
-                      <div class="mt-2 flex flex-wrap gap-1.5">
-                        ${x.technologies.split(',').map(t => 
+                      <div class="mt-3 flex flex-wrap gap-1.5">
+                        ${x.technologies.split(',').map(t =>
                           `<span class="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">${SB.esc(t.trim())}</span>`
                         ).join('')}
                       </div>` : ''}
-                    <div class="mt-3 flex flex-wrap gap-3 text-sm">
-                      ${x.github_url ? `<a href="${SB.esc(x.github_url)}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline">
-                        <i data-lucide="github" class="h-3.5 w-3.5"></i> GitHub
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      <button type="button" onclick="viewProject(${x.id})" class="btn btn-soft">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                        View
+                      </button>
+
+                      <button type="button" onclick="downloadProject(${x.id})" class="btn btn-soft">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Download
+                      </button>
+
+                      ${x.github_url ? `<a href="${SB.esc(x.github_url)}" target="_blank" class="btn btn-soft">
+                        <i data-lucide="github" class="h-4 w-4"></i>
+                        GitHub
                       </a>` : ''}
-                      ${x.live_url ? `<a href="${SB.esc(x.live_url)}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline">
-                        <i data-lucide="external-link" class="h-3.5 w-3.5"></i> Live
+
+                      ${x.live_url ? `<a href="${SB.esc(x.live_url)}" target="_blank" class="btn btn-soft">
+                        <i data-lucide="external-link" class="h-4 w-4"></i>
+                        Live
                       </a>` : ''}
                     </div>
                   </div>
@@ -214,23 +386,55 @@
       // Certifications
       try {
         const c = await SB.get('/students/certifications');
-        document.getElementById('certCount').textContent = c.length;
+        
 
-        certs.innerHTML = c.length
-          ? c.map(x => `
-              <div class="card-hover rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-                <div class="flex items-start gap-3">
-                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100">
-                    <i data-lucide="award" class="h-4 w-4 text-violet-600"></i>
+        currentCertifications = Array.isArray(c) ? c : (c.data || []);
+
+        document.getElementById('certCount').textContent = currentCertifications.length;
+
+        certs.innerHTML = currentCertifications.length
+          ? currentCertifications.map(x => `
+              <div class="credential-card card-hover p-4">
+                <div class="relative z-10 flex items-start gap-3">
+                  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+                    <i data-lucide="badge-check" class="h-5 w-5 text-violet-600"></i>
                   </div>
+
                   <div class="min-w-0 flex-1">
-                    <h3 class="font-semibold text-slate-900">${SB.esc(x.name)}</h3>
-                    ${x.organization ? `<p class="mt-0.5 text-sm text-slate-500">${SB.esc(x.organization)}</p>` : ''}
-                    ${x.credential_url ? `
-                      <a href="${SB.esc(x.credential_url)}" target="_blank" 
-                         class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-600 hover:underline">
-                        <i data-lucide="external-link" class="h-3.5 w-3.5"></i> View Credential
-                      </a>` : ''}
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="font-black text-slate-900">${SB.esc(x.name)}</h3>
+                      <span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
+                        Credential
+                      </span>
+                    </div>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                      ${SB.esc(x.organization || 'Issuer not specified')}
+                    </p>
+
+                    <div class="mt-3 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
+                      <p><span class="font-bold text-slate-700">Credential ID:</span> ${SB.esc(x.credential_id || '—')}</p>
+                      <p><span class="font-bold text-slate-700">Issue Date:</span> ${SB.esc(x.issue_date || '—')}</p>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      <button type="button" onclick="viewCertificate(${x.id})" class="btn btn-soft">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                        View
+                      </button>
+
+                      <button type="button" onclick="downloadCertificate(${x.id})" class="btn btn-soft">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Download Record
+                      </button>
+
+                      ${x.credential_url ? `
+                        <a href="${SB.esc(x.credential_url)}" target="_blank" class="btn btn-soft">
+                          <i data-lucide="external-link" class="h-4 w-4"></i>
+                          Verify Credential
+                        </a>
+                      ` : ''}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -249,6 +453,7 @@
       const total = (parseInt(projectCount.textContent) || 0) + (parseInt(certCount.textContent) || 0);
       const score = Math.min(100, total * 15);
       strengthScore.textContent = score + '%';
+      heroStrength.textContent = score + '%';
       lastUpdated.textContent = new Date().toLocaleDateString();
     }
 
@@ -263,8 +468,8 @@
           technologies: f.get('technologies') || null,
           github_url: f.get('github_url') || null,
           live_url: f.get('live_url') || null,
-          start_date: null,
-          end_date: null
+          start_date: f.get('start_date') || null,
+          end_date: f.get('end_date') || null
         });
         e.target.reset();
         SB.toast?.('Project added successfully') || alert('Project added');
@@ -282,7 +487,7 @@
         await SB.post('/students/certifications', {
           name: f.get('name'),
           organization: f.get('organization') || null,
-          issue_date: null,
+          issue_date: f.get('issue_date') || null,
           credential_url: f.get('credential_url') || null,
           credential_id: f.get('credential_id') || null
         });
@@ -293,6 +498,243 @@
         SB.toast?.(err.message) || alert(err.message);
       }
     };
+
+
+    function openDetailsModal(eyebrow, title, body) {
+      modalEyebrow.textContent = eyebrow;
+      modalTitle.textContent = title;
+      modalBody.innerHTML = body;
+      detailsModal.classList.remove('hidden');
+      detailsModal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.closeDetailsModal = function () {
+      detailsModal.classList.add('hidden');
+      detailsModal.classList.remove('flex');
+    };
+
+    window.viewProject = function (id) {
+      const p = currentProjects.find(x => Number(x.id) === Number(id));
+      if (!p) return;
+
+      openDetailsModal(
+        'Project Details',
+        p.title,
+        `
+          <div class="space-y-5">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Description</p>
+              <p class="mt-2 leading-7 text-slate-700">${SB.esc(p.description || 'No description added.')}</p>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Technologies</p>
+                <p class="mt-2 font-semibold">${SB.esc(p.technologies || '—')}</p>
+              </div>
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Duration</p>
+                <p class="mt-2 font-semibold">${SB.esc(p.start_date || '—')} → ${SB.esc(p.end_date || '—')}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              ${p.github_url ? `<a href="${SB.esc(p.github_url)}" target="_blank" class="btn btn-soft">GitHub</a>` : ''}
+              ${p.live_url ? `<a href="${SB.esc(p.live_url)}" target="_blank" class="btn btn-soft">Live Demo</a>` : ''}
+            </div>
+          </div>
+        `
+      );
+    };
+
+    window.downloadProject = function (id) {
+      const p = currentProjects.find(x => Number(x.id) === Number(id));
+      if (!p) return;
+
+      printDocument(
+        `${p.title} - Project Summary`,
+        `
+          <h1>${escapePrint(p.title)}</h1>
+          <p class="subtitle">SkillBridge AI • Project Record</p>
+
+          <div class="grid">
+            <div class="field"><span>Technologies</span><b>${escapePrint(p.technologies)}</b></div>
+            <div class="field"><span>Start Date</span><b>${escapePrint(p.start_date)}</b></div>
+            <div class="field"><span>End Date</span><b>${escapePrint(p.end_date)}</b></div>
+            <div class="field"><span>GitHub</span><b>${escapePrint(p.github_url)}</b></div>
+            <div class="field"><span>Live URL</span><b>${escapePrint(p.live_url)}</b></div>
+          </div>
+
+          <h2>Description</h2>
+          <p>${escapePrint(p.description)}</p>
+        `
+      );
+    };
+
+    window.viewCertificate = function (id) {
+      const c = currentCertifications.find(x => Number(x.id) === Number(id));
+      if (!c) return;
+
+      openDetailsModal(
+        'Certification Record',
+        c.name,
+        `
+          <div class="space-y-5">
+            <div class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 to-indigo-50 p-6 text-center">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <i data-lucide="award" class="h-7 w-7 text-violet-600"></i>
+              </div>
+              <p class="mt-4 text-xs font-black uppercase tracking-[0.18em] text-violet-600">Credential Record</p>
+              <h3 class="mt-2 text-2xl font-black text-slate-950">${SB.esc(c.name)}</h3>
+              <p class="mt-2 text-slate-600">${SB.esc(c.organization || 'Issuer not specified')}</p>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Credential ID</p>
+                <p class="mt-2 font-bold">${SB.esc(c.credential_id || '—')}</p>
+              </div>
+
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <p class="text-xs font-bold uppercase text-slate-400">Issue Date</p>
+                <p class="mt-2 font-bold">${SB.esc(c.issue_date || '—')}</p>
+              </div>
+            </div>
+
+            ${c.credential_url ? `
+              <a href="${SB.esc(c.credential_url)}" target="_blank" class="btn btn-primary">
+                <i data-lucide="external-link" class="h-4 w-4"></i>
+                Open Official Credential
+              </a>
+            ` : `
+              <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                No external credential URL was provided.
+              </div>
+            `}
+          </div>
+        `
+      );
+    };
+
+    window.downloadCertificate = function (id) {
+      const c = currentCertifications.find(x => Number(x.id) === Number(id));
+      if (!c) return;
+
+      printDocument(
+        `${c.name} - Credential Record`,
+        `
+          <div class="certificate">
+            <div class="seal">✓</div>
+            <div class="eyebrow">SKILLBRIDGE AI • CREDENTIAL RECORD</div>
+            <h1>${escapePrint(c.name)}</h1>
+            <p class="issuer">Issued by ${escapePrint(c.organization || 'Issuer not specified')}</p>
+
+            <div class="certificate-grid">
+              <div>
+                <span>Credential ID</span>
+                <strong>${escapePrint(c.credential_id)}</strong>
+              </div>
+              <div>
+                <span>Issue Date</span>
+                <strong>${escapePrint(c.issue_date)}</strong>
+              </div>
+              <div class="wide">
+                <span>Verification URL</span>
+                <strong>${escapePrint(c.credential_url)}</strong>
+              </div>
+            </div>
+
+            <div class="note">
+              This document is a SkillBridge portfolio record generated from the student's saved credential details.
+              It is not a replacement for the certificate issued by the original organization.
+            </div>
+          </div>
+        `
+      );
+    };
+
+    function printDocument(title, content) {
+      const win = window.open('', '_blank');
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${escapePrint(title)}</title>
+          <style>
+            body{
+              font-family:Arial,sans-serif;
+              max-width:900px;
+              margin:40px auto;
+              padding:30px;
+              color:#0f172a;
+              background:#fff;
+            }
+            h1{font-size:30px;margin:0;color:#312e81}
+            h2{margin-top:30px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}
+            .subtitle{color:#64748b;margin-top:8px}
+            .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:25px}
+            .field{border:1px solid #e2e8f0;border-radius:12px;padding:14px}
+            .field span,.certificate-grid span{display:block;font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700}
+            .field b,.certificate-grid strong{display:block;margin-top:6px}
+            .certificate{
+              border:2px solid #c7d2fe;
+              border-radius:24px;
+              padding:50px;
+              text-align:center;
+              background:linear-gradient(135deg,#ffffff,#eef2ff);
+            }
+            .seal{
+              width:64px;height:64px;margin:0 auto 18px;border-radius:50%;
+              display:flex;align-items:center;justify-content:center;
+              background:#4f46e5;color:#fff;font-size:28px;font-weight:bold;
+            }
+            .eyebrow{font-size:12px;letter-spacing:2px;font-weight:bold;color:#6366f1}
+            .issuer{font-size:17px;color:#475569}
+            .certificate-grid{
+              margin-top:35px;
+              display:grid;
+              grid-template-columns:1fr 1fr;
+              gap:14px;
+              text-align:left;
+            }
+            .certificate-grid>div{
+              border:1px solid #dbeafe;
+              border-radius:14px;
+              padding:16px;
+              background:#fff;
+            }
+            .certificate-grid .wide{grid-column:1/-1}
+            .note{
+              margin-top:35px;
+              padding-top:18px;
+              border-top:1px solid #cbd5e1;
+              font-size:12px;
+              line-height:1.6;
+              color:#64748b;
+            }
+            @media print{body{margin:0;padding:0}.certificate{break-inside:avoid}}
+          </style>
+        </head>
+        <body>${content}</body>
+        </html>
+      `);
+
+      win.document.close();
+
+      setTimeout(() => {
+        win.focus();
+        win.print();
+      }, 350);
+    }
+
+    function escapePrint(value) {
+      return String(value ?? '—')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;');
+    }
 
     // Initial load
     loadPortfolio();
