@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.session import engine
 from app.db.base import Base
+
 from app.api.routes import (
     auth,
     users,
@@ -13,6 +14,7 @@ from app.api.routes import (
     resumes,
     career,
     chat,
+    recruiter_chat,   # ✅ ADD THIS
     notifications,
     colleges,
     collaborations,
@@ -25,7 +27,10 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="AI-powered Academia-Industry Collaboration, Skill Intelligence, Internship and Placement Platform",
+    description=(
+        "AI-powered Academia-Industry Collaboration, "
+        "Skill Intelligence, Internship and Placement Platform"
+    ),
 )
 
 app.add_middleware(
@@ -49,6 +54,7 @@ for r in [
     resumes,
     career,
     chat,
+    recruiter_chat,   # ✅ ADD THIS
     notifications,
     colleges,
     collaborations,

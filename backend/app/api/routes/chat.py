@@ -8,9 +8,13 @@ from app.db.session import get_db
 
 from app.models.user import User, UserRole
 from app.models.student import Student
+from app.models.skill import Skill, StudentSkill
+from app.models.project import Project
+from app.models.certification import Certification
 from app.models.chat import ChatSession, ChatMessage
 from app.models.company import Company
 from app.models.opportunity import Opportunity
+from app.models.application import Application
 
 from app.schemas.chat import CreateChatRequest, ChatRequest
 
@@ -20,556 +24,545 @@ from app.services.ai_career import generate_career_response
 
 router = APIRouter(
     prefix="/career-chat",
-    tags=["AI Career Assistant"]
+    tags=["AI Career Assistant"],
 )
 
 
-def student(db, uid):
-
-    s = (
+def get_student(db: Session, user_id: int) -> Student:
+    student = (
         db.query(Student)
-        .filter(
-            Student.user_id == uid
-        )
+        .filter(Student.user_id == user_id)
         .first()
     )
 
-    if not s:
-
+    if not student:
         raise HTTPException(
-            404,
-            "Student profile not found"
+            status_code=404,
+            detail="Student profile not found",
         )
 
-    return s
+    return student
 
 
 def enum_value(value):
-
     if value is None:
         return None
 
-    return getattr(
-        value,
-        "value",
-        value
-    )
+    return getattr(value, "value", value)
 
 
-def extract_id(
-    message: str,
-    keyword: str
-):
-
-    pattern = (
-        rf"{keyword}\s*"
-        rf"(?:id)?\s*"
-        rf"#?\s*(\d+)"
-    )
+def extract_id(message: str, keyword: str):
+    pattern = rf"{keyword}\s*(?:id)?\s*#?\s*(\d+)"
 
     match = re.search(
         pattern,
         message,
-        re.IGNORECASE
+        re.IGNORECASE,
     )
 
     if not match:
         return None
 
-    return int(
-        match.group(1)
-    )
+    return int(match.group(1))
 
 
-# =========================================================
-# Basic database chat
-# =========================================================
+def normalize_text(message: str) -> str:
+    return " ".join(message.strip().lower().split())
 
-def basic_database_response(
+
+def contains_any(text: str, phrases: list[str]) -> bool:
+    return any(phrase in text for phrase in phrases)
+
+
+def student_database_response(
     db: Session,
-    message: str
+    student: Student,
+    user: User,
+    message: str,
 ):
+    text = normalize_text(message)
 
-    text = message.strip().lower()
-
-
-    # =====================================================
-    # STUDENT ID
-    # =====================================================
-
-    student_id = extract_id(
+    if contains_any(
         text,
-        "student"
-    )
-
-
-    if student_id is not None:
-
-        row = (
-            db.query(
-                Student,
-                User
-            )
-            .join(
-                User,
-                Student.user_id == User.id
-            )
-            .filter(
-                Student.id == student_id
-            )
-            .first()
+        [
+            "my profile",
+            "my details",
+            "meri profile",
+            "meri details",
+            "mera profile",
+            "student details",
+            "about me",
+        ],
+    ):
+        return (
+            "Your Student Profile\n\n"
+            f"Name: {user.full_name}\n"
+            f"Email: {user.email}\n"
+            f"Student ID: #{student.id}\n"
+            f"College ID: {getattr(student, 'college_id', None) or '—'}\n"
+            f"Department ID: {getattr(student, 'department_id', None) or '—'}\n"
+            f"Branch: {getattr(student, 'branch', None) or '—'}\n"
+            f"Year: {getattr(student, 'year', None) or '—'}\n"
+            f"Semester: {getattr(student, 'semester', None) or '—'}\n"
+            f"Career Goal: {getattr(student, 'career_goal', None) or '—'}"
         )
 
+    if contains_any(
+        text,
+        [
+            "my skills",
+            "meri skills",
+            "mere skills",
+            "skills i have",
+            "what skills do i have",
+        ],
+    ):
+        rows = (
+            db.query(StudentSkill, Skill)
+            .join(
+                Skill,
+                StudentSkill.skill_id == Skill.id,
+            )
+            .filter(
+                StudentSkill.student_id == student.id
+            )
+            .order_by(Skill.name.asc())
+            .all()
+        )
 
-        if not row:
-
+        if not rows:
             return (
-                f"Student ID #{student_id} "
-                f"not found."
+                "You have not added any skills yet. "
+                "Add your skills from Profile & Skills so SkillBridge "
+                "can calculate your skill gap and opportunity match."
             )
 
+        lines = []
 
-        s, u = row
+        for student_skill, skill in rows:
+            level = enum_value(student_skill.level) or "—"
+            verified = (
+                "Verified"
+                if getattr(student_skill, "is_verified", False)
+                else "Unverified"
+            )
 
+            lines.append(
+                f"• {skill.name} — {level} — {verified}"
+            )
 
         return (
-            f"Student Details\n\n"
-            f"Student ID: #{s.id}\n"
-            f"Name: {u.full_name}\n"
-            f"Email: {u.email}\n"
-            f"College: "
-            f"{getattr(s, 'college_name', None) or '—'}\n"
-            f"Branch: "
-            f"{getattr(s, 'branch', None) or '—'}\n"
-            f"Year: "
-            f"{getattr(s, 'year', None) or '—'}\n"
-            f"Semester: "
-            f"{getattr(s, 'semester', None) or '—'}\n"
-            f"Career Goal: "
-            f"{getattr(s, 'career_goal', None) or '—'}"
+            f"Your Skills ({len(lines)})\n\n"
+            + "\n".join(lines)
         )
 
-
-    # =====================================================
-    # COMPANY ID
-    # =====================================================
-
-    company_id = extract_id(
+    if contains_any(
         text,
-        "company"
-    )
+        [
+            "my projects",
+            "mere projects",
+            "meri projects",
+            "project list",
+        ],
+    ):
+        rows = (
+            db.query(Project)
+            .filter(Project.student_id == student.id)
+            .order_by(Project.id.desc())
+            .all()
+        )
 
+        if not rows:
+            return (
+                "You have not added any projects yet. "
+                "Projects act as proof of work and strengthen "
+                "your internship and placement profile."
+            )
+
+        lines = []
+
+        for project in rows:
+            tech = (
+                getattr(project, "technologies", None)
+                or "Technologies not specified"
+            )
+
+            lines.append(
+                f"• #{project.id} {project.title}\n"
+                f"  Technologies: {tech}"
+            )
+
+        return (
+            f"Your Projects ({len(rows)})\n\n"
+            + "\n".join(lines)
+        )
+
+    if contains_any(
+        text,
+        [
+            "my certificates",
+            "my certifications",
+            "mere certificates",
+            "meri certifications",
+            "certificate list",
+        ],
+    ):
+        rows = (
+            db.query(Certification)
+            .filter(
+                Certification.student_id == student.id
+            )
+            .order_by(Certification.id.desc())
+            .all()
+        )
+
+        if not rows:
+            return (
+                "You have not added any certifications yet. "
+                "Add relevant credentials to strengthen your profile."
+            )
+
+        lines = []
+
+        for certificate in rows:
+            issuer = (
+                getattr(certificate, "organization", None)
+                or "Issuer not specified"
+            )
+
+            lines.append(
+                f"• #{certificate.id} "
+                f"{certificate.name} — {issuer}"
+            )
+
+        return (
+            f"Your Certifications ({len(rows)})\n\n"
+            + "\n".join(lines)
+        )
+
+    if contains_any(
+        text,
+        [
+            "my applications",
+            "application status",
+            "meri applications",
+            "maine kaha apply",
+            "where have i applied",
+        ],
+    ):
+        rows = (
+            db.query(Application, Opportunity)
+            .join(
+                Opportunity,
+                Application.opportunity_id == Opportunity.id,
+            )
+            .filter(
+                Application.student_id == student.id
+            )
+            .order_by(Application.id.desc())
+            .all()
+        )
+
+        if not rows:
+            return (
+                "You have not applied to any opportunities yet. "
+                "Open Opportunities to check your match score "
+                "before applying."
+            )
+
+        lines = []
+
+        for application, opportunity in rows:
+            status = enum_value(application.status) or "—"
+
+            lines.append(
+                f"• {opportunity.title} "
+                f"(Opportunity #{opportunity.id}) "
+                f"— {status}"
+            )
+
+        return (
+            f"Your Applications ({len(rows)})\n\n"
+            + "\n".join(lines)
+        )
+
+    company_id = extract_id(text, "company")
 
     if company_id is not None:
-
         company = (
             db.query(Company)
-            .filter(
-                Company.id == company_id
-            )
+            .filter(Company.id == company_id)
             .first()
         )
 
-
         if not company:
-
-            return (
-                f"Company ID #{company_id} "
-                f"not found."
-            )
-
+            return f"Company ID #{company_id} not found."
 
         opportunities = (
             db.query(Opportunity)
             .filter(
-                Opportunity.company_id ==
-                company.id
+                Opportunity.company_id == company.id,
+                Opportunity.is_active.is_(True),
             )
+            .order_by(Opportunity.id.desc())
             .all()
         )
 
-
-        opportunity_text = "None"
-
-
         if opportunities:
-
             opportunity_text = "\n".join(
                 [
-                    (
-                        f"#{o.id} - "
-                        f"{o.title} "
-                        f"({enum_value(o.opportunity_type)})"
-                    )
+                    f"• #{o.id} — {o.title} "
+                    f"({enum_value(o.opportunity_type)})"
                     for o in opportunities
                 ]
             )
-
+        else:
+            opportunity_text = "No active opportunities."
 
         return (
-            f"Company Details\n\n"
+            "Company Details\n\n"
             f"Company ID: #{company.id}\n"
             f"Name: {company.name}\n"
-            f"Industry: "
-            f"{getattr(company, 'industry', None) or '—'}\n"
-            f"Location: "
-            f"{getattr(company, 'location', None) or '—'}\n"
-            f"Website: "
-            f"{getattr(company, 'website', None) or '—'}\n\n"
-            f"Opportunities:\n"
-            f"{opportunity_text}"
+            f"Industry: {getattr(company, 'industry', None) or '—'}\n"
+            f"Location: {getattr(company, 'location', None) or '—'}\n"
+            f"Website: {getattr(company, 'website', None) or '—'}\n\n"
+            f"Active Opportunities:\n{opportunity_text}"
         )
 
-
-    # =====================================================
-    # OPPORTUNITY ID
-    # =====================================================
-
-    opportunity_id = extract_id(
-        text,
-        "opportunity"
-    )
-
+    opportunity_id = extract_id(text, "opportunity")
 
     if opportunity_id is None:
-
-        opportunity_id = extract_id(
-            text,
-            "job"
-        )
-
+        opportunity_id = extract_id(text, "job")
 
     if opportunity_id is None:
-
-        opportunity_id = extract_id(
-            text,
-            "internship"
-        )
-
+        opportunity_id = extract_id(text, "internship")
 
     if opportunity_id is not None:
-
         row = (
-            db.query(
-                Opportunity,
-                Company
-            )
+            db.query(Opportunity, Company)
             .join(
                 Company,
-                Opportunity.company_id ==
-                Company.id
+                Opportunity.company_id == Company.id,
             )
             .filter(
-                Opportunity.id ==
-                opportunity_id
+                Opportunity.id == opportunity_id,
+                Opportunity.is_active.is_(True),
             )
             .first()
         )
 
-
         if not row:
-
             return (
                 f"Opportunity ID #{opportunity_id} "
-                f"not found."
+                "not found or inactive."
             )
-
 
         opportunity, company = row
 
-
         return (
-            f"Opportunity Details\n\n"
+            "Opportunity Details\n\n"
             f"Opportunity ID: #{opportunity.id}\n"
             f"Title: {opportunity.title}\n"
             f"Company: {company.name}\n"
-            f"Company ID: #{company.id}\n"
-            f"Type: "
-            f"{enum_value(opportunity.opportunity_type)}\n"
-            f"Location: "
-            f"{opportunity.location or '—'}\n"
-            f"Stipend: "
-            f"{opportunity.stipend or '—'}\n"
-            f"Experience: "
-            f"{opportunity.experience_required or '—'}\n"
-            f"Description: "
-            f"{opportunity.description or '—'}"
+            f"Type: {enum_value(opportunity.opportunity_type) or '—'}\n"
+            f"Location: {opportunity.location or '—'}\n"
+            f"Stipend: {opportunity.stipend or '—'}\n"
+            f"Experience: {opportunity.experience_required or '—'}\n"
+            f"Description: {opportunity.description or '—'}"
         )
 
-
-    # Basic command nahi mila
     return None
 
 
-# =========================================================
-# CREATE SESSION
-# =========================================================
-
 @router.post("/sessions")
-def create(
+def create_session(
     data: CreateChatRequest,
     db: Session = Depends(get_db),
     user: User = Depends(
-        require_roles(
-            UserRole.student
-        )
-    )
+        require_roles(UserRole.student)
+    ),
 ):
+    student = get_student(db, user.id)
 
-    s = student(
-        db,
-        user.id
+    session = ChatSession(
+        student_id=student.id,
+        title=data.title or "Career Conversation",
     )
 
-
-    x = ChatSession(
-        student_id=s.id,
-        title=data.title or
-        "Career Conversation"
-    )
-
-
-    db.add(x)
-
+    db.add(session)
     db.commit()
-
-    db.refresh(x)
-
+    db.refresh(session)
 
     return {
         "success": True,
         "data": {
-            "session_id": x.id,
-            "title": x.title
-        }
+            "session_id": session.id,
+            "title": session.title,
+        },
     }
 
 
-# =========================================================
-# GET SESSIONS
-# =========================================================
-
 @router.get("/sessions")
-def sessions(
+def get_sessions(
     db: Session = Depends(get_db),
     user: User = Depends(
-        require_roles(
-            UserRole.student
-        )
-    )
+        require_roles(UserRole.student)
+    ),
 ):
-
-    s = student(
-        db,
-        user.id
-    )
-
+    student = get_student(db, user.id)
 
     rows = (
         db.query(ChatSession)
         .filter(
-            ChatSession.student_id ==
-            s.id
+            ChatSession.student_id == student.id
         )
-        .order_by(
-            ChatSession.id.desc()
-        )
+        .order_by(ChatSession.id.desc())
         .all()
     )
 
-
     return {
         "success": True,
-        "data": rows
+        "data": rows,
     }
 
 
-# =========================================================
-# SEND MESSAGE
-# =========================================================
-
 @router.post("/sessions/{sid}/messages")
-def send(
+def send_message(
     sid: int,
     data: ChatRequest,
     db: Session = Depends(get_db),
     user: User = Depends(
-        require_roles(
-            UserRole.student
-        )
-    )
+        require_roles(UserRole.student)
+    ),
 ):
+    student = get_student(db, user.id)
 
-    s = student(
-        db,
-        user.id
-    )
-
-
-    sess = (
+    session = (
         db.query(ChatSession)
         .filter(
             ChatSession.id == sid,
-            ChatSession.student_id ==
-            s.id
+            ChatSession.student_id == student.id,
         )
         .first()
     )
 
-
-    if not sess:
-
+    if not session:
         raise HTTPException(
-            404,
-            "Chat session not found"
+            status_code=404,
+            detail="Chat session not found",
         )
 
+    clean_message = (data.message or "").strip()
 
-    # -----------------------------------------------------
-    # Save user message
-    # -----------------------------------------------------
+    if not clean_message:
+        raise HTTPException(
+            status_code=400,
+            detail="Message cannot be empty",
+        )
+
+    history_rows = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == sid)
+        .order_by(ChatMessage.id.desc())
+        .limit(10)
+        .all()
+    )[::-1]
+
+    history = [
+        {
+            "role": message.role,
+            "content": message.content,
+        }
+        for message in history_rows
+    ]
 
     user_message = ChatMessage(
         session_id=sid,
         role="user",
-        content=data.message
+        content=clean_message,
     )
-
 
     db.add(user_message)
-
     db.commit()
 
-
-    # -----------------------------------------------------
-    # FIRST: Try basic database command
-    # -----------------------------------------------------
-
-    answer = basic_database_response(
+    answer = student_database_response(
         db,
-        data.message
+        student,
+        user,
+        clean_message,
     )
-
-
-    # -----------------------------------------------------
-    # SECOND: Existing career assistant
-    # -----------------------------------------------------
 
     if answer is None:
-
-        hist = (
-            db.query(ChatMessage)
-            .filter(
-                ChatMessage.session_id ==
-                sid
-            )
-            .order_by(
-                ChatMessage.id.desc()
-            )
-            .limit(10)
-            .all()
-        )[::-1]
-
-
-        answer = generate_career_response(
-
-            build_student_context(
-                db,
-                s,
-                data.opportunity_id
-            ),
-
-            data.message,
-
-            [
-                {
-                    "role": m.role,
-                    "content": m.content
-                }
-                for m in hist
-            ]
+        context = build_student_context(
+            db,
+            student,
+            data.opportunity_id,
         )
 
+        answer = generate_career_response(
+            context,
+            clean_message,
+            history,
+        )
 
-    # -----------------------------------------------------
-    # Save assistant response
-    # -----------------------------------------------------
+    if not answer:
+        answer = (
+            "I could not generate a response. "
+            "Please try asking your question again."
+        )
 
-    msg = ChatMessage(
+    assistant_message = ChatMessage(
         session_id=sid,
         role="assistant",
-        content=answer
+        content=str(answer),
     )
 
-
-    db.add(msg)
-
+    db.add(assistant_message)
     db.commit()
-
-    db.refresh(msg)
-
+    db.refresh(assistant_message)
 
     return {
         "success": True,
         "data": {
-            "message_id": msg.id,
-            "answer": answer
-        }
+            "message_id": assistant_message.id,
+            "answer": str(answer),
+        },
     }
 
 
-# =========================================================
-# GET MESSAGES
-# =========================================================
-
 @router.get("/sessions/{sid}/messages")
-def messages(
+def get_messages(
     sid: int,
     db: Session = Depends(get_db),
     user: User = Depends(
-        require_roles(
-            UserRole.student
-        )
-    )
+        require_roles(UserRole.student)
+    ),
 ):
+    student = get_student(db, user.id)
 
-    s = student(
-        db,
-        user.id
-    )
-
-
-    sess = (
+    session = (
         db.query(ChatSession)
         .filter(
             ChatSession.id == sid,
-            ChatSession.student_id ==
-            s.id
+            ChatSession.student_id == student.id,
         )
         .first()
     )
 
-
-    if not sess:
-
+    if not session:
         raise HTTPException(
-            404,
-            "Chat session not found"
+            status_code=404,
+            detail="Chat session not found",
         )
 
+    rows = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == sid)
+        .order_by(ChatMessage.id.asc())
+        .all()
+    )
 
     return {
         "success": True,
-
-        "data": (
-            db.query(ChatMessage)
-            .filter(
-                ChatMessage.session_id ==
-                sid
-            )
-            .order_by(
-                ChatMessage.id.asc()
-            )
-            .all()
-        )
+        "data": rows,
     }
