@@ -3,265 +3,1266 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SkillBridge AI — Student Career Assistant"
+    >
+
+    <title>AI Career Assistant | SkillBridge AI</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link
+        rel="stylesheet"
+        href="/assets/css/app.css"
+    >
 
-    <title>AI Career Assistant | SkillBridge AI</title>
+    <style>
+        body {
+            background:
+                radial-gradient(
+                    circle at 8% 0%,
+                    rgba(99, 102, 241, 0.10),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 92% 10%,
+                    rgba(14, 165, 233, 0.08),
+                    transparent 30%
+                ),
+                #f8fafc;
+        }
+
+        .chat-hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.75rem;
+            padding: 2rem;
+            color: white;
+
+            background:
+                radial-gradient(
+                    circle at 82% 14%,
+                    rgba(255, 255, 255, 0.17),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 10% 120%,
+                    rgba(34, 211, 238, 0.20),
+                    transparent 34%
+                ),
+                linear-gradient(
+                    135deg,
+                    #1e1b4b 0%,
+                    #4338ca 44%,
+                    #2563eb 100%
+                );
+
+            box-shadow:
+                0 24px 60px
+                rgba(37, 99, 235, 0.20);
+        }
+
+        .chat-hero-grid {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+
+            background-image:
+                linear-gradient(
+                    rgba(255, 255, 255, 0.2) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.2) 1px,
+                    transparent 1px
+                );
+
+            background-size: 30px 30px;
+        }
+
+        .chat-shell {
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius: 1.5rem;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.96
+                );
+
+            box-shadow:
+                0 18px 45px
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.07
+                );
+        }
+
+        .message-area {
+            min-height: 430px;
+            max-height: 65vh;
+            scroll-behavior: smooth;
+        }
+
+        .assistant-bubble {
+            border:
+                1px solid
+                #e2e8f0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffffff,
+                    #f8fafc
+                );
+
+            box-shadow:
+                0 6px 18px
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.04
+                );
+        }
+
+        .user-bubble {
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #6366f1
+                );
+
+            box-shadow:
+                0 8px 22px
+                rgba(
+                    79,
+                    70,
+                    229,
+                    0.18
+                );
+        }
+
+        .quick-prompt {
+            transition:
+                transform 0.2s,
+                background 0.2s,
+                border-color 0.2s;
+        }
+
+        .quick-prompt:hover {
+            transform:
+                translateY(-1px);
+
+            border-color:
+                #c7d2fe;
+
+            background:
+                #eef2ff;
+        }
+
+        @media (max-width: 640px) {
+            .chat-hero {
+                border-radius: 1.2rem;
+                padding: 1.25rem;
+            }
+
+            .chat-shell {
+                border-radius: 1rem;
+            }
+
+            .message-area {
+                min-height: 360px;
+                max-height: 60vh;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900">
 
-    <script>
-        window.SKILLBRIDGE_ROLE = "student";
-    </script>
+<body class="text-slate-900">
 
-    <div id="app-shell">
-
-        <main class="min-h-screen lg:pl-72">
-
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-
-                <header class="mb-7">
-
-                    <p class="text-sm font-semibold text-indigo-600">
-                        SkillBridge AI
-                    </p>
-
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
-                        AI Career Assistant
-                    </h1>
-
-                    <p class="mt-2 text-slate-500">
-                        Ask personalized questions using your SkillBridge profile context.
-                    </p>
-
-                </header>
+<script>
+    window.SKILLBRIDGE_ROLE = "student";
+</script>
 
 
-                <div class="card flex min-h-[65vh] flex-col overflow-hidden">
+<div id="app-shell">
 
-                    <div
-                        id="messages"
-                        class="flex-1 space-y-3 overflow-y-auto p-5"
-                    ></div>
+    <main class="min-h-screen lg:pl-72">
+
+        <div
+            class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
+        >
 
 
-                    <form
-                        id="chatForm"
-                        class="flex gap-3 border-t p-4"
-                    >
+            <!-- ================================================= -->
+            <!-- HERO -->
+            <!-- ================================================= -->
 
-                        <input
-                            class="input"
-                            name="message"
-                            placeholder="Ask about your career, skills or roadmap…"
-                            required
+            <header class="chat-hero mb-7">
+
+                <div class="chat-hero-grid"></div>
+
+
+                <div
+                    class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between"
+                >
+
+                    <div class="max-w-3xl">
+
+                        <div
+                            class="mb-3 flex flex-wrap items-center gap-2"
                         >
 
-                        <button class="btn btn-primary">
-                            Send
+                            <span
+                                class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-indigo-100"
+                            >
+                                Student Assistant
+                            </span>
+
+
+                            <span
+                                class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-emerald-200"
+                            >
+                                Personalized Career Guidance
+                            </span>
+
+                        </div>
+
+
+                        <p
+                            class="text-sm font-semibold text-indigo-100"
+                        >
+                            SkillBridge AI
+                        </p>
+
+
+                        <h1
+                            class="mt-1 text-3xl font-black tracking-tight sm:text-4xl"
+                        >
+                            AI Career Assistant
+                        </h1>
+
+
+                        <p
+                            class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100 sm:text-base"
+                        >
+                            Ask about your skills, projects, certificates,
+                            applications, skill gaps, career readiness,
+                            internships and what you should learn next.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="relative z-10 rounded-2xl border border-white/15 bg-white/10 px-5 py-4"
+                    >
+
+                        <p
+                            class="text-xs font-black uppercase tracking-[0.14em] text-indigo-200"
+                        >
+                            Context
+                        </p>
+
+                        <p
+                            class="mt-1 text-sm font-bold text-white"
+                        >
+                            Your own profile data only
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ================================================= -->
+            <!-- QUICK PROMPTS -->
+            <!-- ================================================= -->
+
+            <section class="mb-5">
+
+                <div
+                    class="flex flex-wrap gap-2"
+                >
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="my skills"
+                    >
+                        My Skills
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="my projects"
+                    >
+                        My Projects
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="my certificates"
+                    >
+                        My Certificates
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="my applications"
+                    >
+                        My Applications
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="What skills am I missing for my career goal?"
+                    >
+                        Skill Gap
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="quick-prompt rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                        data-prompt="What should I learn next?"
+                    >
+                        What To Learn Next
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================= -->
+            <!-- CHAT -->
+            <!-- ================================================= -->
+
+            <section
+                class="chat-shell flex min-h-[65vh] flex-col overflow-hidden"
+            >
+
+
+                <!-- Chat Top Bar -->
+
+                <div
+                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4"
+                >
+
+                    <div
+                        class="flex items-center gap-3"
+                    >
+
+                        <div
+                            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600"
+                        >
+                            <i
+                                data-lucide="bot"
+                                class="h-5 w-5"
+                            ></i>
+                        </div>
+
+
+                        <div>
+
+                            <h2
+                                class="font-black text-slate-900"
+                            >
+                                SkillBridge Career Assistant
+                            </h2>
+
+                            <p
+                                id="chatStatus"
+                                class="text-xs text-slate-500"
+                            >
+                                Connecting...
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="newChatBtn"
+                        type="button"
+                        class="btn btn-soft"
+                    >
+                        <i
+                            data-lucide="message-square-plus"
+                            class="h-4 w-4"
+                        ></i>
+
+                        New Chat
+                    </button>
+
+                </div>
+
+
+
+                <!-- Messages -->
+
+                <div
+                    id="messages"
+                    class="message-area flex-1 space-y-4 overflow-y-auto p-4 sm:p-6"
+                >
+
+                    <div
+                        class="flex items-center justify-center py-12"
+                    >
+
+                        <div
+                            class="text-center"
+                        >
+
+                            <span
+                                class="mx-auto block h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"
+                            ></span>
+
+                            <p
+                                class="mt-3 text-sm text-slate-500"
+                            >
+                                Loading your career assistant...
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Input -->
+
+                <form
+                    id="chatForm"
+                    class="border-t border-slate-200 bg-white p-4"
+                >
+
+                    <div
+                        class="flex items-end gap-3"
+                    >
+
+                        <textarea
+                            id="messageInput"
+                            class="input min-h-[46px] max-h-36 resize-none"
+                            name="message"
+                            rows="1"
+                            placeholder="Ask about your career, skills, projects, applications or roadmap..."
+                            required
+                        ></textarea>
+
+
+                        <button
+                            id="sendBtn"
+                            type="submit"
+                            class="btn btn-primary h-[46px] shrink-0"
+                        >
+                            <i
+                                data-lucide="send"
+                                class="h-4 w-4"
+                            ></i>
+
+                            <span
+                                class="hidden sm:inline"
+                            >
+                                Send
+                            </span>
                         </button>
 
-                    </form>
+                    </div>
+
+
+                    <p
+                        class="mt-2 text-xs text-slate-400"
+                    >
+                        Press Enter to send · Shift + Enter for a new line
+                    </p>
+
+                </form>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- COMMON JS -->
+<!-- ================================================= -->
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+
+
+<!-- ================================================= -->
+<!-- CHAT LOGIC -->
+<!-- ================================================= -->
+
+<script>
+
+let sid = null;
+
+let isSending = false;
+
+
+const messages =
+    document.getElementById(
+        "messages"
+    );
+
+const chatForm =
+    document.getElementById(
+        "chatForm"
+    );
+
+const messageInput =
+    document.getElementById(
+        "messageInput"
+    );
+
+const sendBtn =
+    document.getElementById(
+        "sendBtn"
+    );
+
+const newChatBtn =
+    document.getElementById(
+        "newChatBtn"
+    );
+
+const chatStatus =
+    document.getElementById(
+        "chatStatus"
+    );
+
+
+
+/* =====================================================
+   BUBBLE
+===================================================== */
+
+function bubble(message) {
+
+    const isUser =
+        (
+            message.role ||
+            message.sender
+        ) === "user";
+
+
+    const content =
+        message.content ||
+        message.message ||
+        "";
+
+
+    return `
+
+        <div
+            class="flex ${
+                isUser
+                    ? "justify-end"
+                    : "justify-start"
+            }"
+        >
+
+            <div
+                class="
+                    max-w-[88%]
+                    whitespace-pre-wrap
+                    break-words
+                    rounded-2xl
+                    px-4
+                    py-3
+                    text-sm
+                    leading-6
+                    ${
+                        isUser
+                            ? "user-bubble text-white"
+                            : "assistant-bubble text-slate-700"
+                    }
+                "
+            >
+                ${SB.esc(content)}
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   WELCOME MESSAGE
+===================================================== */
+
+function renderWelcome() {
+
+    messages.innerHTML =
+        bubble({
+            role: "assistant",
+            content:
+                "Hi! I am your SkillBridge Career Assistant.\n\n" +
+                "You can ask me about:\n" +
+                "• your profile and skills\n" +
+                "• projects and certificates\n" +
+                "• applications and opportunities\n" +
+                "• skill gaps and career readiness\n" +
+                "• what to learn next\n" +
+                "• internship and placement preparation"
+        });
+
+
+    scrollToBottom();
+
+}
+
+
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+function scrollToBottom() {
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+
+
+/* =====================================================
+   CREATE SESSION
+===================================================== */
+
+async function createSession() {
+
+    const response =
+        await SB.post(
+            "/career-chat/sessions",
+            {
+                title:
+                    "Career Assistant"
+            }
+        );
+
+
+    sid =
+        response.data?.session_id ||
+        response.session_id ||
+        response.id;
+
+
+    if (!sid) {
+
+        throw new Error(
+            "Chat session could not be created."
+        );
+
+    }
+
+
+    return sid;
+
+}
+
+
+
+/* =====================================================
+   LOAD SESSION
+===================================================== */
+
+async function loadSession() {
+
+    const response =
+        await SB.get(
+            "/career-chat/sessions"
+        );
+
+
+    const sessions =
+        response.data ||
+        response ||
+        [];
+
+
+    sid =
+        sessions[0]?.id ||
+        sessions[0]?.session_id ||
+        null;
+
+
+    if (!sid) {
+
+        await createSession();
+
+    }
+
+
+    return sid;
+
+}
+
+
+
+/* =====================================================
+   LOAD MESSAGES
+===================================================== */
+
+async function loadMessages() {
+
+    if (!sid) {
+
+        renderWelcome();
+
+        return;
+
+    }
+
+
+    const response =
+        await SB.get(
+            `/career-chat/sessions/${sid}/messages`
+        );
+
+
+    const history =
+        response.data ||
+        response ||
+        [];
+
+
+    if (!history.length) {
+
+        renderWelcome();
+
+        return;
+
+    }
+
+
+    messages.innerHTML =
+        history
+            .map(bubble)
+            .join("");
+
+
+    scrollToBottom();
+
+}
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+async function init() {
+
+    try {
+
+        chatStatus.textContent =
+            "Connecting to your profile...";
+
+
+        await loadSession();
+
+        await loadMessages();
+
+
+        chatStatus.textContent =
+            "Connected · Personalized to your profile";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Chat initialization error:",
+            error
+        );
+
+
+        chatStatus.textContent =
+            "Unable to connect";
+
+
+        messages.innerHTML = `
+
+            <div
+                class="mx-auto max-w-xl rounded-2xl border border-rose-200 bg-rose-50 p-5 text-center"
+            >
+
+                <div
+                    class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-rose-100 text-rose-600"
+                >
+                    <i
+                        data-lucide="circle-alert"
+                        class="h-5 w-5"
+                    ></i>
+                </div>
+
+
+                <p
+                    class="mt-3 font-black text-rose-800"
+                >
+                    Career Assistant unavailable
+                </p>
+
+
+                <p
+                    class="mt-2 text-sm text-rose-700"
+                >
+                    ${SB.esc(error.message)}
+                </p>
+
+
+                <p
+                    class="mt-2 text-xs text-rose-600"
+                >
+                    Make sure your student profile is created first.
+                </p>
+
+            </div>
+
+        `;
+
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
+
+async function sendMessage(
+    text
+) {
+
+    const cleanText =
+        String(
+            text || ""
+        ).trim();
+
+
+    if (
+        !cleanText ||
+        isSending
+    ) {
+
+        return;
+
+    }
+
+
+    if (!sid) {
+
+        SB.toast(
+            "Chat session is not ready."
+        );
+
+        return;
+
+    }
+
+
+    isSending =
+        true;
+
+
+    messages.innerHTML +=
+        bubble({
+            role: "user",
+            content: cleanText
+        });
+
+
+    messages.innerHTML += `
+
+        <div
+            id="typingBubble"
+            class="flex justify-start"
+        >
+
+            <div
+                class="assistant-bubble rounded-2xl px-4 py-3"
+            >
+
+                <div
+                    class="flex items-center gap-1.5"
+                >
+
+                    <span
+                        class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                    ></span>
+
+                    <span
+                        class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                        style="animation-delay:120ms"
+                    ></span>
+
+                    <span
+                        class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                        style="animation-delay:240ms"
+                    ></span>
 
                 </div>
 
             </div>
 
-        </main>
+        </div>
 
-    </div>
-
-
-    <script src="/assets/js/config.js"></script>
-    <script src="/assets/js/api.js"></script>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/shell.js"></script>
+    `;
 
 
-    <script>
-
-        let sid = null;
+    scrollToBottom();
 
 
-        function bubble(m) {
-
-            const user =
-                (m.role || m.sender) === 'user';
+    sendBtn.disabled =
+        true;
 
 
-            return `
+    sendBtn.innerHTML = `
 
-                <div class="flex ${user ? 'justify-end' : 'justify-start'}">
+        <span
+            class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+        ></span>
 
-                    <div
-                        class="
-                            max-w-[80%]
-                            rounded-2xl
-                            px-4
-                            py-3
-                            ${user ? 'bg-indigo-600 text-white' : 'bg-slate-100'}
-                        "
-                    >
-                        ${SB.esc(m.content || m.message || '')}
-                    </div>
+        <span
+            class="hidden sm:inline"
+        >
+            Sending
+        </span>
 
-                </div>
-
-            `;
-
-        }
+    `;
 
 
-        async function init() {
+    try {
 
-            try {
-
-                const s =
-                    await SB.get(
-                        '/career-chat/sessions'
-                    );
-
-
-                const arr =
-                    s.data ||
-                    s ||
-                    [];
-
-
-                sid =
-                    arr[0]?.id;
-
-
-                if (!sid) {
-
-                    const n =
-                        await SB.post(
-                            '/career-chat/sessions',
-                            {
-                                title: 'Career Assistant'
-                            }
-                        );
-
-
-                    sid =
-                        n.data?.session_id ||
-                        n.session_id ||
-                        n.id;
-
+        const response =
+            await SB.post(
+                `/career-chat/sessions/${sid}/messages`,
+                {
+                    message:
+                        cleanText
                 }
+            );
 
 
-                const m =
-                    await SB.get(
-                        `/career-chat/sessions/${sid}/messages`
-                    );
+        const typingBubble =
+            document.getElementById(
+                "typingBubble"
+            );
 
 
-                messages.innerHTML =
-                    (m.data || m || [])
-                        .map(bubble)
-                        .join('') ||
-                    '<p class="text-center text-sm text-slate-500">Ask your first career question.</p>';
+        if (typingBubble) {
 
-            }
-
-            catch (e) {
-
-                messages.innerHTML = `
-
-                    <p class="text-rose-600">
-                        ${SB.esc(e.message)}
-                    </p>
-
-                `;
-
-            }
+            typingBubble.remove();
 
         }
 
 
-        chatForm.onsubmit = async e => {
-
-            e.preventDefault();
-
-
-            const f =
-                new FormData(
-                    e.target
-                );
+        const answer =
+            response.data?.answer ||
+            response.answer ||
+            response.message ||
+            response.content ||
+            "Response received.";
 
 
-            const txt =
-                f.get('message');
+        messages.innerHTML +=
+            bubble({
+                role: "assistant",
+                content: answer
+            });
 
 
-            messages.innerHTML +=
-                bubble({
-                    role: 'user',
-                    content: txt
-                });
+        scrollToBottom();
+
+    }
+
+    catch (error) {
+
+        const typingBubble =
+            document.getElementById(
+                "typingBubble"
+            );
 
 
-            e.target.reset();
+        if (typingBubble) {
+
+            typingBubble.remove();
+
+        }
 
 
-            try {
-
-                const r =
-                    await SB.post(
-                        `/career-chat/sessions/${sid}/messages`,
-                        {
-                            message: txt
-                        }
-                    );
+        messages.innerHTML +=
+            bubble({
+                role: "assistant",
+                content:
+                    "Sorry, I could not process that request. " +
+                    error.message
+            });
 
 
-                messages.innerHTML +=
-                    bubble({
-                        role: 'assistant',
-                        content:
-                            r.data?.answer ||
-                            r.answer ||
-                            r.message ||
-                            r.content ||
-                            'Response received.'
-                    });
+        SB.toast(
+            error.message
+        );
 
 
-                messages.scrollTop =
-                    messages.scrollHeight;
+        scrollToBottom();
 
-            }
+    }
 
-            catch (err) {
+    finally {
 
-                SB.toast(
-                    err.message
-                );
-
-            }
-
-        };
+        isSending =
+            false;
 
 
-        init();
+        sendBtn.disabled =
+            false;
 
-    </script>
 
+        sendBtn.innerHTML = `
 
-    <script>
+            <i
+                data-lucide="send"
+                class="h-4 w-4"
+            ></i>
+
+            <span
+                class="hidden sm:inline"
+            >
+                Send
+            </span>
+
+        `;
+
 
         if (window.lucide) {
+
             lucide.createIcons();
+
         }
 
-    </script>
+
+        messageInput.focus();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   FORM SUBMIT
+===================================================== */
+
+chatForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const text =
+            messageInput.value;
+
+
+        messageInput.value =
+            "";
+
+
+        await sendMessage(
+            text
+        );
+
+    }
+);
+
+
+
+/* =====================================================
+   ENTER TO SEND
+===================================================== */
+
+messageInput.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+
+            chatForm.requestSubmit();
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   QUICK PROMPTS
+===================================================== */
+
+document
+    .querySelectorAll(
+        "[data-prompt]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    messageInput.value =
+                        this.dataset.prompt ||
+                        "";
+
+
+                    messageInput.focus();
+
+                }
+            );
+
+        }
+    );
+
+
+
+/* =====================================================
+   NEW CHAT
+===================================================== */
+
+newChatBtn.addEventListener(
+    "click",
+    async function () {
+
+        if (isSending) {
+
+            return;
+
+        }
+
+
+        try {
+
+            newChatBtn.disabled =
+                true;
+
+
+            await createSession();
+
+
+            renderWelcome();
+
+
+            chatStatus.textContent =
+                "New conversation started";
+
+
+            SB.toast(
+                "New chat started."
+            );
+
+        }
+
+        catch (error) {
+
+            SB.toast(
+                error.message
+            );
+
+        }
+
+        finally {
+
+            newChatBtn.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+init();
+
+
+if (window.lucide) {
+
+    lucide.createIcons();
+
+}
+
+</script>
+
 
 </body>
 
