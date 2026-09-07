@@ -85,6 +85,52 @@
       mask-composite: exclude;
       pointer-events: none;
     }
+  
+    /* Floating SkillBridge AI Chat */
+    .sb-chat-launcher{
+      position:fixed;right:1.25rem;bottom:1.25rem;z-index:90;
+      display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+      min-width:58px;height:58px;padding:0 1rem;border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(135deg,#4f46e5,#7c3aed,#2563eb);
+      color:white;font-weight:800;box-shadow:0 20px 45px rgba(79,70,229,.35);
+      transition:.2s;
+    }
+    .sb-chat-launcher:hover{transform:translateY(-2px);box-shadow:0 24px 55px rgba(79,70,229,.45)}
+    .sb-chat-panel{
+      position:fixed;right:1.25rem;bottom:5.9rem;z-index:90;
+      width:min(420px,calc(100vw - 2rem));height:min(620px,calc(100vh - 8rem));
+      display:flex;flex-direction:column;overflow:hidden;
+      border:1px solid rgba(148,163,184,.18);border-radius:1.5rem;
+      background:rgba(15,23,42,.98);box-shadow:0 30px 80px rgba(2,6,23,.55);
+      backdrop-filter:blur(18px);
+    }
+    .sb-chat-head{padding:1rem;background:linear-gradient(135deg,#312e81,#4f46e5,#2563eb)}
+    .sb-chat-messages{flex:1;overflow-y:auto;padding:1rem;background:linear-gradient(180deg,#0f172a,#111827);scroll-behavior:smooth}
+    .sb-chat-user{
+      max-width:84%;margin-left:auto;padding:.72rem .88rem;
+      border-radius:1rem 1rem .35rem 1rem;color:white;
+      background:linear-gradient(135deg,#4f46e5,#6366f1);
+      box-shadow:0 8px 22px rgba(79,70,229,.18);
+    }
+    .sb-chat-ai{
+      max-width:88%;padding:.72rem .88rem;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:1rem 1rem 1rem .35rem;
+      color:#e2e8f0;background:rgba(30,41,59,.92);
+    }
+    .sb-chat-quick{
+      border:1px solid rgba(148,163,184,.18);border-radius:999px;
+      padding:.45rem .72rem;font-size:.75rem;font-weight:700;
+      color:#cbd5e1;background:rgba(255,255,255,.04);transition:.18s;
+    }
+    .sb-chat-quick:hover{color:#fff;border-color:rgba(129,140,248,.45);background:rgba(99,102,241,.14)}
+    @media(max-width:640px){
+      .sb-chat-launcher{right:.85rem;bottom:.85rem;width:56px;min-width:56px;padding:0}
+      .sb-chat-launcher span{display:none}
+      .sb-chat-panel{right:.75rem;left:.75rem;bottom:5rem;width:auto;height:min(72vh,620px);border-radius:1.15rem}
+    }
+
   </style>
 </head>
 
@@ -647,6 +693,60 @@
 
   </div>
 
+
+  <!-- Floating SkillBridge AI Chat -->
+  <button id="sbChatLauncher" type="button" class="sb-chat-launcher" aria-label="Open SkillBridge AI Assistant">
+    <i data-lucide="message-circle" class="h-5 w-5"></i>
+    <span>Ask SkillBridge AI</span>
+  </button>
+
+  <section id="sbChatPanel" class="sb-chat-panel hidden" aria-label="SkillBridge AI Assistant">
+    <div class="sb-chat-head">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+            <i data-lucide="bot" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h2 class="font-black text-white">SkillBridge AI Assistant</h2>
+            <p id="sbChatStatus" class="text-xs text-indigo-100">Platform guide</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button id="sbChatNew" type="button" class="hidden rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="New chat">
+            <i data-lucide="message-square-plus" class="h-4 w-4"></i>
+          </button>
+          <button id="sbChatClose" type="button" class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="Close">
+            <i data-lucide="x" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 border-b border-white/10 bg-slate-900 px-3 py-3">
+      <button type="button" class="sb-chat-quick" data-sb-prompt="What is SkillBridge AI?">What is SkillBridge?</button>
+      <button type="button" class="sb-chat-quick" data-sb-prompt="How does SkillBridge help students?">For Students</button>
+      <button type="button" class="sb-chat-quick" data-sb-prompt="How does SkillBridge help recruiters?">For Recruiters</button>
+      <button type="button" class="sb-chat-quick" data-sb-prompt="How does the skill gap process work?">Skill Gap</button>
+    </div>
+
+    <div id="sbChatMessages" class="sb-chat-messages space-y-3"></div>
+
+    <form id="sbChatForm" class="border-t border-white/10 bg-slate-950 p-3">
+      <div class="flex items-end gap-2">
+        <textarea id="sbChatInput" rows="1"
+          class="min-h-[44px] max-h-28 flex-1 resize-none rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
+          placeholder="Ask about SkillBridge..." required></textarea>
+        <button id="sbChatSend" type="submit"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white transition hover:bg-indigo-500 disabled:opacity-60"
+          aria-label="Send message">
+          <i data-lucide="send" class="h-4 w-4"></i>
+        </button>
+      </div>
+    </form>
+  </section>
+
+
   <!-- Scripts -->
   <script src="/assets/js/config.js"></script>
   <script src="/assets/js/api.js"></script>
@@ -668,6 +768,336 @@
         console.error('Platform stats error:', error);
       }
     }
+
+
+    let sbChatSessionId = null;
+    let sbChatRole = "public";
+    let sbChatInitialized = false;
+    let sbChatSending = false;
+
+    const sbChatLauncher = document.getElementById("sbChatLauncher");
+    const sbChatPanel = document.getElementById("sbChatPanel");
+    const sbChatClose = document.getElementById("sbChatClose");
+    const sbChatNew = document.getElementById("sbChatNew");
+    const sbChatStatus = document.getElementById("sbChatStatus");
+    const sbChatMessages = document.getElementById("sbChatMessages");
+    const sbChatForm = document.getElementById("sbChatForm");
+    const sbChatInput = document.getElementById("sbChatInput");
+    const sbChatSend = document.getElementById("sbChatSend");
+
+    function sbChatBubble(message){
+      const isUser = (message.role || message.sender) === "user";
+      const content = message.content || message.message || "";
+      return `<div class="flex ${isUser ? "justify-end" : "justify-start"}">
+        <div class="${isUser ? "sb-chat-user" : "sb-chat-ai"} whitespace-pre-wrap break-words text-sm leading-6">${SB.esc(content)}</div>
+      </div>`;
+    }
+
+    function sbChatScroll(){
+      sbChatMessages.scrollTop = sbChatMessages.scrollHeight;
+    }
+
+    function sbPublicWelcome(){
+      sbChatMessages.innerHTML = sbChatBubble({
+        role:"assistant",
+        content:"Hi! I’m the SkillBridge AI platform guide.\n\nI can explain how SkillBridge works for students, colleges and recruiters. Login to use your personalized role-based assistant."
+      });
+      sbChatStatus.textContent = "Platform guide · Login for personalized chat";
+      sbChatScroll();
+    }
+
+   function sbPublicResponse(message){
+
+  const text =
+    String(message || "")
+      .trim()
+      .toLowerCase();
+
+
+  // GREETING / WEBSITE INTRO
+  if(
+    text === "hi" ||
+    text === "hii" ||
+    text === "hello" ||
+    text === "hey" ||
+    text.includes("website kya karta") ||
+    text.includes("website ka kaam") ||
+    text.includes("skillbridge kya hai") ||
+    text.includes("what is skillbridge")
+  ){
+    return (
+      "Hi 👋 Welcome to SkillBridge AI! " +
+      "Ye ek Academia–Industry Skill Intelligence Platform hai jo students, colleges aur companies ko connect karta hai. " +
+      "Student apni skills aur resume analyze karke skill gap identify kar sakta hai, career roadmap dekh sakta hai aur matching internships/jobs ke liye apply kar sakta hai. " +
+      "Companies skill requirements ke basis par suitable candidates find kar sakti hain, aur colleges student skill gaps aur industry demand analyze kar sakte hain."
+    );
+  }
+
+
+  // STUDENT
+  if(
+    text.includes("student")
+  ){
+    return (
+      "SkillBridge AI me student apna profile aur skills add kar sakta hai, " +
+      "resume analyze kar sakta hai, skill gap identify kar sakta hai, " +
+      "career roadmap dekh sakta hai aur matching internships/jobs ke liye apply kar sakta hai."
+    );
+  }
+
+
+  // COMPANY
+  if(
+    text.includes("company") ||
+    text.includes("recruiter") ||
+    text.includes("industry")
+  ){
+    return (
+      "SkillBridge AI me company jobs aur internships create kar sakti hai, " +
+      "required skills define kar sakti hai aur applicants ko skill match score ke basis par review kar sakti hai."
+    );
+  }
+
+
+  // COLLEGE
+  if(
+    text.includes("college") ||
+    text.includes("tpo")
+  ){
+    return (
+      "SkillBridge AI me College/TPO student skills, common skill gaps, " +
+      "industry demand aur collaborations ko analyze aur manage kar sakta hai."
+    );
+  }
+
+
+  // DEFAULT
+  return (
+    "Main SkillBridge AI ke features aur workflow ke baare me help kar sakta hoon. " +
+    "Aap Student, College, Company, Skill Gap, Internship ya Placement ke baare me puch sakte hain."
+  );
+
+}
+
+
+
+    
+
+    async function sbDetectRole(){
+      try{
+        const user = await Auth.me();
+        const role = user?.role?.value || user?.role || "public";
+        if(role === "student" || role === "recruiter"){
+          sbChatRole = role;
+          sbChatNew.classList.remove("hidden");
+        }
+      }catch(error){
+        sbChatRole = "public";
+      }
+    }
+
+    function sbChatBasePath(){
+      if(sbChatRole === "student") return "/career-chat";
+      if(sbChatRole === "recruiter") return "/recruiter-chat";
+      return null;
+    }
+
+    async function sbCreateSession(){
+      const basePath = sbChatBasePath();
+      if(!basePath) return null;
+
+      const response = await SB.post(`${basePath}/sessions`,{
+        title: sbChatRole === "student" ? "Homepage Career Assistant" : "Homepage Hiring Assistant"
+      });
+
+      sbChatSessionId = response.data?.session_id || response.session_id || response.id;
+      return sbChatSessionId;
+    }
+
+    async function sbLoadSession(){
+      const basePath = sbChatBasePath();
+      if(!basePath) return;
+
+      const response = await SB.get(`${basePath}/sessions`);
+      const sessions = response.data || response || [];
+      sbChatSessionId = sessions[0]?.id || sessions[0]?.session_id || null;
+
+      if(!sbChatSessionId) await sbCreateSession();
+    }
+
+    async function sbLoadMessages(){
+      const basePath = sbChatBasePath();
+
+      if(!basePath || !sbChatSessionId){
+        sbPublicWelcome();
+        return;
+      }
+
+      const response = await SB.get(`${basePath}/sessions/${sbChatSessionId}/messages`);
+      const history = response.data || response || [];
+
+      if(!history.length){
+        sbChatMessages.innerHTML = sbChatBubble({
+          role:"assistant",
+          content: sbChatRole === "student"
+            ? "Hi! I’m your SkillBridge Career Assistant. Ask me about your skills, projects, applications, skill gap or what to learn next."
+            : "Hi! I’m your SkillBridge Hiring Intelligence Assistant. Ask me about your company, opportunities, applicants, match scores or collaborations."
+        });
+      }else{
+        sbChatMessages.innerHTML = history.map(sbChatBubble).join("");
+      }
+
+      sbChatStatus.textContent = sbChatRole === "student"
+        ? "Student Career Assistant · Connected"
+        : "Hiring Intelligence Assistant · Connected";
+
+      sbChatScroll();
+    }
+
+    async function sbInitChat(){
+      if(sbChatInitialized) return;
+
+      sbChatStatus.textContent = "Checking account...";
+      await sbDetectRole();
+
+      if(sbChatRole === "student" || sbChatRole === "recruiter"){
+        try{
+          await sbLoadSession();
+          await sbLoadMessages();
+        }catch(error){
+          console.error("Chat init error:",error);
+          sbPublicWelcome();
+        }
+      }else{
+        sbPublicWelcome();
+      }
+
+      sbChatInitialized = true;
+      if(window.lucide) lucide.createIcons();
+    }
+
+    async function sbOpenChat(){
+      sbChatPanel.classList.remove("hidden");
+      sbChatLauncher.classList.add("hidden");
+      await sbInitChat();
+      sbChatInput.focus();
+    }
+
+    function sbCloseChat(){
+      sbChatPanel.classList.add("hidden");
+      sbChatLauncher.classList.remove("hidden");
+    }
+
+    sbChatLauncher.addEventListener("click",sbOpenChat);
+    sbChatClose.addEventListener("click",sbCloseChat);
+
+    sbChatNew.addEventListener("click",async function(){
+      if(sbChatSending || sbChatRole === "public") return;
+
+      try{
+        sbChatNew.disabled = true;
+        await sbCreateSession();
+
+        sbChatMessages.innerHTML = sbChatBubble({
+          role:"assistant",
+          content: sbChatRole === "student"
+            ? "New career conversation started. What would you like to work on?"
+            : "New hiring conversation started. What would you like to review?"
+        });
+
+        sbChatScroll();
+      }catch(error){
+        SB.toast(error.message);
+      }finally{
+        sbChatNew.disabled = false;
+      }
+    });
+
+    async function sbSendMessage(text){
+      const cleanText = String(text || "").trim();
+
+      if(!cleanText || sbChatSending) return;
+
+      sbChatSending = true;
+      sbChatMessages.innerHTML += sbChatBubble({role:"user",content:cleanText});
+
+      sbChatMessages.innerHTML += `<div id="sbTypingBubble" class="flex justify-start">
+        <div class="sb-chat-ai">
+          <div class="flex items-center gap-1.5">
+            <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400"></span>
+            <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400" style="animation-delay:120ms"></span>
+            <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400" style="animation-delay:240ms"></span>
+          </div>
+        </div>
+      </div>`;
+
+      sbChatScroll();
+      sbChatSend.disabled = true;
+
+      try{
+        let answer;
+
+        if(sbChatRole === "student" || sbChatRole === "recruiter"){
+          const basePath = sbChatBasePath();
+
+          const response = await SB.post(
+            `${basePath}/sessions/${sbChatSessionId}/messages`,
+            {message:cleanText}
+          );
+
+          answer = response.data?.answer || response.answer || response.message || response.content || "Response received.";
+        }else{
+          await new Promise(resolve => setTimeout(resolve,250));
+          answer = sbPublicResponse(cleanText);
+        }
+
+        document.getElementById("sbTypingBubble")?.remove();
+
+        sbChatMessages.innerHTML += sbChatBubble({
+          role:"assistant",
+          content:answer
+        });
+
+        sbChatScroll();
+
+      }catch(error){
+        document.getElementById("sbTypingBubble")?.remove();
+
+        sbChatMessages.innerHTML += sbChatBubble({
+          role:"assistant",
+          content:"Sorry, I could not process that request. " + error.message
+        });
+
+        sbChatScroll();
+      }finally{
+        sbChatSending = false;
+        sbChatSend.disabled = false;
+        if(window.lucide) lucide.createIcons();
+        sbChatInput.focus();
+      }
+    }
+
+    sbChatForm.addEventListener("submit",async function(event){
+      event.preventDefault();
+      const text = sbChatInput.value;
+      sbChatInput.value = "";
+      await sbSendMessage(text);
+    });
+
+    sbChatInput.addEventListener("keydown",function(event){
+      if(event.key === "Enter" && !event.shiftKey){
+        event.preventDefault();
+        sbChatForm.requestSubmit();
+      }
+    });
+
+    document.querySelectorAll("[data-sb-prompt]").forEach(button => {
+      button.addEventListener("click",function(){
+        sbChatInput.value = this.dataset.sbPrompt || "";
+        sbChatInput.focus();
+      });
+    });
+
 
     loadPlatformStats();
 

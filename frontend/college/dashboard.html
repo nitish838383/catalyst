@@ -23,6 +23,68 @@
     >
 
     <title>College / TPO Dashboard | SkillBridge AI</title>
+
+    <style>
+      .college-chat-launcher{
+        position:fixed;right:1.25rem;bottom:1.25rem;z-index:90;
+        display:flex;align-items:center;gap:.6rem;
+        height:58px;padding:0 1rem;border-radius:999px;
+        background:linear-gradient(135deg,#4f46e5,#7c3aed);
+        color:#fff;font-weight:800;
+        box-shadow:0 20px 45px rgba(79,70,229,.35);
+        transition:.2s;
+      }
+      .college-chat-launcher:hover{transform:translateY(-2px)}
+      .college-chat-panel{
+        position:fixed;right:1.25rem;bottom:5.9rem;z-index:90;
+        width:min(420px,calc(100vw - 2rem));
+        height:min(620px,calc(100vh - 8rem));
+        display:flex;flex-direction:column;overflow:hidden;
+        border:1px solid rgba(148,163,184,.2);
+        border-radius:1.5rem;background:#0f172a;
+        box-shadow:0 30px 80px rgba(2,6,23,.5);
+      }
+      .college-chat-head{
+        padding:1rem;
+        background:linear-gradient(135deg,#312e81,#4f46e5,#7c3aed);
+        color:white;
+      }
+      .college-chat-messages{
+        flex:1;overflow-y:auto;padding:1rem;background:#111827;
+      }
+      .college-chat-user{
+        max-width:82%;margin-left:auto;padding:.75rem .9rem;
+        border-radius:1rem 1rem .35rem 1rem;
+        background:linear-gradient(135deg,#4f46e5,#6366f1);
+        color:white;
+      }
+      .college-chat-ai{
+        max-width:88%;padding:.75rem .9rem;
+        border:1px solid rgba(148,163,184,.18);
+        border-radius:1rem 1rem 1rem .35rem;
+        background:#1e293b;color:#e2e8f0;
+      }
+      .college-chat-quick{
+        border:1px solid rgba(148,163,184,.22);
+        border-radius:999px;padding:.42rem .7rem;
+        font-size:.75rem;font-weight:700;
+        color:#cbd5e1;background:rgba(255,255,255,.04);
+      }
+      .college-chat-quick:hover{
+        color:#fff;border-color:rgba(129,140,248,.5);
+        background:rgba(99,102,241,.14)
+      }
+      @media(max-width:640px){
+        .college-chat-launcher{
+          right:.8rem;bottom:.8rem;width:56px;padding:0;justify-content:center
+        }
+        .college-chat-launcher span{display:none}
+        .college-chat-panel{
+          left:.75rem;right:.75rem;bottom:5rem;width:auto;height:min(72vh,620px)
+        }
+      }
+    </style>
+
 </head>
 
 
@@ -737,6 +799,103 @@
 
 
 
+
+    <!-- ===================================================== -->
+    <!-- College AI Assistant -->
+    <!-- ===================================================== -->
+
+    <button
+      id="collegeChatLauncher"
+      type="button"
+      class="college-chat-launcher"
+      aria-label="Open College AI Assistant"
+    >
+      <i data-lucide="bot" class="h-5 w-5"></i>
+      <span>College AI Assistant</span>
+    </button>
+
+    <section
+      id="collegeChatPanel"
+      class="college-chat-panel hidden"
+      aria-label="College AI Assistant"
+    >
+      <div class="college-chat-head">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+              <i data-lucide="brain-circuit" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <h2 class="font-black">College Intelligence Assistant</h2>
+              <p id="collegeChatStatus" class="text-xs text-indigo-100">
+                Your college data · Secure
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button
+              id="collegeChatNew"
+              type="button"
+              class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
+              title="New chat"
+            >
+              <i data-lucide="message-square-plus" class="h-4 w-4"></i>
+            </button>
+
+            <button
+              id="collegeChatClose"
+              type="button"
+              class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
+              title="Close"
+            >
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 border-b border-white/10 bg-slate-900 px-3 py-3">
+        <button type="button" class="college-chat-quick" data-college-prompt="Show my college">My College</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="Show college overview">Overview</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="Show top student skills">Top Skills</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="Show our skill gaps">Skill Gaps</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="What skills are companies demanding?">Industry Demand</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="What training should we organize?">Training</button>
+        <button type="button" class="college-chat-quick" data-college-prompt="Show collaborations">Collaborations</button>
+      </div>
+
+      <div
+        id="collegeChatMessages"
+        class="college-chat-messages space-y-3"
+      ></div>
+
+      <form
+        id="collegeChatForm"
+        class="border-t border-white/10 bg-slate-950 p-3"
+      >
+        <div class="flex items-end gap-2">
+          <textarea
+            id="collegeChatInput"
+            rows="1"
+            class="min-h-[44px] max-h-28 flex-1 resize-none rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
+            placeholder="Ask about students, skills, gaps, demand..."
+            required
+          ></textarea>
+
+          <button
+            id="collegeChatSend"
+            type="submit"
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
+            aria-label="Send message"
+          >
+            <i data-lucide="send" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </form>
+    </section>
+
+
     <!-- ===================================================== -->
     <!-- Scripts -->
     <!-- ===================================================== -->
@@ -1110,6 +1269,446 @@ Website: ${currentCollege.website ?? ""}
 
             };
 
+
+
+
+        // =====================================================
+        // College AI Chat
+        // =====================================================
+
+        let collegeChatSessionId = null;
+        let collegeChatBusy = false;
+        let collegeChatInitialized = false;
+
+        const collegeChatLauncher =
+            document.getElementById("collegeChatLauncher");
+
+        const collegeChatPanel =
+            document.getElementById("collegeChatPanel");
+
+        const collegeChatClose =
+            document.getElementById("collegeChatClose");
+
+        const collegeChatNew =
+            document.getElementById("collegeChatNew");
+
+        const collegeChatMessages =
+            document.getElementById("collegeChatMessages");
+
+        const collegeChatForm =
+            document.getElementById("collegeChatForm");
+
+        const collegeChatInput =
+            document.getElementById("collegeChatInput");
+
+        const collegeChatSend =
+            document.getElementById("collegeChatSend");
+
+        const collegeChatStatus =
+            document.getElementById("collegeChatStatus");
+
+
+        function collegeChatBubble(message) {
+
+            const isUser =
+                message.role === "user";
+
+            const content =
+                message.content ||
+                message.message ||
+                "";
+
+            return `
+              <div class="flex ${isUser ? "justify-end" : "justify-start"}">
+                <div
+                  class="${isUser ? "college-chat-user" : "college-chat-ai"} whitespace-pre-wrap break-words text-sm leading-6"
+                >
+                  ${SB.esc(content)}
+                </div>
+              </div>
+            `;
+        }
+
+
+        function collegeChatScroll() {
+
+            collegeChatMessages.scrollTop =
+                collegeChatMessages.scrollHeight;
+        }
+
+
+        function collegeChatWelcome() {
+
+            collegeChatMessages.innerHTML =
+                collegeChatBubble({
+                    role: "assistant",
+                    content:
+                        "Hi! I’m your College Intelligence Assistant.\n\n" +
+                        "Ask me about your college overview, departments, student skills, skill gaps, industry demand, training priorities and collaborations."
+                });
+
+            collegeChatScroll();
+        }
+
+
+        async function createCollegeChatSession() {
+
+            const response =
+                await SB.post(
+                    "/college-chat/sessions",
+                    {
+                        title: "College Dashboard Assistant"
+                    }
+                );
+
+            collegeChatSessionId =
+                response.data?.session_id ||
+                response.data?.id ||
+                response.session_id ||
+                response.id;
+
+            return collegeChatSessionId;
+        }
+
+
+        async function loadCollegeChatSession() {
+
+            const response =
+                await SB.get(
+                    "/college-chat/sessions"
+                );
+
+            const sessions =
+                response.data ||
+                response ||
+                [];
+
+            collegeChatSessionId =
+                sessions[0]?.id ||
+                sessions[0]?.session_id ||
+                null;
+
+            if (!collegeChatSessionId) {
+                await createCollegeChatSession();
+            }
+        }
+
+
+        async function loadCollegeChatMessages() {
+
+            if (!collegeChatSessionId) {
+                collegeChatWelcome();
+                return;
+            }
+
+            const response =
+                await SB.get(
+                    `/college-chat/sessions/${collegeChatSessionId}/messages`
+                );
+
+            const messages =
+                response.data ||
+                response ||
+                [];
+
+            if (!messages.length) {
+                collegeChatWelcome();
+            } else {
+                collegeChatMessages.innerHTML =
+                    messages
+                        .map(collegeChatBubble)
+                        .join("");
+            }
+
+            collegeChatScroll();
+        }
+
+
+        async function initCollegeChat() {
+
+            if (collegeChatInitialized) {
+                return;
+            }
+
+            collegeChatStatus.textContent =
+                "Connecting to college data...";
+
+            try {
+
+                await loadCollegeChatSession();
+                await loadCollegeChatMessages();
+
+                collegeChatStatus.textContent =
+                    "Your college data · Connected";
+
+            } catch (error) {
+
+                console.error(
+                    "College chat init error:",
+                    error
+                );
+
+                collegeChatStatus.textContent =
+                    "Unable to connect";
+
+                collegeChatMessages.innerHTML =
+                    collegeChatBubble({
+                        role: "assistant",
+                        content:
+                            "College AI Assistant could not connect. Please make sure the College Chat backend is deployed and you are logged in with a college account."
+                    });
+            }
+
+            collegeChatInitialized = true;
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+
+        collegeChatLauncher.addEventListener(
+            "click",
+            async function () {
+
+                collegeChatPanel.classList.remove(
+                    "hidden"
+                );
+
+                collegeChatLauncher.classList.add(
+                    "hidden"
+                );
+
+                await initCollegeChat();
+
+                collegeChatInput.focus();
+            }
+        );
+
+
+        collegeChatClose.addEventListener(
+            "click",
+            function () {
+
+                collegeChatPanel.classList.add(
+                    "hidden"
+                );
+
+                collegeChatLauncher.classList.remove(
+                    "hidden"
+                );
+            }
+        );
+
+
+        collegeChatNew.addEventListener(
+            "click",
+            async function () {
+
+                if (collegeChatBusy) {
+                    return;
+                }
+
+                try {
+
+                    collegeChatNew.disabled = true;
+
+                    await createCollegeChatSession();
+
+                    collegeChatMessages.innerHTML =
+                        collegeChatBubble({
+                            role: "assistant",
+                            content:
+                                "New college intelligence conversation started. What would you like to analyze?"
+                        });
+
+                    collegeChatScroll();
+
+                } catch (error) {
+
+                    SB.toast(
+                        error.message ||
+                        "Unable to create new chat."
+                    );
+
+                } finally {
+
+                    collegeChatNew.disabled = false;
+                }
+            }
+        );
+
+
+        async function sendCollegeChatMessage(
+            message
+        ) {
+
+            const cleanMessage =
+                String(message || "")
+                    .trim();
+
+            if (
+                !cleanMessage ||
+                collegeChatBusy
+            ) {
+                return;
+            }
+
+            collegeChatBusy = true;
+            collegeChatSend.disabled = true;
+
+
+            collegeChatMessages.innerHTML +=
+                collegeChatBubble({
+                    role: "user",
+                    content: cleanMessage
+                });
+
+
+            collegeChatMessages.innerHTML += `
+              <div
+                id="collegeChatTyping"
+                class="flex justify-start"
+              >
+                <div class="college-chat-ai">
+                  <div class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400"></span>
+                    <span
+                      class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                      style="animation-delay:120ms"
+                    ></span>
+                    <span
+                      class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
+                      style="animation-delay:240ms"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            collegeChatScroll();
+
+
+            try {
+
+                if (!collegeChatSessionId) {
+                    await createCollegeChatSession();
+                }
+
+                const response =
+                    await SB.post(
+                        `/college-chat/sessions/${collegeChatSessionId}/messages`,
+                        {
+                            message: cleanMessage
+                        }
+                    );
+
+                const answer =
+                    response.data?.answer ||
+                    response.answer ||
+                    response.message ||
+                    "Response received.";
+
+                document
+                    .getElementById(
+                        "collegeChatTyping"
+                    )
+                    ?.remove();
+
+                collegeChatMessages.innerHTML +=
+                    collegeChatBubble({
+                        role: "assistant",
+                        content: answer
+                    });
+
+                collegeChatScroll();
+
+            } catch (error) {
+
+                document
+                    .getElementById(
+                        "collegeChatTyping"
+                    )
+                    ?.remove();
+
+                collegeChatMessages.innerHTML +=
+                    collegeChatBubble({
+                        role: "assistant",
+                        content:
+                            "Sorry, I could not process that request. " +
+                            (error.message || "")
+                    });
+
+                collegeChatScroll();
+
+            } finally {
+
+                collegeChatBusy = false;
+                collegeChatSend.disabled = false;
+                collegeChatInput.focus();
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            }
+        }
+
+
+        collegeChatForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const message =
+                    collegeChatInput.value;
+
+                collegeChatInput.value = "";
+
+                await sendCollegeChatMessage(
+                    message
+                );
+            }
+        );
+
+
+        collegeChatInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    collegeChatForm.requestSubmit();
+                }
+            }
+        );
+
+
+        document
+            .querySelectorAll(
+                "[data-college-prompt]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            collegeChatInput.value =
+                                this.dataset.collegePrompt ||
+                                "";
+
+                            collegeChatInput.focus();
+                        }
+                    );
+                }
+            );
 
 
         // =====================================================
