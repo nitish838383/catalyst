@@ -27,8 +27,10 @@ def register(
     data: RegisterRequest,
     db: Session = Depends(get_db)
 ):
-   
-    
+    raise HTTPException(
+        status_code=403,
+        detail="New account registration is temporarily disabled."
+    )
 
     # Registration code preserved for future use
     if get_user_by_email(db, data.email):
