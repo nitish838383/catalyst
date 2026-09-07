@@ -20,6 +20,8 @@ from app.api.routes import (
     collaborations,
     challenges,
     admin,
+    college_chat,
+
 )
 
 Base.metadata.create_all(bind=engine)
@@ -60,6 +62,8 @@ for r in [
     collaborations,
     challenges,
     admin,
+    college_chat,
+
 ]:
     app.include_router(
         r.router,
