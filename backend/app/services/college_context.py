@@ -36,7 +36,6 @@ def build_college_context(
         .all()
     )
 
-
     # ========================================================
     # Collaborations
     # ========================================================
@@ -53,37 +52,94 @@ def build_college_context(
 
     for row in collaborations:
 
+        collaboration_type = (
+            getattr(row, "type", None)
+            or getattr(
+                row,
+                "collaboration_type",
+                None
+            )
+        )
+
+        collaboration_status = getattr(
+            row,
+            "status",
+            None
+        )
+
         collaboration_data.append(
             {
                 "id": row.id,
-                "company_id": row.company_id,
 
-                "title": row.title,
+                "company_id": getattr(
+                    row,
+                    "company_id",
+                    None
+                ),
 
-                "description": row.description,
+                "title": getattr(
+                    row,
+                    "title",
+                    None
+                ),
+
+                "description": getattr(
+                    row,
+                    "description",
+                    None
+                ),
 
                 "type": (
-                    row.type.value
-                    if hasattr(row.type, "value")
-                    else str(row.type)
+                    collaboration_type.value
+                    if hasattr(
+                        collaboration_type,
+                        "value"
+                    )
+                    else (
+                        str(collaboration_type)
+                        if collaboration_type
+                        else None
+                    )
                 ),
 
                 "status": (
-                    row.status.value
-                    if hasattr(row.status, "value")
-                    else str(row.status)
+                    collaboration_status.value
+                    if hasattr(
+                        collaboration_status,
+                        "value"
+                    )
+                    else (
+                        str(collaboration_status)
+                        if collaboration_status
+                        else None
+                    )
                 ),
 
-                "mode": row.mode,
+                "mode": getattr(
+                    row,
+                    "mode",
+                    None
+                ),
 
-                "location": row.location,
+                "location": getattr(
+                    row,
+                    "location",
+                    None
+                ),
 
-                "proposed_date": row.proposed_date,
+                "proposed_date": getattr(
+                    row,
+                    "proposed_date",
+                    None
+                ),
 
-                "college_note": row.college_note,
+                "college_note": getattr(
+                    row,
+                    "college_note",
+                    None
+                ),
             }
         )
-
 
     # ========================================================
     # Existing College Analytics
@@ -110,7 +166,6 @@ def build_college_context(
         college.id
     )
 
-
     # ========================================================
     # Final College AI Context
     # ========================================================
@@ -127,29 +182,22 @@ def build_college_context(
             "is_verified": college.is_verified,
         },
 
-
         "departments": [
             {
                 "id": row.id,
                 "name": row.name,
                 "code": row.code,
             }
-
             for row in departments
         ],
 
-
         "summary": summary,
-
 
         "student_skills": student_skills,
 
-
         "industry_demand": industry_demand,
 
-
         "skill_gap": skill_gap,
-
 
         "collaborations": collaboration_data,
     }
