@@ -16,6 +16,10 @@ from app.schemas.student import StudentProfileCreate,StudentProfileUpdate,Studen
 from app.schemas.skill import AddSkillRequest,AssessmentSubmit
 from app.schemas.project import ProjectCreate,ProjectResponse
 from app.schemas.certification import CertificationCreate,CertificationResponse
+from app.models.student import Student
+from app.models.company import Company
+from app.models.opportunity import Opportunity
+from app.services.matching import calculate_match
 from app.services.matching import calculate_match
 router=APIRouter(prefix="/students",tags=["Students"])
 def get_student(db,uid):
@@ -94,3 +98,94 @@ def collab_register(cid:int,db:Session=Depends(get_db),user:User=Depends(require
     if not c: raise HTTPException(404,"Collaboration not available")
     if db.query(CollaborationParticipant).filter(CollaborationParticipant.collaboration_id==cid,CollaborationParticipant.student_id==s.id).first(): raise HTTPException(409,"Already registered")
     p=CollaborationParticipant(collaboration_id=cid,student_id=s.id); db.add(p); db.commit(); return {"success":True,"registration_id":p.id}
+@router.get("/recommended-opportunities")
+def recommended_opportunities(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_roles(UserRole.student)
+    ),
+):
+    student = (
+        db.query(Student)
+        .filter(Student.user_id == current_user.id)
+        .first()
+    )
+
+    if not student:
+        raise HTTPException(
+            status_code=404,
+            detail="Student profile not found"
+        )
+
+    opportunities = (
+        db.query(Opportunity)
+        .filter(Opportunity.is_active == True)
+        .all()
+    )
+
+    results = []
+
+    for opportunity in opportunities:
+
+        match = calculate_match(
+            db,
+            student.id,
+            opportunity.id
+        )
+
+        score = match.get("score", 0)
+
+        if score < 40:
+            continue
+
+        company = (
+            db.query(Company)
+            .filter(
+                Company.id == opportunity.company_id
+            )
+            .first()
+        )
+
+        results.append({
+            "opportunity_id": opportunity.id,
+            "title": opportunity.title,
+
+            "company": {
+                "id": company.id if company else None,
+                "name": company.name if company else "Company",
+            },
+
+            "type": (
+                opportunity.opportunity_type.value
+                if hasattr(
+                    opportunity.opportunity_type,
+                    "value"
+                )
+                else str(opportunity.opportunity_type)
+            ),
+
+            "location": opportunity.location,
+            "stipend": opportunity.stipend,
+
+            "match_score": score,
+
+            "matched_skills": match.get(
+                "matched_skills",
+                []
+            ),
+
+            "missing_skills": match.get(
+                "missing_skills",
+                []
+            ),
+        })
+
+    results.sort(
+        key=lambda item: item["match_score"],
+        reverse=True
+    )
+
+    return {
+        "success": True,
+        "data": results[:10]
+    }
