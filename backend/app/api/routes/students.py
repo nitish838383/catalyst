@@ -1,140 +1,729 @@
-from fastapi import APIRouter,Depends,HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.db.session import get_db
 from app.api.deps import require_roles
-from app.models.user import User,UserRole
+
+from app.models.user import User, UserRole
 from app.models.student import Student
-from app.models.skill import Skill,StudentSkill
+from app.models.skill import Skill, StudentSkill
 from app.models.project import Project
 from app.models.certification import Certification
 from app.models.opportunity import Opportunity
-from app.models.application import Application,ApplicationStatus
-from app.models.assessment import SkillAssessment
-from app.models.collaboration import Collaboration,CollaborationStatus
-from app.models.collaboration_participant import CollaborationParticipant
-from app.schemas.student import StudentProfileCreate,StudentProfileUpdate,StudentProfileResponse
-from app.schemas.skill import AddSkillRequest,AssessmentSubmit
-from app.schemas.project import ProjectCreate,ProjectResponse
-from app.schemas.certification import CertificationCreate,CertificationResponse
-from app.models.student import Student
 from app.models.company import Company
-from app.models.opportunity import Opportunity
+from app.models.application import Application, ApplicationStatus
+from app.models.assessment import SkillAssessment
+from app.models.collaboration import Collaboration, CollaborationStatus
+from app.models.collaboration_participant import CollaborationParticipant
+
+from app.schemas.student import (
+    StudentProfileCreate,
+    StudentProfileUpdate,
+    StudentProfileResponse,
+)
+from app.schemas.skill import AddSkillRequest, AssessmentSubmit
+from app.schemas.project import ProjectCreate, ProjectResponse
+from app.schemas.certification import (
+    CertificationCreate,
+    CertificationResponse,
+)
+
 from app.services.matching import calculate_match
-from app.services.matching import calculate_match
-router=APIRouter(prefix="/students",tags=["Students"])
-def get_student(db,uid):
-    s=db.query(Student).filter(Student.user_id==uid).first()
-    if not s: raise HTTPException(404,"Create student profile first")
-    return s
-@router.post("/profile",response_model=StudentProfileResponse)
-def create_profile(data:StudentProfileCreate,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    if db.query(Student).filter(Student.user_id==user.id).first(): raise HTTPException(409,"Student profile already exists")
-    s=Student(user_id=user.id,**data.model_dump()); db.add(s); db.commit(); db.refresh(s); return s
-@router.get("/profile",response_model=StudentProfileResponse)
-def profile(db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))): return get_student(db,user.id)
-@router.patch("/profile",response_model=StudentProfileResponse)
-def update_profile(data:StudentProfileUpdate,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id)
-    for k,v in data.model_dump(exclude_unset=True).items(): setattr(s,k,v)
-    db.commit(); db.refresh(s); return s
-@router.post("/skills")
-def add_skill(data:AddSkillRequest,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); name=data.name.strip().lower(); skill=db.query(Skill).filter(Skill.name==name).first()
-    if not skill: skill=Skill(name=name,category=data.category); db.add(skill); db.flush()
-    if db.query(StudentSkill).filter(StudentSkill.student_id==s.id,StudentSkill.skill_id==skill.id).first(): raise HTTPException(409,"Skill already added")
-    ss=StudentSkill(student_id=s.id,skill_id=skill.id,level=data.level,source="manual"); db.add(ss); db.commit(); return {"success":True,"id":ss.id,"skill":skill.name}
-@router.get("/skills")
-def skills(db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); rows=db.query(StudentSkill,Skill).join(Skill,StudentSkill.skill_id==Skill.id).filter(StudentSkill.student_id==s.id).all(); return {"success":True,"data":[{"id":ss.id,"name":sk.name,"level":ss.level,"source":ss.source,"verified":ss.is_verified} for ss,sk in rows]}
-@router.delete("/skills/{sid}")
-def del_skill(sid:int,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); r=db.query(StudentSkill).filter(StudentSkill.id==sid,StudentSkill.student_id==s.id).first()
-    if not r: raise HTTPException(404,"Skill not found")
-    db.delete(r); db.commit(); return {"success":True}
-@router.post("/projects",response_model=ProjectResponse)
-def project(data:ProjectCreate,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); p=Project(student_id=s.id,**data.model_dump()); db.add(p); db.commit(); db.refresh(p); return p
-@router.get("/projects",response_model=list[ProjectResponse])
-def projects(db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); return db.query(Project).filter(Project.student_id==s.id).all()
-@router.post("/certifications",response_model=CertificationResponse)
-def cert(data:CertificationCreate,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); c=Certification(student_id=s.id,**data.model_dump()); db.add(c); db.commit(); db.refresh(c); return c
-@router.get("/certifications",response_model=list[CertificationResponse])
-def certs(db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); return db.query(Certification).filter(Certification.student_id==s.id).all()
-@router.get("/opportunities/{oid}/match")
-def match(oid:int,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); o=db.query(Opportunity).filter(Opportunity.id==oid,Opportunity.is_active==True).first()
-    if not o: raise HTTPException(404,"Opportunity not found")
-    return {"success":True,"match":calculate_match(db,s.id,o.id)}
-@router.post("/opportunities/{oid}/apply")
-def apply(oid:int,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); o=db.query(Opportunity).filter(Opportunity.id==oid,Opportunity.is_active==True).first()
-    if not o: raise HTTPException(404,"Opportunity not found")
-    if db.query(Application).filter(Application.student_id==s.id,Application.opportunity_id==oid).first(): raise HTTPException(409,"Already applied")
-    a=Application(student_id=s.id,opportunity_id=oid); db.add(a); db.commit(); db.refresh(a); return {"success":True,"application_id":a.id,"status":a.status}
-@router.get("/applications")
-def applications(db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); rows=db.query(Application,Opportunity).join(Opportunity,Application.opportunity_id==Opportunity.id).filter(Application.student_id==s.id).all(); return {"success":True,"data":[{"application_id":a.id,"opportunity_id":o.id,"title":o.title,"status":a.status,"recruiter_note":a.recruiter_note,"applied_at":a.applied_at} for a,o in rows]}
-@router.patch("/applications/{aid}/withdraw")
-def withdraw(aid:int,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); a=db.query(Application).filter(Application.id==aid,Application.student_id==s.id).first()
-    if not a: raise HTTPException(404,"Application not found")
-    if a.status in [ApplicationStatus.selected,ApplicationStatus.rejected,ApplicationStatus.withdrawn]: raise HTTPException(400,"Cannot withdraw")
-    a.status=ApplicationStatus.withdrawn; db.commit(); return {"success":True}
-@router.post("/assessments")
-def assessment(data:AssessmentSubmit,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id)
-    if data.total_questions<=0 or data.correct_answers<0 or data.correct_answers>data.total_questions: raise HTTPException(400,"Invalid assessment values")
-    score=data.correct_answers/data.total_questions*100; level="advanced" if score>=80 else "intermediate" if score>=50 else "beginner"
-    a=SkillAssessment(student_id=s.id,skill_id=data.skill_id,score=round(score,2),level=level,total_questions=data.total_questions,correct_answers=data.correct_answers); db.add(a)
-    ss=db.query(StudentSkill).filter(StudentSkill.student_id==s.id,StudentSkill.skill_id==data.skill_id).first()
-    if ss: ss.level=level; ss.is_verified=True; ss.source="assessment"; ss.confidence_score=score/100
-    db.commit(); return {"success":True,"score":round(score,2),"level":level}
-@router.post("/collaborations/{cid}/register")
-def collab_register(cid:int,db:Session=Depends(get_db),user:User=Depends(require_roles(UserRole.student))):
-    s=get_student(db,user.id); c=db.query(Collaboration).filter(Collaboration.id==cid,Collaboration.status.in_([CollaborationStatus.approved,CollaborationStatus.ongoing])).first()
-    if not c: raise HTTPException(404,"Collaboration not available")
-    if db.query(CollaborationParticipant).filter(CollaborationParticipant.collaboration_id==cid,CollaborationParticipant.student_id==s.id).first(): raise HTTPException(409,"Already registered")
-    p=CollaborationParticipant(collaboration_id=cid,student_id=s.id); db.add(p); db.commit(); return {"success":True,"registration_id":p.id}
-@router.get("/recommended-opportunities")
-def recommended_opportunities(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(
-        require_roles(UserRole.student)
-    ),
-):
+
+
+router = APIRouter(prefix="/students", tags=["Students"])
+
+
+# ======================================================
+# HELPER
+# ======================================================
+
+def get_student(db: Session, user_id: int) -> Student:
     student = (
         db.query(Student)
-        .filter(Student.user_id == current_user.id)
+        .filter(Student.user_id == user_id)
         .first()
     )
 
     if not student:
         raise HTTPException(
             status_code=404,
-            detail="Student profile not found"
+            detail="Create student profile first",
         )
+
+    return student
+
+
+# ======================================================
+# STUDENT PROFILE
+# ======================================================
+
+@router.post("/profile", response_model=StudentProfileResponse)
+def create_profile(
+    data: StudentProfileCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    existing = (
+        db.query(Student)
+        .filter(Student.user_id == user.id)
+        .first()
+    )
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Student profile already exists",
+        )
+
+    student = Student(
+        user_id=user.id,
+        **data.model_dump(),
+    )
+
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+
+    return student
+
+
+@router.get("/profile", response_model=StudentProfileResponse)
+def profile(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    return get_student(db, user.id)
+
+
+@router.patch("/profile", response_model=StudentProfileResponse)
+def update_profile(
+    data: StudentProfileUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(student, key, value)
+
+    db.commit()
+    db.refresh(student)
+
+    return student
+
+
+# ======================================================
+# STUDENT SKILLS
+# ======================================================
+
+@router.post("/skills")
+def add_skill(
+    data: AddSkillRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    name = data.name.strip().lower()
+
+    skill = (
+        db.query(Skill)
+        .filter(Skill.name == name)
+        .first()
+    )
+
+    if not skill:
+        skill = Skill(
+            name=name,
+            category=data.category,
+        )
+        db.add(skill)
+        db.flush()
+
+    existing = (
+        db.query(StudentSkill)
+        .filter(
+            StudentSkill.student_id == student.id,
+            StudentSkill.skill_id == skill.id,
+        )
+        .first()
+    )
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Skill already added",
+        )
+
+    student_skill = StudentSkill(
+        student_id=student.id,
+        skill_id=skill.id,
+        level=data.level,
+        source="manual",
+    )
+
+    db.add(student_skill)
+    db.commit()
+    db.refresh(student_skill)
+
+    return {
+        "success": True,
+        "id": student_skill.id,
+        "skill": skill.name,
+    }
+
+
+@router.get("/skills")
+def skills(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    rows = (
+        db.query(StudentSkill, Skill)
+        .join(
+            Skill,
+            StudentSkill.skill_id == Skill.id,
+        )
+        .filter(
+            StudentSkill.student_id == student.id
+        )
+        .all()
+    )
+
+    return {
+        "success": True,
+        "data": [
+            {
+                "id": student_skill.id,
+                "name": skill.name,
+                "level": student_skill.level,
+                "source": student_skill.source,
+                "verified": student_skill.is_verified,
+            }
+            for student_skill, skill in rows
+        ],
+    }
+
+
+@router.delete("/skills/{sid}")
+def delete_skill(
+    sid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    student_skill = (
+        db.query(StudentSkill)
+        .filter(
+            StudentSkill.id == sid,
+            StudentSkill.student_id == student.id,
+        )
+        .first()
+    )
+
+    if not student_skill:
+        raise HTTPException(
+            status_code=404,
+            detail="Skill not found",
+        )
+
+    db.delete(student_skill)
+    db.commit()
+
+    return {"success": True}
+
+
+# ======================================================
+# PROJECTS
+# ======================================================
+
+@router.post("/projects", response_model=ProjectResponse)
+def create_project(
+    data: ProjectCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    project = Project(
+        student_id=student.id,
+        **data.model_dump(),
+    )
+
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+
+    return project
+
+
+@router.get("/projects", response_model=list[ProjectResponse])
+def projects(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    return (
+        db.query(Project)
+        .filter(Project.student_id == student.id)
+        .all()
+    )
+
+
+# ======================================================
+# CERTIFICATIONS
+# ======================================================
+
+@router.post("/certifications", response_model=CertificationResponse)
+def create_certification(
+    data: CertificationCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    certification = Certification(
+        student_id=student.id,
+        **data.model_dump(),
+    )
+
+    db.add(certification)
+    db.commit()
+    db.refresh(certification)
+
+    return certification
+
+
+@router.get("/certifications", response_model=list[CertificationResponse])
+def certifications(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    return (
+        db.query(Certification)
+        .filter(
+            Certification.student_id == student.id
+        )
+        .all()
+    )
+
+
+# ======================================================
+# OPPORTUNITY MATCH
+# ======================================================
+
+@router.get("/opportunities/{oid}/match")
+def match_opportunity(
+    oid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    opportunity = (
+        db.query(Opportunity)
+        .filter(
+            Opportunity.id == oid,
+            Opportunity.is_active == True,
+        )
+        .first()
+    )
+
+    if not opportunity:
+        raise HTTPException(
+            status_code=404,
+            detail="Opportunity not found",
+        )
+
+    match_data = calculate_match(
+        db,
+        student.id,
+        opportunity.id,
+    )
+
+    return {
+        "success": True,
+        "match": match_data,
+    }
+
+
+# ======================================================
+# APPLY OPPORTUNITY
+# ======================================================
+
+@router.post("/opportunities/{oid}/apply")
+def apply_opportunity(
+    oid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    opportunity = (
+        db.query(Opportunity)
+        .filter(
+            Opportunity.id == oid,
+            Opportunity.is_active == True,
+        )
+        .first()
+    )
+
+    if not opportunity:
+        raise HTTPException(
+            status_code=404,
+            detail="Opportunity not found",
+        )
+
+    existing = (
+        db.query(Application)
+        .filter(
+            Application.student_id == student.id,
+            Application.opportunity_id == oid,
+        )
+        .first()
+    )
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Already applied",
+        )
+
+    application = Application(
+        student_id=student.id,
+        opportunity_id=oid,
+    )
+
+    db.add(application)
+    db.commit()
+    db.refresh(application)
+
+    return {
+        "success": True,
+        "application_id": application.id,
+        "status": application.status,
+    }
+
+
+# ======================================================
+# STUDENT APPLICATIONS
+# ======================================================
+
+@router.get("/applications")
+def applications(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    rows = (
+        db.query(Application, Opportunity)
+        .join(
+            Opportunity,
+            Application.opportunity_id == Opportunity.id,
+        )
+        .filter(
+            Application.student_id == student.id
+        )
+        .all()
+    )
+
+    return {
+        "success": True,
+        "data": [
+            {
+                "application_id": application.id,
+                "opportunity_id": opportunity.id,
+                "title": opportunity.title,
+                "status": application.status,
+                "recruiter_note": application.recruiter_note,
+                "applied_at": application.applied_at,
+            }
+            for application, opportunity in rows
+        ],
+    }
+
+
+@router.patch("/applications/{aid}/withdraw")
+def withdraw_application(
+    aid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    application = (
+        db.query(Application)
+        .filter(
+            Application.id == aid,
+            Application.student_id == student.id,
+        )
+        .first()
+    )
+
+    if not application:
+        raise HTTPException(
+            status_code=404,
+            detail="Application not found",
+        )
+
+    if application.status in [
+        ApplicationStatus.selected,
+        ApplicationStatus.rejected,
+        ApplicationStatus.withdrawn,
+    ]:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot withdraw",
+        )
+
+    application.status = ApplicationStatus.withdrawn
+
+    db.commit()
+
+    return {"success": True}
+
+
+# ======================================================
+# SKILL ASSESSMENT
+# ======================================================
+
+@router.post("/assessments")
+def assessment(
+    data: AssessmentSubmit,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    if (
+        data.total_questions <= 0
+        or data.correct_answers < 0
+        or data.correct_answers > data.total_questions
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid assessment values",
+        )
+
+    score = (
+        data.correct_answers
+        / data.total_questions
+        * 100
+    )
+
+    level = (
+        "advanced"
+        if score >= 80
+        else "intermediate"
+        if score >= 50
+        else "beginner"
+    )
+
+    assessment_row = SkillAssessment(
+        student_id=student.id,
+        skill_id=data.skill_id,
+        score=round(score, 2),
+        level=level,
+        total_questions=data.total_questions,
+        correct_answers=data.correct_answers,
+    )
+
+    db.add(assessment_row)
+
+    student_skill = (
+        db.query(StudentSkill)
+        .filter(
+            StudentSkill.student_id == student.id,
+            StudentSkill.skill_id == data.skill_id,
+        )
+        .first()
+    )
+
+    if student_skill:
+        student_skill.level = level
+        student_skill.is_verified = True
+        student_skill.source = "assessment"
+        student_skill.confidence_score = score / 100
+
+    db.commit()
+
+    return {
+        "success": True,
+        "score": round(score, 2),
+        "level": level,
+    }
+
+
+# ======================================================
+# COLLABORATION REGISTRATION
+# ======================================================
+
+@router.post("/collaborations/{cid}/register")
+def register_collaboration(
+    cid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    student = get_student(db, user.id)
+
+    collaboration = (
+        db.query(Collaboration)
+        .filter(
+            Collaboration.id == cid,
+            Collaboration.status.in_(
+                [
+                    CollaborationStatus.approved,
+                    CollaborationStatus.ongoing,
+                ]
+            ),
+        )
+        .first()
+    )
+
+    if not collaboration:
+        raise HTTPException(
+            status_code=404,
+            detail="Collaboration not available",
+        )
+
+    existing = (
+        db.query(CollaborationParticipant)
+        .filter(
+            CollaborationParticipant.collaboration_id == cid,
+            CollaborationParticipant.student_id == student.id,
+        )
+        .first()
+    )
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Already registered",
+        )
+
+    participant = CollaborationParticipant(
+        collaboration_id=cid,
+        student_id=student.id,
+    )
+
+    db.add(participant)
+    db.commit()
+    db.refresh(participant)
+
+    return {
+        "success": True,
+        "registration_id": participant.id,
+    }
+
+
+# ======================================================
+# RECOMMENDED OPPORTUNITIES
+# ======================================================
+
+@router.get("/recommended-opportunities")
+def recommended_opportunities(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    """
+    Recommend active opportunities using the student's
+    confirmed StudentSkill profile.
+
+    Career readiness and opportunity match are different:
+    - Career readiness = target-role readiness
+    - Match score = match against each company's opportunity
+    """
+
+    student = get_student(db, user.id)
+
+    # Confirm student has profile skills.
+    confirmed_skill_count = (
+        db.query(StudentSkill)
+        .filter(
+            StudentSkill.student_id == student.id
+        )
+        .count()
+    )
+
+    if confirmed_skill_count == 0:
+        return {
+            "success": True,
+            "message": "Add or accept skills before checking recommendations",
+            "data": [],
+        }
 
     opportunities = (
         db.query(Opportunity)
-        .filter(Opportunity.is_active == True)
+        .filter(
+            Opportunity.is_active == True
+        )
         .all()
     )
 
     results = []
 
     for opportunity in opportunities:
+        try:
+            match_data = calculate_match(
+                db,
+                student.id,
+                opportunity.id,
+            )
+        except Exception as error:
+            print(
+                f"[recommended-opportunities] "
+                f"match failed for opportunity "
+                f"{opportunity.id}: {error}"
+            )
+            continue
 
-        match = calculate_match(
-            db,
-            student.id,
-            opportunity.id
+        if not isinstance(match_data, dict):
+            print(
+                f"[recommended-opportunities] "
+                f"unexpected match response for "
+                f"opportunity {opportunity.id}: "
+                f"{match_data}"
+            )
+            continue
+
+        # Support common key names returned by matching service.
+        raw_score = (
+            match_data.get("score")
+            if match_data.get("score") is not None
+            else match_data.get("match_score")
+            if match_data.get("match_score") is not None
+            else match_data.get("match_percentage")
+            if match_data.get("match_percentage") is not None
+            else match_data.get("percentage")
+            if match_data.get("percentage") is not None
+            else 0
         )
 
-        score = match.get("score", 0)
+        try:
+            score = float(raw_score)
+        except (TypeError, ValueError):
+            score = 0.0
 
+        print(
+            "[recommended-opportunities]",
+            "opportunity_id=",
+            opportunity.id,
+            "match_data=",
+            match_data,
+            "score=",
+            score,
+        )
+
+        # For now show matches >= 40%.
+        # During debugging, change 40 to 0 if you want all active opportunities.
         if score < 40:
             continue
 
@@ -146,46 +735,64 @@ def recommended_opportunities(
             .first()
         )
 
-        results.append({
-            "opportunity_id": opportunity.id,
-            "title": opportunity.title,
+        opportunity_type = getattr(
+            opportunity,
+            "opportunity_type",
+            None,
+        )
 
-            "company": {
-                "id": company.id if company else None,
-                "name": company.name if company else "Company",
-            },
+        if hasattr(opportunity_type, "value"):
+            opportunity_type = opportunity_type.value
+        elif opportunity_type is not None:
+            opportunity_type = str(opportunity_type)
 
-            "type": (
-                opportunity.opportunity_type.value
-                if hasattr(
-                    opportunity.opportunity_type,
-                    "value"
-                )
-                else str(opportunity.opportunity_type)
-            ),
+        results.append(
+            {
+                "opportunity_id": opportunity.id,
+                "title": opportunity.title,
 
-            "location": opportunity.location,
-            "stipend": opportunity.stipend,
+                "company": {
+                    "id": company.id if company else None,
+                    "name": company.name if company else "Unknown Company",
+                    "industry": getattr(company, "industry", None) if company else None,
+                    "location": getattr(company, "location", None) if company else None,
+                    "website": getattr(company, "website", None) if company else None,
+                    "is_verified": getattr(company, "is_verified", False) if company else False,
+                },
 
-            "match_score": score,
+                "type": opportunity_type,
+                "location": getattr(opportunity, "location", None),
+                "stipend": getattr(opportunity, "stipend", None),
+                "experience_required": getattr(
+                    opportunity,
+                    "experience_required",
+                    None,
+                ),
 
-            "matched_skills": match.get(
-                "matched_skills",
-                []
-            ),
+                "match_score": round(score, 2),
 
-            "missing_skills": match.get(
-                "missing_skills",
-                []
-            ),
-        })
+                "matched_skills": (
+                    match_data.get("matched_skills")
+                    or match_data.get("matches")
+                    or []
+                ),
+
+                "missing_skills": (
+                    match_data.get("missing_skills")
+                    or match_data.get("missing")
+                    or match_data.get("skill_gaps")
+                    or []
+                ),
+            }
+        )
 
     results.sort(
         key=lambda item: item["match_score"],
-        reverse=True
+        reverse=True,
     )
 
     return {
         "success": True,
-        "data": results[:10]
+        "message": "Recommended opportunities loaded",
+        "data": results[:10],
     }
