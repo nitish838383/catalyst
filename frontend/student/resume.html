@@ -118,6 +118,11 @@
             to { transform: rotate(360deg); }
         }
 
+
+        .opportunity-card { transition: all .22s ease; }
+        .opportunity-card:hover { transform: translateY(-3px); border-color: #c7d2fe; box-shadow: 0 16px 36px rgba(15,23,42,.07); }
+        .match-badge { min-width: 70px; border-radius: 1rem; padding: .65rem .75rem; text-align: center; }
+
         @media (max-width: 640px) {
             .resume-hero {
                 border-radius: 1.25rem;
@@ -197,7 +202,7 @@
             <!-- ========================================= -->
             <!-- PROCESS -->
             <!-- ========================================= -->
-            <div class="mb-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mb-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
                 <div class="analysis-stat flex items-center gap-3 p-4">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 font-black text-indigo-600">1</div>
                     <div>
@@ -224,6 +229,13 @@
                     <div>
                         <p class="font-bold text-slate-900">Get Roadmap</p>
                         <p class="text-xs text-slate-500">Learn what matters next</p>
+                    </div>
+                </div>
+                <div class="analysis-stat flex items-center gap-3 p-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 font-black text-cyan-600">5</div>
+                    <div>
+                        <p class="font-bold text-slate-900">Match & Apply</p>
+                        <p class="text-xs text-slate-500">Company opportunities</p>
                     </div>
                 </div>
             </div>
@@ -470,6 +482,48 @@
                 </section>
             </section>
 
+
+            <!-- ========================================= -->
+            <!-- RECOMMENDED OPPORTUNITIES -->
+            <!-- ========================================= -->
+            <section id="recommendedSection" class="hidden mt-8 analysis-section overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                            <i data-lucide="briefcase-business" class="h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-slate-900">Recommended Opportunities</h2>
+                            <p class="mt-1 text-sm text-slate-500">Based only on skills you accepted into your SkillBridge profile.</p>
+                        </div>
+                    </div>
+                    <span id="recommendedCount" class="hidden rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-black text-indigo-700">0 matches</span>
+                </div>
+
+                <div class="p-6">
+                    <div class="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
+                        <strong>How matching works:</strong>
+                        Resume-detected skills are suggestions. Opportunity matching uses the skills
+                        already saved/accepted in your StudentSkill profile.
+                    </div>
+
+                    <div id="recommendedLoading" class="hidden py-10 text-center">
+                        <div class="mx-auto h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"></div>
+                        <p class="mt-3 text-sm font-semibold text-slate-600">Finding the best opportunities for your confirmed skills...</p>
+                    </div>
+
+                    <div id="recommendedEmpty" class="hidden rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400">
+                            <i data-lucide="search-x" class="h-6 w-6"></i>
+                        </div>
+                        <h3 class="mt-4 font-black text-slate-800">No matching opportunities yet</h3>
+                        <p class="mt-2 text-sm text-slate-500">Accept your detected skills first, or add more skills to your profile to improve your matches.</p>
+                    </div>
+
+                    <div id="recommendedOpportunities" class="grid gap-5 md:grid-cols-2"></div>
+                </div>
+            </section>
+
         </div>
     </main>
 </div>
@@ -523,6 +577,12 @@ const summaryRole = document.getElementById("summaryRole");
 const summaryDetected = document.getElementById("summaryDetected");
 const summaryMatched = document.getElementById("summaryMatched");
 const summaryMissing = document.getElementById("summaryMissing");
+const recommendedSection = document.getElementById("recommendedSection");
+const recommendedLoading = document.getElementById("recommendedLoading");
+const recommendedEmpty = document.getElementById("recommendedEmpty");
+const recommendedOpportunities = document.getElementById("recommendedOpportunities");
+const recommendedCount = document.getElementById("recommendedCount");
+
 
 /* ======================================================
    TARGET ROLE
@@ -600,6 +660,7 @@ document.getElementById("resumeForm").addEventListener("submit", async function 
         renderDetectedSkills();
 
         await loadCareerAnalysis();
+        await loadRecommendedOpportunities();
 
         resumeInfo.innerHTML = `
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
@@ -739,6 +800,7 @@ acceptBtn.addEventListener("click", async function () {
         });
         SB.toast(`${ids.length} skills added to your profile.`);
         await loadCareerAnalysis();
+        await loadRecommendedOpportunities();
     } catch (error) {
         SB.toast(error.message);
     }
@@ -1091,6 +1153,492 @@ function escapeReport(value) {
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
 }
+
+/* ======================================================
+   RECOMMENDED OPPORTUNITIES
+   Uses confirmed StudentSkill profile via backend
+====================================================== */
+
+function extractOpportunityList(response) {
+    if (Array.isArray(response)) return response;
+
+    if (Array.isArray(response?.data)) {
+        return response.data;
+    }
+
+    if (Array.isArray(response?.data?.data)) {
+        return response.data.data;
+    }
+
+    if (Array.isArray(response?.opportunities)) {
+        return response.opportunities;
+    }
+
+    return [];
+}
+
+
+async function loadRecommendedOpportunities() {
+    recommendedSection.classList.remove("hidden");
+    recommendedLoading.classList.remove("hidden");
+    recommendedEmpty.classList.add("hidden");
+    recommendedOpportunities.innerHTML = "";
+    recommendedCount.classList.add("hidden");
+
+    try {
+        // 1. Load all active opportunities
+        const opportunityResponse = await SB.get("/opportunities");
+
+        const allOpportunities =
+            Array.isArray(opportunityResponse)
+                ? opportunityResponse
+                : Array.isArray(opportunityResponse?.data)
+                    ? opportunityResponse.data
+                    : Array.isArray(opportunityResponse?.data?.data)
+                        ? opportunityResponse.data.data
+                        : [];
+
+        if (!allOpportunities.length) {
+            recommendedEmpty.classList.remove("hidden");
+            recommendedEmpty.innerHTML = `
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400">
+                    <i data-lucide="search-x" class="h-6 w-6"></i>
+                </div>
+                <h3 class="mt-4 font-black text-slate-800">No opportunities available</h3>
+                <p class="mt-2 text-sm text-slate-500">
+                    No active internship or job opportunities are available right now.
+                </p>
+            `;
+            return;
+        }
+
+        const matchedResults = [];
+
+        // 2. Use the same student-opportunity match API
+        // that is already working on the Opportunities page.
+        for (const opportunity of allOpportunities) {
+            const opportunityId =
+                opportunity.id ??
+                opportunity.opportunity_id;
+
+            if (!opportunityId) {
+                continue;
+            }
+
+            try {
+                const matchResponse = await SB.get(
+                    `/students/opportunities/${opportunityId}/match`
+                );
+
+                const match =
+                    matchResponse?.match ??
+                    matchResponse?.data ??
+                    matchResponse ??
+                    {};
+
+                const score = Number(
+                    match.score ??
+                    match.match_score ??
+                    match.match_percentage ??
+                    match.percentage ??
+                    0
+                );
+
+                // Only show useful recommendations
+                if (score < 40) {
+                    continue;
+                }
+
+                matchedResults.push({
+                    ...opportunity,
+                    opportunity_id: opportunityId,
+                    match_score: score,
+                    matched_skills:
+                        match.matched_skills ??
+                        match.matches ??
+                        [],
+                    missing_skills:
+                        match.missing_skills ??
+                        match.missing ??
+                        match.skill_gaps ??
+                        []
+                });
+
+            } catch (matchError) {
+                console.error(
+                    `Match failed for opportunity ${opportunityId}:`,
+                    matchError
+                );
+            }
+        }
+
+        matchedResults.sort(
+            (a, b) => b.match_score - a.match_score
+        );
+
+        if (!matchedResults.length) {
+            recommendedEmpty.classList.remove("hidden");
+            recommendedEmpty.innerHTML = `
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400">
+                    <i data-lucide="search-x" class="h-6 w-6"></i>
+                </div>
+                <h3 class="mt-4 font-black text-slate-800">
+                    No 40%+ matching opportunities yet
+                </h3>
+                <p class="mt-2 text-sm text-slate-500">
+                    Add or accept more skills to improve your opportunity matches.
+                </p>
+            `;
+            return;
+        }
+
+        recommendedCount.textContent =
+            `${matchedResults.length} match${matchedResults.length === 1 ? "" : "es"}`;
+
+        recommendedCount.classList.remove("hidden");
+
+        recommendedOpportunities.innerHTML =
+            matchedResults
+                .map(renderRecommendedOpportunity)
+                .join("");
+
+    } catch (error) {
+        console.error(
+            "Recommended opportunities:",
+            error
+        );
+
+        recommendedEmpty.classList.remove("hidden");
+
+        recommendedEmpty.innerHTML = `
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
+                <i data-lucide="triangle-alert" class="h-6 w-6"></i>
+            </div>
+            <h3 class="mt-4 font-black text-slate-800">
+                Could not load recommended opportunities
+            </h3>
+            <p class="mt-2 text-sm text-slate-500">
+                ${SB.esc(error.message || "Please try again later.")}
+            </p>
+        `;
+
+    } finally {
+        recommendedLoading.classList.add("hidden");
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+}
+
+
+function getMatchClass(score) {
+    if (score >= 80) {
+        return {
+            box: "bg-emerald-50",
+            score: "text-emerald-700",
+            label: "Strong Match",
+            labelClass: "text-emerald-600"
+        };
+    }
+
+    if (score >= 60) {
+        return {
+            box: "bg-indigo-50",
+            score: "text-indigo-700",
+            label: "Good Match",
+            labelClass: "text-indigo-600"
+        };
+    }
+
+    return {
+        box: "bg-amber-50",
+        score: "text-amber-700",
+        label: "Improve Skills",
+        labelClass: "text-amber-600"
+    };
+}
+
+
+function renderRecommendedOpportunity(opportunity) {
+    const score = Math.round(
+        Number(
+            opportunity.match_score ??
+            opportunity.score ??
+            opportunity.match_percentage ??
+            opportunity.percentage ??
+            0
+        )
+    );
+
+    const matched =
+        opportunity.matched_skills ||
+        opportunity.matches ||
+        [];
+
+    const missing =
+        opportunity.missing_skills ||
+        opportunity.missing ||
+        opportunity.skill_gaps ||
+        [];
+
+    const company =
+        opportunity.company || {};
+
+    const companyName =
+        company.name ||
+        company.company_name ||
+        opportunity.company_name ||
+        "Unknown Company";
+
+    const companyIndustry =
+        company.industry ||
+        opportunity.company_industry ||
+        "";
+
+    const companyLocation =
+        company.location ||
+        opportunity.company_location ||
+        "";
+
+    const opportunityId =
+        opportunity.opportunity_id ??
+        opportunity.id;
+
+    const opportunityType =
+        opportunity.type ||
+        opportunity.opportunity_type ||
+        "Opportunity";
+
+    const matchStyle =
+        getMatchClass(score);
+
+    const safeOpportunityId =
+        Number(opportunityId);
+
+    return `
+        <article class="opportunity-card rounded-2xl border border-slate-200 bg-white p-5">
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div class="min-w-0 flex-1">
+
+                    <div class="flex flex-wrap items-center gap-2">
+
+                        <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-indigo-700">
+                            ${SB.esc(opportunityType)}
+                        </span>
+
+                        ${
+                            opportunity.location
+                                ? `
+                                    <span class="flex items-center gap-1 text-xs text-slate-500">
+                                        <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
+                                        ${SB.esc(opportunity.location)}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                    <h3 class="mt-3 text-lg font-black text-slate-900">
+                        ${SB.esc(opportunity.title || "Opportunity")}
+                    </h3>
+
+                    <p class="mt-1 flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                        <i data-lucide="building-2" class="h-4 w-4 text-slate-400"></i>
+                        ${SB.esc(companyName)}
+                    </p>
+
+                    ${
+                        companyIndustry || companyLocation
+                            ? `
+                                <p class="mt-1 text-xs text-slate-500">
+                                    ${SB.esc(
+                                        [companyIndustry, companyLocation]
+                                            .filter(Boolean)
+                                            .join(" • ")
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
+
+                    ${
+                        opportunity.stipend
+                            ? `
+                                <p class="mt-2 text-sm text-slate-500">
+                                    Stipend:
+                                    <strong class="text-slate-700">
+                                        ${SB.esc(opportunity.stipend)}
+                                    </strong>
+                                </p>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+                <div class="match-badge ${matchStyle.box}">
+
+                    <div class="text-2xl font-black ${matchStyle.score}">
+                        ${score}%
+                    </div>
+
+                    <div class="mt-0.5 text-[10px] font-black uppercase tracking-wide ${matchStyle.labelClass}">
+                        ${matchStyle.label}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-5">
+
+                <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+                    Matched Skills
+                </p>
+
+                <div class="mt-2 flex flex-wrap gap-2">
+
+                    ${
+                        matched.length
+                            ? matched.slice(0, 6).map(skill => `
+                                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                                    ✓ ${SB.esc(getSkillName(skill))}
+                                </span>
+                            `).join("")
+                            : `
+                                <span class="text-xs text-slate-400">
+                                    No matched skills returned.
+                                </span>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-4">
+
+                <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+                    Missing Skills
+                </p>
+
+                <div class="mt-2 flex flex-wrap gap-2">
+
+                    ${
+                        missing.length
+                            ? missing.slice(0, 6).map(skill => `
+                                <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">
+                                    ${SB.esc(getSkillName(skill))}
+                                </span>
+                            `).join("")
+                            : `
+                                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                                    No major skill gap
+                                </span>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+
+                <a
+                    href="/student/opportunities.html?id=${encodeURIComponent(opportunityId ?? "")}"
+                    class="btn btn-soft justify-center"
+                >
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                    View Details
+                </a>
+
+                <button
+                    type="button"
+                    class="btn btn-primary justify-center"
+                    ${Number.isFinite(safeOpportunityId) ? "" : "disabled"}
+                    onclick="applyRecommendedOpportunity(${Number.isFinite(safeOpportunityId) ? safeOpportunityId : 0}, this)"
+                >
+                    <i data-lucide="send" class="h-4 w-4"></i>
+                    Apply Now
+                </button>
+
+            </div>
+
+        </article>
+    `;
+}
+
+
+window.applyRecommendedOpportunity =
+async function (opportunityId, button) {
+
+    if (!opportunityId) {
+        SB.toast(
+            "Opportunity ID not available."
+        );
+        return;
+    }
+
+    const originalHtml =
+        button.innerHTML;
+
+    try {
+        button.disabled = true;
+
+        button.innerHTML = `
+            <span class="spinner"></span>
+            Applying...
+        `;
+
+        await SB.post(
+            `/students/opportunities/${opportunityId}/apply`,
+            {}
+        );
+
+        button.innerHTML = `
+            <i data-lucide="circle-check" class="h-4 w-4"></i>
+            Applied
+        `;
+
+        SB.toast(
+            "Application submitted successfully."
+        );
+
+    } catch (error) {
+
+        const message =
+            error.message ||
+            "Could not submit application.";
+
+        if (
+            message.toLowerCase().includes("already applied")
+        ) {
+            button.disabled = true;
+
+            button.innerHTML = `
+                <i data-lucide="circle-check" class="h-4 w-4"></i>
+                Already Applied
+            `;
+        } else {
+            button.disabled = false;
+            button.innerHTML = originalHtml;
+        }
+
+        SB.toast(message);
+    }
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+};
+
 
 /* ======================================================
    INITIALIZE
