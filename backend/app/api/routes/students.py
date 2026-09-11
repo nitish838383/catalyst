@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -6,6 +8,7 @@ from app.api.deps import require_roles
 
 from app.models.user import User, UserRole
 from app.models.student import Student
+from app.models.resume import Resume, ResumeSkill
 from app.models.skill import Skill, StudentSkill
 from app.models.project import Project
 from app.models.certification import Certification
@@ -52,6 +55,55 @@ def get_student(db: Session, user_id: int) -> Student:
         )
 
     return student
+
+
+def get_confirmed_resume_skill_ids(
+    db: Session,
+    student_id: int,
+    resume_id: int,
+) -> list[int]:
+    """
+    Return only accepted skills from the selected resume.
+    The resume must belong to the current student.
+    """
+
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.student_id == student_id,
+        )
+        .first()
+    )
+
+    if not resume:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found",
+        )
+
+    rows = (
+        db.query(ResumeSkill)
+        .filter(
+            ResumeSkill.resume_id == resume_id,
+            ResumeSkill.is_accepted == True,
+        )
+        .all()
+    )
+
+    if not rows:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "No confirmed skills found for this resume. "
+                "Confirm your detected skills first."
+            ),
+        )
+
+    return list({
+        row.skill_id
+        for row in rows
+    })
 
 
 # ======================================================
@@ -322,9 +374,22 @@ def certifications(
 @router.get("/opportunities/{oid}/match")
 def match_opportunity(
     oid: int,
+    resume_id: Optional[int] = None,
     db: Session = Depends(get_db),
     user: User = Depends(require_roles(UserRole.student)),
 ):
+    """
+    Normal mode:
+        GET /students/opportunities/{oid}/match
+
+        Uses the student's complete StudentSkill profile.
+
+    Resume AI mode:
+        GET /students/opportunities/{oid}/match?resume_id=12
+
+        Uses ONLY skills that the student confirmed for that resume.
+    """
+
     student = get_student(db, user.id)
 
     opportunity = (
@@ -342,14 +407,30 @@ def match_opportunity(
             detail="Opportunity not found",
         )
 
+    selected_skill_ids = None
+
+    if resume_id is not None:
+        selected_skill_ids = get_confirmed_resume_skill_ids(
+            db,
+            student.id,
+            resume_id,
+        )
+
     match_data = calculate_match(
         db,
         student.id,
         opportunity.id,
+        selected_skill_ids=selected_skill_ids,
     )
 
     return {
         "success": True,
+        "resume_id": resume_id,
+        "analysis_source": (
+            "confirmed_resume_skills"
+            if resume_id is not None
+            else "student_profile_skills"
+        ),
         "match": match_data,
     }
 
@@ -630,35 +711,51 @@ def register_collaboration(
 
 @router.get("/recommended-opportunities")
 def recommended_opportunities(
+    resume_id: Optional[int] = None,
     db: Session = Depends(get_db),
     user: User = Depends(require_roles(UserRole.student)),
 ):
     """
-    Recommend active opportunities using the student's
-    confirmed StudentSkill profile.
+    Normal mode:
+        GET /students/recommended-opportunities
 
-    Career readiness and opportunity match are different:
-    - Career readiness = target-role readiness
-    - Match score = match against each company's opportunity
+        Uses the complete StudentSkill profile.
+
+    Resume AI mode:
+        GET /students/recommended-opportunities?resume_id=12
+
+        Uses ONLY skills confirmed for the selected resume.
     """
 
     student = get_student(db, user.id)
 
-    # Confirm student has profile skills.
-    confirmed_skill_count = (
-        db.query(StudentSkill)
-        .filter(
-            StudentSkill.student_id == student.id
-        )
-        .count()
-    )
+    selected_skill_ids = None
 
-    if confirmed_skill_count == 0:
-        return {
-            "success": True,
-            "message": "Add or accept skills before checking recommendations",
-            "data": [],
-        }
+    if resume_id is not None:
+        selected_skill_ids = get_confirmed_resume_skill_ids(
+            db,
+            student.id,
+            resume_id,
+        )
+
+    else:
+        profile_skill_count = (
+            db.query(StudentSkill)
+            .filter(
+                StudentSkill.student_id == student.id
+            )
+            .count()
+        )
+
+        if profile_skill_count == 0:
+            return {
+                "success": True,
+                "analysis_source": "student_profile_skills",
+                "message": (
+                    "Add or accept skills before checking recommendations"
+                ),
+                "data": [],
+            }
 
     opportunities = (
         db.query(Opportunity)
@@ -676,6 +773,7 @@ def recommended_opportunities(
                 db,
                 student.id,
                 opportunity.id,
+                selected_skill_ids=selected_skill_ids,
             )
         except Exception as error:
             print(
@@ -686,15 +784,8 @@ def recommended_opportunities(
             continue
 
         if not isinstance(match_data, dict):
-            print(
-                f"[recommended-opportunities] "
-                f"unexpected match response for "
-                f"opportunity {opportunity.id}: "
-                f"{match_data}"
-            )
             continue
 
-        # Support common key names returned by matching service.
         raw_score = (
             match_data.get("score")
             if match_data.get("score") is not None
@@ -712,18 +803,11 @@ def recommended_opportunities(
         except (TypeError, ValueError):
             score = 0.0
 
-        print(
-            "[recommended-opportunities]",
-            "opportunity_id=",
-            opportunity.id,
-            "match_data=",
-            match_data,
-            "score=",
-            score,
-        )
+        # Ignore opportunities that have no required skills configured.
+        if match_data.get("total_required_skills", 0) == 0:
+            continue
 
-        # For now show matches >= 40%.
-        # During debugging, change 40 to 0 if you want all active opportunities.
+        # Show only reasonably relevant recommendations.
         if score < 40:
             continue
 
@@ -753,16 +837,44 @@ def recommended_opportunities(
 
                 "company": {
                     "id": company.id if company else None,
-                    "name": company.name if company else "Unknown Company",
-                    "industry": getattr(company, "industry", None) if company else None,
-                    "location": getattr(company, "location", None) if company else None,
-                    "website": getattr(company, "website", None) if company else None,
-                    "is_verified": getattr(company, "is_verified", False) if company else False,
+                    "name": (
+                        company.name
+                        if company
+                        else "Unknown Company"
+                    ),
+                    "industry": (
+                        getattr(company, "industry", None)
+                        if company
+                        else None
+                    ),
+                    "location": (
+                        getattr(company, "location", None)
+                        if company
+                        else None
+                    ),
+                    "website": (
+                        getattr(company, "website", None)
+                        if company
+                        else None
+                    ),
+                    "is_verified": (
+                        getattr(company, "is_verified", False)
+                        if company
+                        else False
+                    ),
                 },
 
                 "type": opportunity_type,
-                "location": getattr(opportunity, "location", None),
-                "stipend": getattr(opportunity, "stipend", None),
+                "location": getattr(
+                    opportunity,
+                    "location",
+                    None,
+                ),
+                "stipend": getattr(
+                    opportunity,
+                    "stipend",
+                    None,
+                ),
                 "experience_required": getattr(
                     opportunity,
                     "experience_required",
@@ -793,6 +905,13 @@ def recommended_opportunities(
 
     return {
         "success": True,
+        "resume_id": resume_id,
+        "analysis_source": (
+            "confirmed_resume_skills"
+            if resume_id is not None
+            else "student_profile_skills"
+        ),
         "message": "Recommended opportunities loaded",
         "data": results[:10],
     }
+
