@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -273,6 +273,7 @@
                                 <i data-lucide="file-up" class="h-6 w-6"></i>
                             </div>
                             <div>
+                                <div class="mb-1 text-xs font-black uppercase tracking-wider text-indigo-500">Step 1</div>
                                 <h2 class="text-xl font-black text-slate-900">Upload Resume</h2>
                                 <p class="text-sm text-slate-500">Upload your latest PDF resume</p>
                             </div>
@@ -311,7 +312,7 @@
 
                             <button id="analyzeBtn" type="submit" class="btn btn-primary w-full justify-center py-3.5">
                                 <i data-lucide="scan-search" class="h-4 w-4"></i>
-                                Analyze Resume & Skill Gap
+                                Analyze Resume
                             </button>
                         </form>
 
@@ -323,8 +324,9 @@
                 <section class="analysis-section overflow-hidden">
                     <div class="flex items-center justify-between border-b border-slate-100 p-6">
                         <div>
-                            <h2 class="text-xl font-black text-slate-900">Skills Found In Resume</h2>
-                            <p class="mt-1 text-sm text-slate-500">Skills SkillBridge detected from your resume</p>
+                            <div class="mb-1 text-xs font-black uppercase tracking-wider text-indigo-500">Step 2</div>
+                            <h2 class="text-xl font-black text-slate-900">Confirmed Resume Skills</h2>
+                            <p class="mt-1 text-sm text-slate-500">Review the detected skills and select only the skills you actually know</p>
                         </div>
                         <span id="detectedBadge" class="hidden rounded-full bg-indigo-50 px-3 py-1 text-sm font-bold text-indigo-600">0</span>
                     </div>
@@ -341,17 +343,41 @@
                         <div id="analysisLoader" class="hidden py-12 text-center">
                             <div class="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"></div>
                             <p class="mt-4 font-bold text-slate-800">Analyzing your resume...</p>
-                            <p class="mt-1 text-sm text-slate-500">Extracting skills and comparing your profile.</p>
+                            <p class="mt-1 text-sm text-slate-500">Extracting skills from your resume.</p>
                         </div>
 
                         <div id="detectedSkillsContainer" class="hidden space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
 
                         <div id="acceptArea" class="hidden mt-6 border-t border-slate-100 pt-5">
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <p id="selectedCount" class="text-sm text-slate-500">0 selected</p>
+                            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="shield-check" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+                                    <div>
+                                        <p class="font-black text-slate-900">Confirm your actual skills</p>
+                                        <p class="mt-1 text-sm leading-6 text-slate-600">
+                                            Select only the skills you genuinely know. Resume-detected skills are suggestions and are not treated as verified automatically.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <label class="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-100 bg-white p-3">
+                                    <input
+                                        id="skillDeclaration"
+                                        type="checkbox"
+                                        class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                    >
+                                    <span class="text-sm leading-6 text-slate-700">
+                                        I confirm that I have practical knowledge of the selected skills.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                                <p id="selectedCount" class="text-sm font-semibold text-slate-500">0 selected</p>
+
                                 <button id="acceptBtn" type="button" class="btn btn-primary">
-                                    <i data-lucide="plus-circle" class="h-4 w-4"></i>
-                                    Add Selected To Profile
+                                    <i data-lucide="badge-check" class="h-4 w-4"></i>
+                                    Confirm Skills & Generate Analysis
                                 </button>
                             </div>
                         </div>
@@ -368,7 +394,7 @@
                     <p id="summaryRole" class="mt-2 font-black text-slate-900">—</p>
                 </div>
                 <div class="analysis-stat p-5">
-                    <p class="text-xs font-black uppercase tracking-wide text-slate-400">Detected Skills</p>
+                    <p class="text-xs font-black uppercase tracking-wide text-slate-400">Confirmed Skills</p>
                     <p id="summaryDetected" class="mt-2 text-3xl font-black text-indigo-600">0</p>
                 </div>
                 <div class="analysis-stat p-5">
@@ -494,7 +520,7 @@
                         </div>
                         <div>
                             <h2 class="text-xl font-black text-slate-900">Recommended Opportunities</h2>
-                            <p class="mt-1 text-sm text-slate-500">Based only on skills you accepted into your SkillBridge profile.</p>
+                            <p class="mt-1 text-sm text-slate-500">Based on skills confirmed for this resume.</p>
                         </div>
                     </div>
                     <span id="recommendedCount" class="hidden rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-black text-indigo-700">0 matches</span>
@@ -503,8 +529,8 @@
                 <div class="p-6">
                     <div class="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
                         <strong>How matching works:</strong>
-                        Resume-detected skills are suggestions. Opportunity matching uses the skills
-                        already saved/accepted in your StudentSkill profile.
+                        Resume-detected skills are suggestions. Opportunity matching uses only the
+                        skills you confirmed for this current resume.
                     </div>
 
                     <div id="recommendedLoading" class="hidden py-10 text-center">
@@ -517,7 +543,7 @@
                             <i data-lucide="search-x" class="h-6 w-6"></i>
                         </div>
                         <h3 class="mt-4 font-black text-slate-800">No matching opportunities yet</h3>
-                        <p class="mt-2 text-sm text-slate-500">Accept your detected skills first, or add more skills to your profile to improve your matches.</p>
+                        <p class="mt-2 text-sm text-slate-500">Confirm your detected skills first. SkillBridge will then compare only those confirmed skills with active opportunities.</p>
                     </div>
 
                     <div id="recommendedOpportunities" class="grid gap-5 md:grid-cols-2"></div>
@@ -582,6 +608,7 @@ const recommendedLoading = document.getElementById("recommendedLoading");
 const recommendedEmpty = document.getElementById("recommendedEmpty");
 const recommendedOpportunities = document.getElementById("recommendedOpportunities");
 const recommendedCount = document.getElementById("recommendedCount");
+const skillDeclaration = document.getElementById("skillDeclaration");
 
 
 /* ======================================================
@@ -589,6 +616,32 @@ const recommendedCount = document.getElementById("recommendedCount");
 ====================================================== */
 document.getElementById("targetRole").addEventListener("change", function () {
     selectedRole = this.value;
+
+    resetGeneratedAnalysis();
+
+    if (detectedSkills.length) {
+        acceptArea.classList.remove("hidden");
+        acceptBtn.disabled = false;
+
+        acceptBtn.innerHTML = `
+            <i data-lucide="badge-check" class="h-4 w-4"></i>
+            Confirm Skills & Generate Analysis
+        `;
+
+        resumeInfo.innerHTML = `
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p class="font-bold text-amber-800">Target role changed</p>
+                <p class="mt-1 text-sm text-amber-700">
+                    Generate the analysis again for
+                    <strong>${SB.esc(selectedRole)}</strong>.
+                </p>
+            </div>
+        `;
+    }
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 });
 
 /* ======================================================
@@ -623,22 +676,40 @@ function formatBytes(bytes) {
 }
 
 /* ======================================================
-   ANALYZE RESUME
+   STEP 1 — ANALYZE RESUME / DETECT SKILLS ONLY
 ====================================================== */
 document.getElementById("resumeForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const file = resumeFile.files[0];
+
     if (!file) {
         SB.toast("Please select your resume.");
         return;
     }
+
     if (file.type !== "application/pdf") {
         SB.toast("Only PDF resume is allowed.");
         return;
     }
 
     selectedRole = document.getElementById("targetRole").value;
+
+    // Reset old analysis whenever a new resume is analyzed.
+    readinessData = null;
+    careerAnalysis.classList.add("hidden");
+    analysisSummary.classList.add("hidden");
+    recommendedSection.classList.add("hidden");
+    roadmapList.classList.add("hidden");
+    roadmapEmpty.classList.remove("hidden");
+
+    downloadAnalysisBtn.classList.add("hidden");
+    downloadAnalysisBtn.classList.remove("inline-flex");
+
+    if (skillDeclaration) {
+        skillDeclaration.checked = false;
+    }
+
     setAnalyzingState(true);
 
     try {
@@ -650,54 +721,67 @@ document.getElementById("resumeForm").addEventListener("submit", async function 
             body: formData
         });
 
-        resumeId = uploadResponse.id || uploadResponse.resume_id;
-        if (!resumeId) throw new Error("Resume ID not returned.");
+        resumeId =
+            uploadResponse.id ||
+            uploadResponse.resume_id ||
+            uploadResponse.data?.id ||
+            uploadResponse.data?.resume_id;
+
+        if (!resumeId) {
+            throw new Error("Resume ID not returned.");
+        }
 
         await SB.post(`/resumes/${resumeId}/analyze`, {});
 
         const analysis = await SB.get(`/resumes/${resumeId}/analysis`);
-        detectedSkills = analysis.data || [];
-        renderDetectedSkills();
 
-        await loadCareerAnalysis();
-        await loadRecommendedOpportunities();
+        detectedSkills =
+            Array.isArray(analysis?.data)
+                ? analysis.data
+                : Array.isArray(analysis?.data?.data)
+                    ? analysis.data.data
+                    : Array.isArray(analysis)
+                        ? analysis
+                        : [];
+
+        renderDetectedSkills();
 
         resumeInfo.innerHTML = `
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                 <div class="flex items-start gap-3">
                     <i data-lucide="circle-check" class="mt-0.5 h-5 w-5 text-emerald-600"></i>
                     <div>
-                        <p class="font-bold text-emerald-800">Resume analyzed successfully</p>
-                        <p class="mt-1 text-xs text-emerald-700">
-                            Resume #${resumeId} · Target role: ${SB.esc(selectedRole)}
+                        <p class="font-bold text-emerald-800">Resume skills detected successfully</p>
+                        <p class="mt-1 text-sm text-emerald-700">
+                            Now review the detected skills, select only the skills you actually know,
+                            confirm the declaration, and generate your final career analysis.
                         </p>
                     </div>
                 </div>
             </div>
         `;
 
-        careerAnalysis.classList.remove("hidden");
-        analysisSummary.classList.remove("hidden");
-        summaryRole.textContent = selectedRole;
-        summaryDetected.textContent = detectedSkills.length;
-
-        // Show both download buttons
-        downloadAnalysisBtn.classList.remove("hidden");
-        downloadAnalysisBtn.classList.add("inline-flex");
+        // Original resume can be downloaded after upload,
+        // but career analysis report stays hidden until skill confirmation.
         downloadResumeBtn.classList.remove("hidden");
         downloadResumeBtn.classList.add("inline-flex");
 
     } catch (error) {
         resumeInfo.innerHTML = `
             <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
-                <p class="font-bold text-rose-700">Analysis failed</p>
+                <p class="font-bold text-rose-700">Resume analysis failed</p>
                 <p class="mt-1 text-sm text-rose-600">${SB.esc(error.message)}</p>
             </div>
         `;
+
         detectedEmpty.classList.remove("hidden");
+
     } finally {
         setAnalyzingState(false);
-        if (window.lucide) lucide.createIcons();
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 });
 
@@ -717,7 +801,7 @@ function setAnalyzingState(active) {
         analyzeBtn.disabled = false;
         analyzeBtn.innerHTML = `
             <i data-lucide="scan-search" class="h-4 w-4"></i>
-            Analyze Resume & Skill Gap
+            Analyze Resume
         `;
         if (window.lucide) lucide.createIcons();
     }
@@ -769,8 +853,35 @@ function renderDetectedSkills() {
 
     acceptArea.classList.remove("hidden");
     document.querySelectorAll(".skillCheck").forEach(checkbox => {
-        checkbox.addEventListener("change", updateSelectedCount);
+        checkbox.addEventListener("change", function () {
+            updateSelectedCount();
+
+            if (readinessData) {
+                resetGeneratedAnalysis();
+
+                acceptBtn.disabled = false;
+                acceptBtn.innerHTML = `
+                    <i data-lucide="badge-check" class="h-4 w-4"></i>
+                    Confirm Skills & Generate Analysis
+                `;
+
+                resumeInfo.innerHTML = `
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                        <p class="font-bold text-amber-800">Skill selection changed</p>
+                        <p class="mt-1 text-sm text-amber-700">
+                            Generate the analysis again so the score, roadmap and company matches
+                            use only the currently selected skills.
+                        </p>
+                    </div>
+                `;
+            }
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
     });
+
     updateSelectedCount();
 }
 
@@ -783,44 +894,163 @@ function updateSelectedCount() {
 }
 
 /* ======================================================
-   ACCEPT RESUME SKILLS
+   STEP 2 — CONFIRM SKILLS & GENERATE FINAL ANALYSIS
 ====================================================== */
 acceptBtn.addEventListener("click", async function () {
-    const ids = [...document.querySelectorAll(".skillCheck:checked")].map(input => Number(input.value));
-    if (!ids.length) {
-        SB.toast("Select at least one skill.");
+    selectedRole = document.getElementById("targetRole").value;
+
+    if (!resumeId) {
+        SB.toast("Analyze your resume first.");
         return;
     }
 
+    const ids = [
+        ...document.querySelectorAll(".skillCheck:checked")
+    ].map(input => Number(input.value));
+
+    if (!ids.length) {
+        SB.toast("Select at least one skill you actually know.");
+        return;
+    }
+
+    if (!skillDeclaration?.checked) {
+        SB.toast("Please confirm the skill declaration first.");
+        return;
+    }
+
+    const originalHtml = acceptBtn.innerHTML;
+
     try {
+        acceptBtn.disabled = true;
+        acceptBtn.innerHTML = `
+            <span class="spinner"></span>
+            Generating Analysis...
+        `;
+
+        // Resume-detected skills become student-confirmed profile skills.
         await SB.request(`/resumes/${resumeId}/accept-skills`, {
             method: "POST",
             body: JSON.stringify(ids),
-            headers: { "Content-Type": "application/json" }
+            headers: {
+                "Content-Type": "application/json"
+            }
         });
-        SB.toast(`${ids.length} skills added to your profile.`);
+
+        // Only now calculate career score and opportunity matching.
         await loadCareerAnalysis();
+        await loadRoadmapAutomatically();
         await loadRecommendedOpportunities();
+
+        analysisSummary.classList.remove("hidden");
+        careerAnalysis.classList.remove("hidden");
+
+        downloadAnalysisBtn.classList.remove("hidden");
+        downloadAnalysisBtn.classList.add("inline-flex");
+
+        resumeInfo.innerHTML = `
+            <div class="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="badge-check" class="mt-0.5 h-5 w-5 text-indigo-600"></i>
+                    <div>
+                        <p class="font-bold text-indigo-900">Career analysis generated</p>
+                        <p class="mt-1 text-sm text-indigo-700">
+                            ${ids.length} selected skills were confirmed for this resume.
+                            Your readiness score, skill gap, roadmap and matching opportunities were generated from those confirmed skills.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        acceptBtn.innerHTML = `
+            <i data-lucide="circle-check" class="h-4 w-4"></i>
+            Analysis Generated
+        `;
+
+        SB.toast("Skills confirmed and career analysis generated.");
+
     } catch (error) {
-        SB.toast(error.message);
+        console.error("Confirm skills error:", error);
+
+        acceptBtn.disabled = false;
+        acceptBtn.innerHTML = originalHtml;
+
+        SB.toast(error.message || "Could not generate analysis.");
+
+    } finally {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 });
+
+/* ======================================================
+   CURRENT RESUME ANALYSIS HELPERS
+====================================================== */
+
+function resetGeneratedAnalysis() {
+    readinessData = null;
+
+    analysisSummary.classList.add("hidden");
+    careerAnalysis.classList.add("hidden");
+    recommendedSection.classList.add("hidden");
+
+    readinessScore.textContent = "0";
+    readinessText.textContent = "—";
+    readinessBar.style.width = "0%";
+
+    matchedSkills.innerHTML = "";
+    missingSkills.innerHTML = "";
+    focusList.innerHTML = "";
+    recommendation.innerHTML = "—";
+
+    summaryMatched.textContent = "0";
+    summaryMissing.textContent = "0";
+
+    roadmapList.classList.add("hidden");
+    roadmapList.innerHTML = "";
+    roadmapEmpty.classList.remove("hidden");
+    roadmapEmpty.textContent =
+        "Confirm your skills to generate your personalized roadmap.";
+
+    recommendedOpportunities.innerHTML = "";
+    recommendedCount.classList.add("hidden");
+
+    downloadAnalysisBtn.classList.add("hidden");
+    downloadAnalysisBtn.classList.remove("inline-flex");
+}
+
+
+function getConfirmedSkillCount() {
+    return document.querySelectorAll(".skillCheck:checked").length;
+}
+
 
 /* ======================================================
    LOAD CAREER READINESS
 ====================================================== */
 async function loadCareerAnalysis() {
-    try {
-        const encodedRole = encodeURIComponent(selectedRole);
-        const response = await SB.get(`/career/readiness?role=${encodedRole}`);
-        readinessData = response.data || response;
-        renderCareerAnalysis(readinessData);
-    } catch (error) {
-        console.error("Career readiness error:", error);
-        careerAnalysis.classList.remove("hidden");
-        readinessText.textContent = "Career readiness could not be calculated.";
+    if (!resumeId) {
+        throw new Error("Resume ID is missing.");
     }
+
+    const role = encodeURIComponent(selectedRole);
+
+    const response = await SB.get(
+        `/career/readiness?role=${role}&resume_id=${resumeId}`
+    );
+
+    const data =
+        response?.data?.data ||
+        response?.data ||
+        response ||
+        {};
+
+    readinessData = data;
+
+    renderCareerAnalysis(data);
 }
+
 
 /* ======================================================
    RENDER CAREER ANALYSIS
@@ -831,7 +1061,7 @@ function renderCareerAnalysis(data) {
     const missing = data.missing_skills || data.skill_gaps || data.missing || [];
 
     summaryRole.textContent = selectedRole;
-    summaryDetected.textContent = detectedSkills.length;
+    summaryDetected.textContent = getConfirmedSkillCount();
     summaryMatched.textContent = matched.length;
     summaryMissing.textContent = missing.length;
 
@@ -942,28 +1172,78 @@ function buildRecommendation(score, missing) {
 }
 
 /* ======================================================
+   AUTO ROADMAP AFTER SKILL CONFIRMATION
+====================================================== */
+async function loadRoadmapAutomatically() {
+    if (!resumeId) {
+        throw new Error("Resume ID is missing.");
+    }
+
+    const role = encodeURIComponent(selectedRole);
+
+    const response = await SB.post(
+        `/career/roadmap?role=${role}&resume_id=${resumeId}`,
+        {}
+    );
+
+    const data =
+        response?.data?.data ||
+        response?.data ||
+        response ||
+        {};
+
+    renderRoadmap(data);
+}
+
+
+/* ======================================================
    GENERATE ROADMAP
 ====================================================== */
 generateRoadmapBtn.addEventListener("click", async function () {
+    if (!readinessData || !resumeId) {
+        SB.toast("Confirm your skills and generate analysis first.");
+        return;
+    }
+
     this.disabled = true;
     this.innerHTML = `<span class="spinner"></span> Generating...`;
 
     try {
         const role = encodeURIComponent(selectedRole);
-        const response = await SB.post(`/career/roadmap?role=${role}`, {});
-        const data = response.data || response;
+
+        const response = await SB.post(
+            `/career/roadmap?role=${role}&resume_id=${resumeId}`,
+            {}
+        );
+
+        const data =
+            response?.data?.data ||
+            response?.data ||
+            response ||
+            {};
+
         renderRoadmap(data);
+
+        SB.toast("Roadmap generated from your confirmed resume skills.");
     } catch (error) {
-        SB.toast(error.message);
+        SB.toast(
+            error.message ||
+            "Could not generate roadmap."
+        );
     } finally {
         this.disabled = false;
+
         this.innerHTML = `
             <i data-lucide="route" class="h-4 w-4"></i>
             Generate Roadmap
         `;
-        if (window.lucide) lucide.createIcons();
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 });
+
 
 /* ======================================================
    RENDER ROADMAP
@@ -1067,7 +1347,14 @@ downloadAnalysisBtn.addEventListener("click", function () {
 
     const matched = readinessData.matched_skills || readinessData.matches || [];
     const missing = readinessData.missing_skills || readinessData.skill_gaps || readinessData.missing || [];
-    const detected = detectedSkills.map(skill => skill.skill_name || skill.name || "Skill");
+    const confirmedIds = new Set(
+        [...document.querySelectorAll(".skillCheck:checked")]
+            .map(input => String(input.value))
+    );
+
+    const detected = detectedSkills
+        .filter(skill => confirmedIds.has(String(skill.resume_skill_id || skill.id)))
+        .map(skill => skill.skill_name || skill.name || "Skill");
     const focus = missing.slice(0, 5).map(getSkillName);
 
     const reportWindow = window.open("", "_blank");
@@ -1134,8 +1421,8 @@ downloadAnalysisBtn.addEventListener("click", function () {
                     <h2>Recommendation</h2>
                     <div class="recommendation">${buildRecommendation(score, missing)}</div>
                     <div class="footer">
-                        This report is generated from the student's saved profile, detected resume skills and SkillBridge career-readiness logic.
-                        Skill extraction in the current system is deterministic and rule-based; this report should be used as career guidance rather than as an official qualification assessment.
+                        This report is generated from the skills confirmed for the current resume together with SkillBridge career-readiness logic.
+                        Skill extraction in the current system is deterministic and rule-based; confirmed skills are student-declared and should not be treated as assessment-verified unless a separate skill assessment has been completed.
                     </div>
                 </div>
             </div>
@@ -1159,26 +1446,12 @@ function escapeReport(value) {
    Uses confirmed StudentSkill profile via backend
 ====================================================== */
 
-function extractOpportunityList(response) {
-    if (Array.isArray(response)) return response;
-
-    if (Array.isArray(response?.data)) {
-        return response.data;
-    }
-
-    if (Array.isArray(response?.data?.data)) {
-        return response.data.data;
-    }
-
-    if (Array.isArray(response?.opportunities)) {
-        return response.opportunities;
-    }
-
-    return [];
-}
-
 
 async function loadRecommendedOpportunities() {
+    if (!resumeId) {
+        throw new Error("Resume ID is missing.");
+    }
+
     recommendedSection.classList.remove("hidden");
     recommendedLoading.classList.remove("hidden");
     recommendedEmpty.classList.add("hidden");
@@ -1186,119 +1459,48 @@ async function loadRecommendedOpportunities() {
     recommendedCount.classList.add("hidden");
 
     try {
-        // 1. Load all active opportunities
-        const opportunityResponse = await SB.get("/opportunities");
-
-        const allOpportunities =
-            Array.isArray(opportunityResponse)
-                ? opportunityResponse
-                : Array.isArray(opportunityResponse?.data)
-                    ? opportunityResponse.data
-                    : Array.isArray(opportunityResponse?.data?.data)
-                        ? opportunityResponse.data.data
-                        : [];
-
-        if (!allOpportunities.length) {
-            recommendedEmpty.classList.remove("hidden");
-            recommendedEmpty.innerHTML = `
-                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400">
-                    <i data-lucide="search-x" class="h-6 w-6"></i>
-                </div>
-                <h3 class="mt-4 font-black text-slate-800">No opportunities available</h3>
-                <p class="mt-2 text-sm text-slate-500">
-                    No active internship or job opportunities are available right now.
-                </p>
-            `;
-            return;
-        }
-
-        const matchedResults = [];
-
-        // 2. Use the same student-opportunity match API
-        // that is already working on the Opportunities page.
-        for (const opportunity of allOpportunities) {
-            const opportunityId =
-                opportunity.id ??
-                opportunity.opportunity_id;
-
-            if (!opportunityId) {
-                continue;
-            }
-
-            try {
-                const matchResponse = await SB.get(
-                    `/students/opportunities/${opportunityId}/match`
-                );
-
-                const match =
-                    matchResponse?.match ??
-                    matchResponse?.data ??
-                    matchResponse ??
-                    {};
-
-                const score = Number(
-                    match.score ??
-                    match.match_score ??
-                    match.match_percentage ??
-                    match.percentage ??
-                    0
-                );
-
-                // Only show useful recommendations
-                if (score < 40) {
-                    continue;
-                }
-
-                matchedResults.push({
-                    ...opportunity,
-                    opportunity_id: opportunityId,
-                    match_score: score,
-                    matched_skills:
-                        match.matched_skills ??
-                        match.matches ??
-                        [],
-                    missing_skills:
-                        match.missing_skills ??
-                        match.missing ??
-                        match.skill_gaps ??
-                        []
-                });
-
-            } catch (matchError) {
-                console.error(
-                    `Match failed for opportunity ${opportunityId}:`,
-                    matchError
-                );
-            }
-        }
-
-        matchedResults.sort(
-            (a, b) => b.match_score - a.match_score
+        const response = await SB.get(
+            `/students/recommended-opportunities?resume_id=${resumeId}`
         );
 
-        if (!matchedResults.length) {
+        const results =
+            Array.isArray(response?.data?.data)
+                ? response.data.data
+                : Array.isArray(response?.data)
+                    ? response.data
+                    : Array.isArray(response)
+                        ? response
+                        : [];
+
+        if (!results.length) {
             recommendedEmpty.classList.remove("hidden");
+
             recommendedEmpty.innerHTML = `
                 <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400">
                     <i data-lucide="search-x" class="h-6 w-6"></i>
                 </div>
+
                 <h3 class="mt-4 font-black text-slate-800">
-                    No 40%+ matching opportunities yet
+                    No 40%+ match for this resume yet
                 </h3>
+
                 <p class="mt-2 text-sm text-slate-500">
-                    Add or accept more skills to improve your opportunity matches.
+                    SkillBridge checked your currently confirmed resume skills
+                    against active opportunities, but no opportunity reached the
+                    recommendation threshold.
                 </p>
             `;
+
             return;
         }
 
         recommendedCount.textContent =
-            `${matchedResults.length} match${matchedResults.length === 1 ? "" : "es"}`;
+            `${results.length} match${results.length === 1 ? "" : "es"}`;
 
         recommendedCount.classList.remove("hidden");
 
         recommendedOpportunities.innerHTML =
-            matchedResults
+            results
                 .map(renderRecommendedOpportunity)
                 .join("");
 
@@ -1314,9 +1516,11 @@ async function loadRecommendedOpportunities() {
             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
                 <i data-lucide="triangle-alert" class="h-6 w-6"></i>
             </div>
+
             <h3 class="mt-4 font-black text-slate-800">
                 Could not load recommended opportunities
             </h3>
+
             <p class="mt-2 text-sm text-slate-500">
                 ${SB.esc(error.message || "Please try again later.")}
             </p>

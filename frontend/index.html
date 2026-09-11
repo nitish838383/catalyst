@@ -131,6 +131,65 @@
       .sb-chat-panel{right:.75rem;left:.75rem;bottom:5rem;width:auto;height:min(72vh,620px);border-radius:1.15rem}
     }
 
+  
+    /* Workspace Hero */
+    .workspace-hero{
+      position:relative;overflow:hidden;border-radius:2rem;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      box-shadow:0 35px 90px rgba(2,6,23,.45);
+    }
+    .workspace-hero::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg,rgba(2,6,23,.22),transparent 38%),
+                 linear-gradient(180deg,transparent 58%,rgba(2,6,23,.30));
+    }
+    .workspace-hero img{
+      display:block;width:100%;height:100%;min-height:460px;
+      object-fit:cover;object-position:center;
+    }
+    .workspace-badge{
+      position:absolute;z-index:2;left:1.25rem;right:1.25rem;bottom:1.25rem;
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.16);
+      border-radius:1.25rem;color:white;background:rgba(15,23,42,.72);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      box-shadow:0 18px 45px rgba(2,6,23,.30);
+    }
+    .workspace-chip{
+      display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .7rem;
+      border-radius:999px;border:1px solid rgba(129,140,248,.25);
+      color:#c7d2fe;background:rgba(99,102,241,.12);
+      font-size:.75rem;font-weight:700;white-space:nowrap;
+    }
+    .live-stat-strip{
+      margin-top:2rem;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+      overflow:hidden;border:1px solid rgba(255,255,255,.08);
+      border-radius:1.5rem;background:rgba(255,255,255,.04);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    }
+    .live-stat-item{
+      padding:1.15rem 1rem;text-align:center;
+      border-right:1px solid rgba(255,255,255,.07);
+    }
+    .live-stat-item:last-child{border-right:0}
+    @media(max-width:1024px){
+      .workspace-hero img{min-height:390px}
+      .live-stat-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .live-stat-item:nth-child(3){border-right:0}
+      .live-stat-item:nth-child(-n+3){border-bottom:1px solid rgba(255,255,255,.07)}
+    }
+    @media(max-width:640px){
+      .workspace-hero{border-radius:1.4rem}
+      .workspace-hero img{min-height:320px;object-position:58% center}
+      .workspace-badge{left:.8rem;right:.8rem;bottom:.8rem;padding:.85rem}
+      .workspace-badge .workspace-chips{display:none}
+      .live-stat-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .live-stat-item{border-bottom:1px solid rgba(255,255,255,.07)}
+      .live-stat-item:nth-child(2n){border-right:0}
+      .live-stat-item:nth-last-child(-n+2){border-bottom:0}
+    }
+
   </style>
 </head>
 
@@ -175,151 +234,125 @@
     <!-- ===================================================== -->
     <!-- Hero Section -->
     <!-- ===================================================== -->
-    <section class="relative z-10 mx-auto grid max-w-7xl gap-14 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
+    <section class="relative z-10 mx-auto max-w-7xl px-6 pb-10 pt-12 lg:pb-14 lg:pt-20">
+      <div class="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
 
-      <!-- Left -->
-      <div>
-        <div class="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
-          <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 pulse-dot"></span>
-          AI-Powered Skill Intelligence
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
+            <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 pulse-dot"></span>
+            Skill Intelligence • Career Matching • Collaboration
+          </div>
+
+          <h1 class="mt-7 text-5xl font-black leading-[1.06] tracking-tight sm:text-6xl lg:text-[4rem]">
+            Know Your Skills.<br>
+            <span class="gradient-text">Bridge Your Gap.</span><br>
+            Build Your Career.
+          </h1>
+
+          <p class="mt-7 max-w-xl text-lg leading-relaxed text-slate-300/90">
+            SkillBridge AI connects students, colleges and companies through skill-gap analysis,
+            explainable opportunity matching and personalized career roadmaps.
+          </p>
+
+          <div class="mt-9 flex flex-wrap gap-4">
+            <a class="btn btn-primary flex items-center gap-2 px-7 py-3.5 text-base shadow-xl shadow-indigo-500/30" href="/register.html">
+              Get Started
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </a>
+            <a class="btn border border-white/15 bg-white/5 px-7 py-3.5 text-base hover:bg-white/10 transition" href="/login.html">
+              Open Dashboard
+            </a>
+          </div>
+
+          <div class="mt-10 grid max-w-xl gap-3 sm:grid-cols-3">
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <div class="flex items-center gap-2 text-sm font-bold text-white">
+                <i data-lucide="file-search" class="h-4 w-4 text-indigo-300"></i>
+                Resume Analysis
+              </div>
+              <p class="mt-1 text-xs text-slate-400">Detect profile skills</p>
+            </div>
+
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <div class="flex items-center gap-2 text-sm font-bold text-white">
+                <i data-lucide="git-compare" class="h-4 w-4 text-violet-300"></i>
+                Skill Gap
+              </div>
+              <p class="mt-1 text-xs text-slate-400">See what is missing</p>
+            </div>
+
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <div class="flex items-center gap-2 text-sm font-bold text-white">
+                <i data-lucide="briefcase-business" class="h-4 w-4 text-cyan-300"></i>
+                Smart Matching
+              </div>
+              <p class="mt-1 text-xs text-slate-400">Find relevant roles</p>
+            </div>
+          </div>
         </div>
 
-        <h1 class="mt-7 text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-[4.1rem]">
-          Know Your Skills.
-          <br>
-          <span class="gradient-text">Bridge Your Gap.</span>
-          <br>
-          Build Your Career.
-        </h1>
+        <div class="workspace-hero">
+          <img src="/assets/images/sih.png" alt="Student using SkillBridge AI on a laptop">
 
-        <p class="mt-7 max-w-xl text-lg leading-relaxed text-slate-300/90">
-          A single intelligent platform connecting students, colleges and industry through skill-gap analysis, explainable matching, personalized roadmaps and real collaboration.
-        </p>
+          <div class="workspace-badge">
+            <div class="min-w-0">
+              <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-200">
+                SkillBridge Experience
+              </p>
+              <p class="mt-1 truncate text-sm font-black text-white sm:text-base">
+                Skills → Gap → Roadmap → Opportunity
+              </p>
+            </div>
 
-        <div class="mt-9 flex flex-wrap gap-4">
-          <a class="btn btn-primary flex items-center gap-2 px-7 py-3.5 text-base shadow-xl shadow-indigo-500/30" href="/register.html">
-            Start now
-            <i data-lucide="arrow-right" class="h-4 w-4"></i>
-          </a>
-          <a class="btn border border-white/15 bg-white/5 px-7 py-3.5 text-base hover:bg-white/10 transition" href="/login.html">
-            Open dashboard
-          </a>
-        </div>
-
-        <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-slate-400">
-          <div class="flex items-center gap-2">
-            <i data-lucide="check-circle-2" class="h-4 w-4 text-emerald-400"></i>
-            <span>Role-based dashboards</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="check-circle-2" class="h-4 w-4 text-emerald-400"></i>
-            <span>AI Skill Matching</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="check-circle-2" class="h-4 w-4 text-emerald-400"></i>
-            <span>Personalized Roadmaps</span>
+            <div class="workspace-chips hidden gap-2 xl:flex">
+              <span class="workspace-chip">
+                <i data-lucide="brain-circuit" class="h-3.5 w-3.5"></i>
+                Skill Intelligence
+              </span>
+              <span class="workspace-chip">
+                <i data-lucide="target" class="h-3.5 w-3.5"></i>
+                Career Match
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Right - Live Stats Card -->
-      <div class="relative">
-        <div class="float-slow rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl glow-border">
-          <div class="rounded-2xl bg-white p-6 text-slate-900 shadow-xl">
-
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-bold text-slate-500">Platform Activity</p>
-                <p class="mt-0.5 text-xs text-slate-400">Real-time SkillBridge statistics</p>
-              </div>
-              <span class="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 pulse-dot"></span>
-                Live
-              </span>
-            </div>
-
-            <div class="mt-6 grid grid-cols-2 gap-3">
-              <!-- Students -->
-              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition hover:bg-slate-50">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div id="statStudents" class="text-3xl font-black text-indigo-600">—</div>
-                    <div class="mt-1 text-sm text-slate-500">Students</div>
-                  </div>
-                  <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">
-                    <i data-lucide="users" class="h-5 w-5 text-indigo-600"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Colleges -->
-              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition hover:bg-slate-50">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div id="statColleges" class="text-3xl font-black text-violet-600">—</div>
-                    <div class="mt-1 text-sm text-slate-500">Colleges</div>
-                  </div>
-                  <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100">
-                    <i data-lucide="graduation-cap" class="h-5 w-5 text-violet-600"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Industry -->
-              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition hover:bg-slate-50">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div id="statCompanies" class="text-3xl font-black text-fuchsia-600">—</div>
-                    <div class="mt-1 text-sm text-slate-500">Industry</div>
-                  </div>
-                  <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-100">
-                    <i data-lucide="building-2" class="h-5 w-5 text-fuchsia-600"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Opportunities -->
-              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition hover:bg-slate-50">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div id="statOpportunities" class="text-3xl font-black text-cyan-600">—</div>
-                    <div class="mt-1 text-sm text-slate-500">Opportunities</div>
-                  </div>
-                  <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-100">
-                    <i data-lucide="briefcase" class="h-5 w-5 text-cyan-600"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-5 border-t border-slate-100 pt-5">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100">
-                    <i data-lucide="brain-circuit" class="h-4 w-4 text-emerald-600"></i>
-                  </div>
-                  <div>
-                    <div id="statSkills" class="font-black text-slate-900">—</div>
-                    <div class="text-xs text-slate-500">Skills Tracked</div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100">
-                    <i data-lucide="send" class="h-4 w-4 text-amber-600"></i>
-                  </div>
-                  <div>
-                    <div id="statApplications" class="font-black text-slate-900">—</div>
-                    <div class="text-xs text-slate-500">Applications</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="mt-8 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-black text-white">Live Platform Data</p>
+          <p class="mt-1 text-xs text-slate-400">Real counts loaded directly from the SkillBridge backend.</p>
         </div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 pulse-dot"></span>
+          LIVE
+        </span>
+      </div>
 
-        <!-- Floating Badge -->
-        <div class="absolute -right-3 -top-4 hidden rounded-2xl border border-white/10 bg-indigo-600 px-4 py-2 text-sm font-semibold shadow-xl sm:block">
-          Live Platform Data
+      <div class="live-stat-strip !mt-4" aria-label="Live platform statistics">
+        <div class="live-stat-item">
+          <div id="statStudents" class="text-2xl font-black text-indigo-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Students</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="statColleges" class="text-2xl font-black text-violet-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Colleges</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="statCompanies" class="text-2xl font-black text-fuchsia-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Industry</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="statOpportunities" class="text-2xl font-black text-cyan-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Opportunities</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="statSkills" class="text-2xl font-black text-emerald-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Skills Tracked</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="statApplications" class="text-2xl font-black text-amber-300">—</div>
+          <div class="mt-1 text-xs font-semibold text-slate-400">Applications</div>
         </div>
       </div>
     </section>
@@ -753,19 +786,66 @@
   <script src="/assets/js/auth.js"></script>
 
   <script>
+    function getStatsPayload(response) {
+      if (response?.data?.data && typeof response.data.data === "object") {
+        return response.data.data;
+      }
+
+      if (response?.data && typeof response.data === "object") {
+        return response.data;
+      }
+
+      if (response && typeof response === "object") {
+        return response;
+      }
+
+      return {};
+    }
+
+    function formatLiveCount(value) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "0";
+      }
+
+      return number.toLocaleString("en-IN");
+    }
+
+    function setLiveStat(id, value) {
+      const element = document.getElementById(id);
+
+      if (!element) {
+        return;
+      }
+
+      element.textContent = formatLiveCount(value);
+    }
+
     async function loadPlatformStats() {
       try {
-        const response = await SB.get('/opportunities/platform/stats');
-        const data = response.data || {};
+        const response = await SB.get("/opportunities/platform/stats");
+        const data = getStatsPayload(response);
 
-        document.getElementById('statStudents').textContent = data.students ?? 0;
-        document.getElementById('statColleges').textContent = data.colleges ?? 0;
-        document.getElementById('statCompanies').textContent = data.companies ?? 0;
-        document.getElementById('statOpportunities').textContent = data.opportunities ?? 0;
-        document.getElementById('statSkills').textContent = data.skills ?? 0;
-        document.getElementById('statApplications').textContent = data.applications ?? 0;
+        setLiveStat("statStudents", data.students ?? data.total_students ?? 0);
+        setLiveStat("statColleges", data.colleges ?? data.total_colleges ?? 0);
+        setLiveStat("statCompanies", data.companies ?? data.total_companies ?? data.recruiters ?? 0);
+        setLiveStat("statOpportunities", data.opportunities ?? data.total_opportunities ?? 0);
+        setLiveStat("statSkills", data.skills ?? data.total_skills ?? 0);
+        setLiveStat("statApplications", data.applications ?? data.total_applications ?? 0);
+
+        console.log("SkillBridge live platform stats:", data);
       } catch (error) {
-        console.error('Platform stats error:', error);
+        console.error("Platform stats error:", error);
+
+        // Keep the section usable if the API is temporarily unavailable.
+        ["statStudents", "statColleges", "statCompanies", "statOpportunities", "statSkills", "statApplications"]
+          .forEach(id => {
+            const element = document.getElementById(id);
+            if (element && element.textContent.trim() === "—") {
+              element.textContent = "0";
+            }
+          });
       }
     }
 
@@ -1100,6 +1180,9 @@
 
 
     loadPlatformStats();
+
+    // Refresh live counts every 30 seconds.
+    window.setInterval(loadPlatformStats, 30000);
 
     if (window.lucide) {
       lucide.createIcons();
