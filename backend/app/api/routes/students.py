@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.models.college_student_registry import CollegeStudentRegistry
 
 from app.db.session import get_db
 from app.api.deps import require_roles
@@ -915,3 +916,148 @@ def recommended_opportunities(
         "data": results[:10],
     }
 
+@router.post("/verify-college")
+def verify_college(
+    data: StudentCollegeVerifyRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(
+        require_roles(UserRole.student)
+    )
+):
+    # ---------------------------------------------
+    # Get logged-in student's profile
+    # ---------------------------------------------
+    student = (
+        db.query(Student)
+        .filter(
+            Student.user_id == user.id
+        )
+        .first()
+    )
+
+    if not student:
+        raise HTTPException(
+            status_code=404,
+            detail="Create student profile first"
+        )
+
+    # ---------------------------------------------
+    # Normalize entered ID
+    # ---------------------------------------------
+    entered_id = (
+        data.student_id_number
+        .strip()
+        .lower()
+    )
+
+    if not entered_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Student ID is required"
+        )
+
+    # ---------------------------------------------
+    # Find student in selected college registry
+    # BOTH college ID + student ID must match
+    # ---------------------------------------------
+    registry = (
+        db.query(CollegeStudentRegistry)
+        .filter(
+            CollegeStudentRegistry.college_id ==
+            data.college_id,
+
+            CollegeStudentRegistry.is_active ==
+            True
+        )
+        .all()
+    )
+
+    matched_registry = None
+
+    for row in registry:
+
+        saved_id = (
+            row.student_id_number
+            .strip()
+            .lower()
+        )
+
+        if saved_id == entered_id:
+            matched_registry = row
+            break
+
+    # ---------------------------------------------
+    # Wrong ID
+    # ---------------------------------------------
+    if not matched_registry:
+
+        student.college_verified = False
+
+        db.commit()
+
+        return {
+            "success": True,
+            "verified": False,
+            "message":
+                "Student ID not found in the selected college registry."
+        }
+
+    # ---------------------------------------------
+    # Already claimed by another SkillBridge user
+    # ---------------------------------------------
+    if (
+        matched_registry.claimed_student_id
+        and
+        matched_registry.claimed_student_id
+        != student.id
+    ):
+
+        student.college_verified = False
+
+        db.commit()
+
+        return {
+            "success": True,
+            "verified": False,
+            "message":
+                "This Student ID is already linked to another account."
+        }
+
+    # ---------------------------------------------
+    # VERIFIED
+    # ---------------------------------------------
+    student.college_id = (
+        matched_registry.college_id
+    )
+
+    student.department_id = (
+        matched_registry.department_id
+    )
+
+    student.student_id_number = (
+        matched_registry.student_id_number
+    )
+
+    student.college_verified = True
+
+    matched_registry.claimed_student_id = (
+        student.id
+    )
+
+    db.commit()
+
+    return {
+        "success": True,
+        "verified": True,
+        "message":
+            "College student identity verified successfully.",
+
+        "college_id":
+            matched_registry.college_id,
+
+        "department_id":
+            matched_registry.department_id,
+
+        "student_id_number":
+            matched_registry.student_id_number
+    }

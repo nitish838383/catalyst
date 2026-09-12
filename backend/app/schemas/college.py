@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 # ============================================================
@@ -6,7 +6,9 @@ from pydantic import BaseModel
 # ============================================================
 
 class CollegeProfileCreate(BaseModel):
+
     name: str
+
     university: str | None = None
     city: str | None = None
     state: str | None = None
@@ -15,11 +17,12 @@ class CollegeProfileCreate(BaseModel):
 
 # ============================================================
 # College Profile Update
-# All fields optional because PATCH supports partial updates
 # ============================================================
 
 class CollegeProfileUpdate(BaseModel):
+
     name: str | None = None
+
     university: str | None = None
     city: str | None = None
     state: str | None = None
@@ -31,5 +34,65 @@ class CollegeProfileUpdate(BaseModel):
 # ============================================================
 
 class DepartmentCreate(BaseModel):
+
     name: str
+
     code: str | None = None
+
+
+# ============================================================
+# College Student Registry Create
+# College admin will add these students.
+# ============================================================
+
+class CollegeStudentRegistryCreate(BaseModel):
+
+    student_id_number: str
+
+    student_name: str | None = None
+
+    department_id: int | None = None
+
+    year: int | None = None
+
+
+# ============================================================
+# College Student Registry Update
+# ============================================================
+
+class CollegeStudentRegistryUpdate(BaseModel):
+
+    student_name: str | None = None
+
+    department_id: int | None = None
+
+    year: int | None = None
+
+    is_active: bool | None = None
+
+
+# ============================================================
+# College Student Registry Response
+# ============================================================
+
+class CollegeStudentRegistryResponse(BaseModel):
+
+    id: int
+
+    college_id: int
+
+    department_id: int | None = None
+
+    student_id_number: str
+
+    student_name: str | None = None
+
+    year: int | None = None
+
+    is_active: bool
+
+    claimed_student_id: int | None = None
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

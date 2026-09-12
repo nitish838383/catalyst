@@ -913,3 +913,152 @@ def create_collaboration(
         "id":
             collaboration.id
     }
+
+
+# =========================================================
+# GET MY COLLABORATION PROPOSALS
+# =========================================================
+
+@router.get("/collaborations")
+def my_collaborations(
+    db: Session = Depends(get_db),
+    user: User = Depends(
+        require_roles(UserRole.recruiter)
+    )
+):
+    """
+    Return collaboration proposals created by the
+    currently logged-in recruiter/company.
+
+    Used by the recruiter Collaboration page to show
+    Proposal History / Manage panel.
+    """
+
+    company = get_company(
+        db,
+        user.id
+    )
+
+    rows = (
+        db.query(
+            Collaboration,
+            College
+        )
+        .join(
+            College,
+            Collaboration.college_id ==
+            College.id
+        )
+        .filter(
+            Collaboration.company_id ==
+            company.id
+        )
+        .order_by(
+            Collaboration.id.desc()
+        )
+        .all()
+    )
+
+    result = []
+
+    for collaboration, college in rows:
+
+        skill_rows = (
+            db.query(Skill)
+            .join(
+                CollaborationSkill,
+                CollaborationSkill.skill_id ==
+                Skill.id
+            )
+            .filter(
+                CollaborationSkill.collaboration_id ==
+                collaboration.id
+            )
+            .all()
+        )
+
+        collaboration_type = getattr(
+            collaboration,
+            "collaboration_type",
+            None
+        )
+
+        if hasattr(
+            collaboration_type,
+            "value"
+        ):
+            collaboration_type = (
+                collaboration_type.value
+            )
+
+        status = getattr(
+            collaboration,
+            "status",
+            None
+        )
+
+        if hasattr(
+            status,
+            "value"
+        ):
+            status = status.value
+
+        mode = getattr(
+            collaboration,
+            "mode",
+            None
+        )
+
+        if hasattr(
+            mode,
+            "value"
+        ):
+            mode = mode.value
+
+        result.append({
+            "id":
+                collaboration.id,
+
+            "company_id":
+                company.id,
+
+            "company_name":
+                company.name,
+
+            "college_id":
+                college.id,
+
+            "college_name":
+                college.name,
+
+            "collaboration_type":
+                collaboration_type,
+
+            "title":
+                collaboration.title,
+
+            "description":
+                collaboration.description,
+
+            "proposed_date":
+                collaboration.proposed_date,
+
+            "location":
+                collaboration.location,
+
+            "mode":
+                mode,
+
+            "status":
+                status or "pending",
+
+            "skills": [
+                skill.name
+                for skill in skill_rows
+            ]
+        })
+
+    return {
+        "success": True,
+        "data": result
+    }
