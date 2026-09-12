@@ -21,18 +21,22 @@ router = APIRouter(
 # REGISTER
 # TEMPORARILY DISABLED
 # ============================================================
+REGISTRATION_ENABLED = False
+
 
 @router.post("/register", response_model=AuthResponse)
 def register(
     data: RegisterRequest,
     db: Session = Depends(get_db)
 ):
-    raise HTTPException(
-        status_code=403,
-        detail="New account registration is temporarily disabled."
-    )
+    # Temporarily disable new registrations
+    if not REGISTRATION_ENABLED:
+        raise HTTPException(
+            status_code=403,
+            detail="New account registration is temporarily disabled."
+        )
 
-    # Registration code preserved for future use
+    # Prevent duplicate email accounts
     if get_user_by_email(db, data.email):
         raise HTTPException(
             status_code=409,
@@ -52,7 +56,6 @@ def register(
         "message": "Registration successful",
         "access_token": create_access_token(user.id)
     }
-
 
 # ============================================================
 # LOGIN
