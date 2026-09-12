@@ -3,716 +3,401 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Projects & Certifications — SkillBridge AI">
+  <meta name="description" content="Student Profile — SkillBridge AI">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/assets/css/app.css">
-  <title>Projects & Certifications | SkillBridge AI</title>
-
+  <title>Student Profile | SkillBridge AI</title>
   <style>
-    body {
-      background:
-        radial-gradient(circle at 8% 0%, rgba(99,102,241,.09), transparent 28%),
-        radial-gradient(circle at 92% 12%, rgba(14,165,233,.07), transparent 30%),
-        #f8fafc;
-    }
-
-    .portfolio-hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 1.75rem;
-      padding: 2rem;
-      color: #fff;
-      background:
-        radial-gradient(circle at 82% 14%, rgba(255,255,255,.16), transparent 26%),
-        radial-gradient(circle at 8% 120%, rgba(34,211,238,.20), transparent 34%),
-        linear-gradient(135deg, #1e1b4b 0%, #4338ca 44%, #2563eb 100%);
-      box-shadow: 0 24px 60px rgba(37,99,235,.20);
-    }
-
-    .portfolio-hero-grid {
-      position: absolute;
-      inset: 0;
-      opacity: .10;
-      background-image:
-        linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-
-    .premium-card {
-      border: 1px solid #e2e8f0;
-      background: rgba(255,255,255,.96);
-      border-radius: 1.5rem;
-      box-shadow: 0 14px 42px rgba(15,23,42,.055);
-    }
-
-    .stat-card {
-      border: 1px solid #e2e8f0;
-      background: linear-gradient(180deg, #fff, #fbfdff);
-      border-radius: 1.25rem;
-      box-shadow: 0 12px 30px rgba(15,23,42,.045);
-      transition: all .22s ease;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 38px rgba(15,23,42,.08);
-      border-color: #c7d2fe;
-    }
-
-    .card-hover {
-      transition: all .2s ease;
-    }
-
-    .card-hover:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px -6px rgba(15,23,42,.1);
-      border-color: #c7d2fe;
-    }
-
-    .credential-card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
-      border-radius: 1.125rem;
-      background:
-        radial-gradient(circle at 100% 0%, rgba(124,58,237,.08), transparent 28%),
-        linear-gradient(180deg, #fff, #fbfdff);
-    }
-
-    .credential-card::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      right: -45px;
-      bottom: -52px;
-      border-radius: 999px;
-      background: rgba(99,102,241,.06);
-    }
-
-    .modal-backdrop {
-      background: rgba(15,23,42,.64);
-      backdrop-filter: blur(6px);
-    }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2.5px solid rgba(255,255,255,.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 640px) {
-      .portfolio-hero {
-        border-radius: 1.25rem;
-        padding: 1.25rem;
-      }
-      .premium-card, .stat-card {
-        border-radius: 1rem;
-      }
-    }
+    body{background:radial-gradient(circle at 8% 0%,rgba(99,102,241,.08),transparent 28%),radial-gradient(circle at 92% 12%,rgba(14,165,233,.06),transparent 30%),#f8fafc}
+    .hero{border-radius:28px;padding:2rem;color:#fff;background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.14),transparent 25%),linear-gradient(135deg,#1e1b4b,#4338ca 48%,#2563eb);box-shadow:0 24px 60px rgba(37,99,235,.18)}
+    .panel{border:1px solid #e2e8f0;background:rgba(255,255,255,.97);border-radius:24px;box-shadow:0 14px 42px rgba(15,23,42,.05)}
+    .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:999px;animation:spin .7s linear infinite;display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900">
+<body class="text-slate-900">
+<script>window.SKILLBRIDGE_ROLE="student";</script>
 
-  <script>window.SKILLBRIDGE_ROLE = "student";</script>
+<div id="app-shell">
+  <main class="min-h-screen lg:pl-72">
+    <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
 
-  <div id="app-shell">
-    <main class="min-h-screen lg:pl-72">
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <header class="hero mb-7">
+        <p class="text-sm font-semibold text-indigo-100">SkillBridge AI</p>
+        <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">Student Profile</h1>
+        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-indigo-100 sm:text-base">
+          Maintain your academic profile, college identity and career information.
+        </p>
+      </header>
 
-        <!-- ==================== HERO ==================== -->
-        <header class="portfolio-hero mb-8">
-          <div class="portfolio-hero-grid"></div>
-          <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div class="max-w-3xl">
-              <p class="text-sm font-semibold text-indigo-100 tracking-wide">SkillBridge AI</p>
-              <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
-                Projects & Certifications
-              </h1>
-              <p class="mt-3 max-w-2xl text-sm leading-relaxed text-indigo-100 sm:text-base">
-                Build proof of work, showcase real projects and maintain a structured record of your professional certifications.
+      <div id="pageMsg" class="mb-6 hidden rounded-2xl border p-4 text-sm"></div>
+
+      <div class="grid gap-6 lg:grid-cols-[1fr_.75fr]">
+
+        <section class="panel p-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-black">Academic & Career Profile</h2>
+              <p class="mt-1 text-sm text-slate-500">Keep your information accurate for matching and analytics.</p>
+            </div>
+            <span id="profileState" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Loading</span>
+          </div>
+
+          <form id="profileForm" class="mt-6 grid gap-4 sm:grid-cols-2">
+
+            <div>
+              <label class="label">Name</label>
+              <input id="fullName" class="input bg-slate-50" type="text" readonly>
+            </div>
+
+            <div>
+              <label class="label">Email</label>
+              <input id="email" class="input bg-slate-50" type="email" readonly>
+            </div>
+
+            <div>
+              <label class="label">College</label>
+              <select id="collegeSelect" class="input" name="college_id">
+                <option value="">Independent / Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="label">Department</label>
+              <select id="departmentSelect" class="input" name="department_id" disabled>
+                <option value="">Select department</option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="label">Student ID / Enrollment Number</label>
+              <div class="flex gap-2">
+                <input id="studentIdNumber" class="input flex-1" name="student_id_number" placeholder="Enter college-issued student ID" autocomplete="off">
+                <button id="verifyCollegeBtn" type="button" class="btn btn-soft shrink-0">
+                  <i data-lucide="badge-check" class="h-4 w-4"></i>
+                  Verify
+                </button>
+              </div>
+              <p id="verificationText" class="mt-2 text-xs text-slate-500">
+                Select a registered college and enter your college-issued ID.
               </p>
             </div>
 
-            <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
-              <p class="text-xs font-bold uppercase tracking-[0.14em] text-indigo-200">
-                Portfolio Strength
-              </p>
-              <p id="heroStrength" class="mt-1 text-3xl font-black">0%</p>
+            <div>
+              <label class="label">Branch</label>
+              <input class="input" name="branch" placeholder="e.g. CSE (AI & ML)">
             </div>
-          </div>
-        </header>
 
-        <!-- ==================== STATS ==================== -->
-        <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div class="stat-card p-5">
-            <p class="text-sm text-slate-500">Projects</p>
-            <p class="mt-1.5 text-2xl font-black text-slate-900" id="projectCount">0</p>
-          </div>
-          <div class="stat-card p-5">
-            <p class="text-sm text-slate-500">Certifications</p>
-            <p class="mt-1.5 text-2xl font-black text-slate-900" id="certCount">0</p>
-          </div>
-          <div class="stat-card p-5">
-            <p class="text-sm text-slate-500">Profile Strength</p>
-            <p class="mt-1.5 text-2xl font-black text-indigo-600" id="strengthScore">—</p>
-          </div>
-          <div class="stat-card p-5">
-            <p class="text-sm text-slate-500">Last Updated</p>
-            <p class="mt-1.5 text-sm font-semibold text-slate-700" id="lastUpdated">—</p>
-          </div>
-        </div>
+            <div>
+              <label class="label">Year</label>
+              <select class="input" name="year">
+                <option value="">Select year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+              </select>
+            </div>
 
-        <!-- ==================== MAIN GRID ==================== -->
-        <div class="grid gap-7 lg:grid-cols-2">
+            <div>
+              <label class="label">Semester</label>
+              <select class="input" name="semester">
+                <option value="">Select semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
 
-          <!-- ==================== PROJECTS ==================== -->
-          <section class="premium-card overflow-hidden">
-            <div class="border-b border-slate-100 p-6">
-              <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
-                  <i data-lucide="folder-git-2" class="h-6 w-6"></i>
-                </div>
-                <div>
-                  <h2 class="text-xl font-black text-slate-900">Projects</h2>
-                  <p class="text-sm text-slate-500">Showcase your work and proof of skills</p>
-                </div>
+            <div>
+              <label class="label">Career Goal</label>
+              <input class="input" name="career_goal" placeholder="e.g. Backend Developer">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="label">Bio</label>
+              <textarea class="input min-h-[110px]" name="bio" placeholder="Briefly describe yourself..."></textarea>
+            </div>
+
+            <div>
+              <label class="label">GitHub URL</label>
+              <input class="input" name="github_url" placeholder="https://github.com/...">
+            </div>
+
+            <div>
+              <label class="label">LinkedIn URL</label>
+              <input class="input" name="linkedin_url" placeholder="https://linkedin.com/in/...">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="label">Portfolio URL</label>
+              <input class="input" name="portfolio_url" placeholder="https://...">
+            </div>
+
+            <button id="saveBtn" type="submit" class="btn btn-primary sm:col-span-2 justify-center py-3">
+              <i data-lucide="save" class="h-4 w-4"></i>
+              Save Profile
+            </button>
+          </form>
+        </section>
+
+        <aside class="space-y-6">
+          <section class="panel p-6">
+            <div class="flex items-center gap-3">
+              <div id="verifyIcon" class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                <i data-lucide="shield-alert" class="h-5 w-5"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">College Status</p>
+                <h2 id="verifyTitle" class="mt-1 text-lg font-black text-slate-900">Not Verified</h2>
               </div>
             </div>
-
-            <div class="p-6">
-              <!-- Add Project Form -->
-              <form id="projectForm" class="space-y-4">
-                <div>
-                  <label class="label">Project Title *</label>
-                  <input class="input" name="title" placeholder="e.g. AI Resume Analyzer" required>
-                </div>
-
-                <div>
-                  <label class="label">Description</label>
-                  <textarea class="input min-h-[90px]" name="description" placeholder="Briefly describe what you built, the problem it solves, and your role..."></textarea>
-                </div>
-
-                <div>
-                  <label class="label">Technologies</label>
-                  <input class="input" name="technologies" placeholder="e.g. FastAPI, PostgreSQL, React, Docker">
-                </div>
-
-                <div class="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label class="label">Start Date</label>
-                    <input class="input" type="date" name="start_date">
-                  </div>
-                  <div>
-                    <label class="label">End Date</label>
-                    <input class="input" type="date" name="end_date">
-                  </div>
-                </div>
-
-                <div class="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label class="label">GitHub URL</label>
-                    <input class="input" name="github_url" placeholder="https://github.com/...">
-                  </div>
-                  <div>
-                    <label class="label">Live URL</label>
-                    <input class="input" name="live_url" placeholder="https://...">
-                  </div>
-                </div>
-
-                <button type="submit" id="addProjectBtn" class="btn btn-primary w-full sm:w-auto">
-                  <i data-lucide="plus" class="h-4 w-4"></i>
-                  Add Project
-                </button>
-              </form>
-
-              <!-- Projects List -->
-              <div id="projects" class="mt-8 space-y-4"></div>
-            </div>
+            <p id="verifyDescription" class="mt-4 text-sm leading-6 text-slate-500">
+              Verify your college identity using the Student ID added by your college.
+            </p>
           </section>
 
-          <!-- ==================== CERTIFICATIONS ==================== -->
-          <section class="premium-card overflow-hidden">
-            <div class="border-b border-slate-100 p-6">
-              <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
-                  <i data-lucide="award" class="h-6 w-6"></i>
-                </div>
-                <div>
-                  <h2 class="text-xl font-black text-slate-900">Certifications</h2>
-                  <p class="text-sm text-slate-500">Add and manage your credentials</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="p-6">
-              <!-- Add Certificate Form -->
-              <form id="certForm" class="space-y-4">
-                <div>
-                  <label class="label">Certificate Name *</label>
-                  <input class="input" name="name" placeholder="e.g. AWS Cloud Practitioner" required>
-                </div>
-
-                <div>
-                  <label class="label">Organization / Issuer</label>
-                  <input class="input" name="organization" placeholder="e.g. Amazon Web Services">
-                </div>
-
-                <div>
-                  <label class="label">Issue Date</label>
-                  <input class="input" type="date" name="issue_date">
-                </div>
-
-                <div>
-                  <label class="label">Credential URL</label>
-                  <input class="input" name="credential_url" placeholder="https://...">
-                </div>
-
-                <div>
-                  <label class="label">Credential ID</label>
-                  <input class="input" name="credential_id" placeholder="Optional ID">
-                </div>
-
-                <button type="submit" id="addCertBtn" class="btn btn-primary w-full sm:w-auto">
-                  <i data-lucide="plus" class="h-4 w-4"></i>
-                  Add Certificate
-                </button>
-              </form>
-
-              <!-- Certifications List -->
-              <div id="certs" class="mt-8 space-y-4"></div>
+          <section class="panel p-6">
+            <h2 class="text-lg font-black">Why verify your college?</h2>
+            <div class="mt-4 space-y-4 text-sm text-slate-600">
+              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Access college-specific industry collaborations.</p></div>
+              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Improve authenticity for recruiters.</p></div>
+              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Connect your profile with college analytics.</p></div>
             </div>
           </section>
-        </div>
-      </div>
-    </main>
-  </div>
+        </aside>
 
-  <!-- ==================== DETAILS MODAL ==================== -->
-  <div id="detailsModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
-    <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-100 p-5 sm:p-6">
-        <div>
-          <p id="modalEyebrow" class="text-xs font-black uppercase tracking-[0.14em] text-indigo-600">Details</p>
-          <h2 id="modalTitle" class="mt-1 text-2xl font-black text-slate-950">Details</h2>
-        </div>
-        <button type="button" onclick="closeDetailsModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-          <i data-lucide="x" class="h-5 w-5"></i>
-        </button>
-      </div>
-      <div id="modalBody" class="p-5 sm:p-6"></div>
-      <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 p-5">
-        <button type="button" onclick="closeDetailsModal()" class="btn btn-soft">Close</button>
       </div>
     </div>
-  </div>
+  </main>
+</div>
 
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/shell.js"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
 
-  <script>
-    let currentProjects = [];
-    let currentCertifications = [];
+<script>
+  const profileForm=document.getElementById("profileForm");
+  const saveBtn=document.getElementById("saveBtn");
+  const collegeSelect=document.getElementById("collegeSelect");
+  const departmentSelect=document.getElementById("departmentSelect");
+  const studentIdNumber=document.getElementById("studentIdNumber");
+  const verifyCollegeBtn=document.getElementById("verifyCollegeBtn");
+  let currentProfile=null;
 
-    // Load portfolio data
-    async function loadPortfolio() {
-      // Projects
-      try {
-        const p = await SB.get('/students/projects');
-        currentProjects = Array.isArray(p) ? p : (p.data || []);
-        document.getElementById('projectCount').textContent = currentProjects.length;
+  function arrayData(response){
+    if(Array.isArray(response)) return response;
+    if(Array.isArray(response?.data)) return response.data;
+    return [];
+  }
 
-        projects.innerHTML = currentProjects.length
-          ? currentProjects.map(x => `
-              <div class="card-hover rounded-2xl border border-slate-200 bg-white p-5">
-                <div class="flex items-start justify-between gap-4">
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <h3 class="font-black text-slate-900">${SB.esc(x.title)}</h3>
-                      <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
-                        Project
-                      </span>
-                    </div>
-                    ${x.description ? `<p class="mt-2 text-sm leading-6 text-slate-500 line-clamp-2">${SB.esc(x.description)}</p>` : ''}
-                    ${x.technologies ? `
-                      <div class="mt-3 flex flex-wrap gap-1.5">
-                        ${x.technologies.split(',').map(t =>
-                          `<span class="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">${SB.esc(t.trim())}</span>`
-                        ).join('')}
-                      </div>` : ''}
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <button type="button" onclick="viewProject(${x.id})" class="btn btn-soft">
-                        <i data-lucide="eye" class="h-4 w-4"></i>
-                        View
-                      </button>
-                      <button type="button" onclick="downloadProject(${x.id})" class="btn btn-soft">
-                        <i data-lucide="download" class="h-4 w-4"></i>
-                        Download
-                      </button>
-                      ${x.github_url ? `<a href="${SB.esc(x.github_url)}" target="_blank" class="btn btn-soft">
-                        <i data-lucide="github" class="h-4 w-4"></i>
-                        GitHub
-                      </a>` : ''}
-                      ${x.live_url ? `<a href="${SB.esc(x.live_url)}" target="_blank" class="btn btn-soft">
-                        <i data-lucide="external-link" class="h-4 w-4"></i>
-                        Live
-                      </a>` : ''}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `).join('')
-          : `<div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
-               <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
-                 <i data-lucide="folder-open" class="h-6 w-6 text-slate-400"></i>
-               </div>
-               <p class="mt-3 font-medium text-slate-600">No projects added yet</p>
-               <p class="mt-1 text-sm text-slate-400">Add your first project using the form above</p>
-             </div>`;
+  function showMessage(type,text){
+    const el=document.getElementById("pageMsg");
+    el.classList.remove("hidden");
+    el.className=type==="success"
+      ?"mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700"
+      :"mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
+    el.textContent=text;
+  }
 
-        if (window.lucide) lucide.createIcons();
-      } catch (e) {
-        projects.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+  function setVerificationUI(verified){
+    const title=document.getElementById("verifyTitle");
+    const description=document.getElementById("verifyDescription");
+    const text=document.getElementById("verificationText");
+    const icon=document.getElementById("verifyIcon");
+
+    if(verified){
+      title.textContent="College Verified";
+      description.textContent="Your student identity has been verified with your selected college.";
+      text.textContent="Verified with college registry.";
+      text.className="mt-2 text-xs font-semibold text-emerald-600";
+      icon.className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700";
+      icon.innerHTML='<i data-lucide="badge-check" class="h-5 w-5"></i>';
+    }else{
+      title.textContent="Not Verified";
+      description.textContent="Verify your college identity using the Student ID added by your college.";
+      text.textContent="Select a registered college and enter your college-issued ID.";
+      text.className="mt-2 text-xs text-slate-500";
+      icon.className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700";
+      icon.innerHTML='<i data-lucide="shield-alert" class="h-5 w-5"></i>';
+    }
+    if(window.lucide) lucide.createIcons();
+  }
+
+  async function loadUser(){
+    try{
+      const me=await Auth.me();
+      document.getElementById("fullName").value=me?.full_name||me?.name||"";
+      document.getElementById("email").value=me?.email||"";
+    }catch(error){
+      console.error("User load failed:",error);
+    }
+  }
+
+  async function loadColleges(){
+    try{
+      const response=await SB.get("/colleges/student-directory");
+      const colleges=arrayData(response);
+      collegeSelect.innerHTML='<option value="">Independent / Other</option>'+
+        colleges.map(c=>`<option value="${c.id}">${SB.esc(c.name)}</option>`).join("");
+    }catch(error){
+      console.error("College directory error:",error);
+    }
+  }
+
+  async function loadDepartments(collegeId,selectedId=null){
+    departmentSelect.innerHTML='<option value="">Select department</option>';
+    if(!collegeId){
+      departmentSelect.disabled=true;
+      return;
+    }
+    try{
+      const response=await SB.get(`/colleges/${collegeId}/student-departments`);
+      const departments=arrayData(response);
+      departmentSelect.innerHTML='<option value="">Select department</option>'+
+        departments.map(d=>`<option value="${d.id}">${SB.esc(d.name)}${d.code?` (${SB.esc(d.code)})`:""}</option>`).join("");
+      departmentSelect.disabled=false;
+      if(selectedId) departmentSelect.value=String(selectedId);
+    }catch(error){
+      console.error("Department load failed:",error);
+      departmentSelect.disabled=true;
+    }
+  }
+
+  async function loadProfile(){
+    try{
+      const response=await SB.get("/students/profile");
+      currentProfile=response?.data||response;
+      if(!currentProfile) return;
+
+      document.getElementById("profileState").textContent="Saved";
+
+      ["student_id_number","branch","year","semester","career_goal","bio","github_url","linkedin_url","portfolio_url"].forEach(name=>{
+        const el=profileForm.elements[name];
+        if(el) el.value=currentProfile[name]??"";
+      });
+
+      if(currentProfile.college_id){
+        collegeSelect.value=String(currentProfile.college_id);
+        await loadDepartments(currentProfile.college_id,currentProfile.department_id);
       }
 
-      // Certifications
-      try {
-        const c = await SB.get('/students/certifications');
-        currentCertifications = Array.isArray(c) ? c : (c.data || []);
-        document.getElementById('certCount').textContent = currentCertifications.length;
+      setVerificationUI(Boolean(currentProfile.college_verified));
+    }catch(error){
+      currentProfile=null;
+      document.getElementById("profileState").textContent="New Profile";
+      console.log("Profile not available yet:",error);
+    }
+  }
 
-        certs.innerHTML = currentCertifications.length
-          ? currentCertifications.map(x => `
-              <div class="credential-card card-hover p-5">
-                <div class="relative z-10 flex items-start gap-4">
-                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100">
-                    <i data-lucide="badge-check" class="h-5 w-5 text-violet-600"></i>
-                  </div>
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <h3 class="font-black text-slate-900">${SB.esc(x.name)}</h3>
-                      <span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
-                        Credential
-                      </span>
-                    </div>
-                    <p class="mt-1 text-sm text-slate-500">
-                      ${SB.esc(x.organization || 'Issuer not specified')}
-                    </p>
-                    <div class="mt-3 grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
-                      <p><span class="font-bold text-slate-700">Credential ID:</span> ${SB.esc(x.credential_id || '—')}</p>
-                      <p><span class="font-bold text-slate-700">Issue Date:</span> ${SB.esc(x.issue_date || '—')}</p>
-                    </div>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <button type="button" onclick="viewCertificate(${x.id})" class="btn btn-soft">
-                        <i data-lucide="eye" class="h-4 w-4"></i>
-                        View
-                      </button>
-                      <button type="button" onclick="downloadCertificate(${x.id})" class="btn btn-soft">
-                        <i data-lucide="download" class="h-4 w-4"></i>
-                        Download Record
-                      </button>
-                      ${x.credential_url ? `
-                        <a href="${SB.esc(x.credential_url)}" target="_blank" class="btn btn-soft">
-                          <i data-lucide="external-link" class="h-4 w-4"></i>
-                          Verify Credential
-                        </a>
-                      ` : ''}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `).join('')
-          : `<div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
-               <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
-                 <i data-lucide="award" class="h-6 w-6 text-slate-400"></i>
-               </div>
-               <p class="mt-3 font-medium text-slate-600">No certifications added yet</p>
-               <p class="mt-1 text-sm text-slate-400">Add your first certificate using the form above</p>
-             </div>`;
+  collegeSelect.addEventListener("change",async function(){
+    setVerificationUI(false);
+    await loadDepartments(this.value);
+  });
 
-        if (window.lucide) lucide.createIcons();
-      } catch (e) {
-        certs.innerHTML = `<p class="text-sm text-rose-600">${SB.esc(e.message)}</p>`;
+  profileForm.addEventListener("submit",async function(event){
+    event.preventDefault();
+    const f=new FormData(profileForm);
+
+    const payload={
+      college_id:f.get("college_id")?Number(f.get("college_id")):null,
+      department_id:f.get("department_id")?Number(f.get("department_id")):null,
+      student_id_number:String(f.get("student_id_number")||"").trim()||null,
+      college_name:null,
+      branch:String(f.get("branch")||"").trim()||null,
+      year:f.get("year")?Number(f.get("year")):null,
+      semester:f.get("semester")?Number(f.get("semester")):null,
+      career_goal:String(f.get("career_goal")||"").trim()||null,
+      bio:String(f.get("bio")||"").trim()||null,
+      github_url:String(f.get("github_url")||"").trim()||null,
+      linkedin_url:String(f.get("linkedin_url")||"").trim()||null,
+      portfolio_url:String(f.get("portfolio_url")||"").trim()||null
+    };
+
+    const old=saveBtn.innerHTML;
+    saveBtn.disabled=true;
+    saveBtn.innerHTML='<span class="spinner"></span> Saving...';
+
+    try{
+      const response=currentProfile?.id
+        ?await SB.patch("/students/profile",payload)
+        :await SB.post("/students/profile",payload);
+
+      currentProfile=response?.data||response||currentProfile;
+      document.getElementById("profileState").textContent="Saved";
+      showMessage("success","Profile saved successfully.");
+      await loadProfile();
+    }catch(error){
+      showMessage("error",error.message||"Could not save profile.");
+    }finally{
+      saveBtn.disabled=false;
+      saveBtn.innerHTML=old;
+      if(window.lucide) lucide.createIcons();
+    }
+  });
+
+  verifyCollegeBtn.addEventListener("click",async function(){
+    const collegeId=Number(collegeSelect.value);
+    const studentId=studentIdNumber.value.trim();
+
+    if(!collegeId){
+      showMessage("error","Please select a registered college first.");
+      return;
+    }
+    if(!studentId){
+      showMessage("error","Please enter your Student ID / Enrollment Number.");
+      return;
+    }
+
+    const old=verifyCollegeBtn.innerHTML;
+    verifyCollegeBtn.disabled=true;
+    verifyCollegeBtn.innerHTML='<span class="spinner"></span> Verifying...';
+
+    try{
+      const response=await SB.post("/students/verify-college",{
+        college_id:collegeId,
+        student_id_number:studentId
+      });
+
+      const result=response?.data||response;
+
+      if(result?.verified){
+        setVerificationUI(true);
+        if(result.department_id){
+          await loadDepartments(collegeId,result.department_id);
+        }
+        showMessage("success",result.message||"College verified successfully.");
+        await loadProfile();
+      }else{
+        setVerificationUI(false);
+        showMessage("error",result?.message||"Student ID could not be verified.");
       }
-
-      // Simple strength score
-      const total = (parseInt(projectCount.textContent) || 0) + (parseInt(certCount.textContent) || 0);
-      const score = Math.min(100, total * 15);
-      strengthScore.textContent = score + '%';
-      heroStrength.textContent = score + '%';
-      lastUpdated.textContent = new Date().toLocaleDateString();
+    }catch(error){
+      setVerificationUI(false);
+      showMessage("error",error.message||"College verification failed.");
+    }finally{
+      verifyCollegeBtn.disabled=false;
+      verifyCollegeBtn.innerHTML=old;
+      if(window.lucide) lucide.createIcons();
     }
+  });
 
-    // Add Project
-    projectForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const f = new FormData(e.target);
-      const btn = document.getElementById('addProjectBtn');
-      const original = btn.innerHTML;
+  async function init(){
+    await loadUser();
+    await loadColleges();
+    await loadProfile();
+    if(window.lucide) lucide.createIcons();
+  }
 
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Adding...`;
-
-      try {
-        await SB.post('/students/projects', {
-          title: f.get('title'),
-          description: f.get('description') || null,
-          technologies: f.get('technologies') || null,
-          github_url: f.get('github_url') || null,
-          live_url: f.get('live_url') || null,
-          start_date: f.get('start_date') || null,
-          end_date: f.get('end_date') || null
-        });
-        e.target.reset();
-        SB.toast?.('Project added successfully') || alert('Project added');
-        loadPortfolio();
-      } catch (err) {
-        SB.toast?.(err.message) || alert(err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = original;
-        if (window.lucide) lucide.createIcons();
-      }
-    };
-
-    // Add Certificate
-    certForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const f = new FormData(e.target);
-      const btn = document.getElementById('addCertBtn');
-      const original = btn.innerHTML;
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Adding...`;
-
-      try {
-        await SB.post('/students/certifications', {
-          name: f.get('name'),
-          organization: f.get('organization') || null,
-          issue_date: f.get('issue_date') || null,
-          credential_url: f.get('credential_url') || null,
-          credential_id: f.get('credential_id') || null
-        });
-        e.target.reset();
-        SB.toast?.('Certificate added successfully') || alert('Certificate added');
-        loadPortfolio();
-      } catch (err) {
-        SB.toast?.(err.message) || alert(err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = original;
-        if (window.lucide) lucide.createIcons();
-      }
-    };
-
-    function openDetailsModal(eyebrow, title, body) {
-      modalEyebrow.textContent = eyebrow;
-      modalTitle.textContent = title;
-      modalBody.innerHTML = body;
-      detailsModal.classList.remove('hidden');
-      detailsModal.classList.add('flex');
-      if (window.lucide) lucide.createIcons();
-    }
-
-    window.closeDetailsModal = function () {
-      detailsModal.classList.add('hidden');
-      detailsModal.classList.remove('flex');
-    };
-
-    window.viewProject = function (id) {
-      const p = currentProjects.find(x => Number(x.id) === Number(id));
-      if (!p) return;
-
-      openDetailsModal(
-        'Project Details',
-        p.title,
-        `
-          <div class="space-y-5">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Description</p>
-              <p class="mt-2 leading-7 text-slate-700">${SB.esc(p.description || 'No description added.')}</p>
-            </div>
-            <div class="grid gap-4 sm:grid-cols-2">
-              <div class="rounded-2xl bg-slate-50 p-4">
-                <p class="text-xs font-bold uppercase text-slate-400">Technologies</p>
-                <p class="mt-2 font-semibold text-slate-800">${SB.esc(p.technologies || '—')}</p>
-              </div>
-              <div class="rounded-2xl bg-slate-50 p-4">
-                <p class="text-xs font-bold uppercase text-slate-400">Duration</p>
-                <p class="mt-2 font-semibold text-slate-800">${SB.esc(p.start_date || '—')} → ${SB.esc(p.end_date || '—')}</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              ${p.github_url ? `<a href="${SB.esc(p.github_url)}" target="_blank" class="btn btn-soft">GitHub</a>` : ''}
-              ${p.live_url ? `<a href="${SB.esc(p.live_url)}" target="_blank" class="btn btn-soft">Live Demo</a>` : ''}
-            </div>
-          </div>
-        `
-      );
-    };
-
-    window.downloadProject = function (id) {
-      const p = currentProjects.find(x => Number(x.id) === Number(id));
-      if (!p) return;
-
-      printDocument(
-        `${p.title} - Project Summary`,
-        `
-          <h1>${escapePrint(p.title)}</h1>
-          <p class="subtitle">SkillBridge AI • Project Record</p>
-          <div class="grid">
-            <div class="field"><span>Technologies</span><b>${escapePrint(p.technologies)}</b></div>
-            <div class="field"><span>Start Date</span><b>${escapePrint(p.start_date)}</b></div>
-            <div class="field"><span>End Date</span><b>${escapePrint(p.end_date)}</b></div>
-            <div class="field"><span>GitHub</span><b>${escapePrint(p.github_url)}</b></div>
-            <div class="field"><span>Live URL</span><b>${escapePrint(p.live_url)}</b></div>
-          </div>
-          <h2>Description</h2>
-          <p>${escapePrint(p.description)}</p>
-        `
-      );
-    };
-
-    window.viewCertificate = function (id) {
-      const c = currentCertifications.find(x => Number(x.id) === Number(id));
-      if (!c) return;
-
-      openDetailsModal(
-        'Certification Record',
-        c.name,
-        `
-          <div class="space-y-5">
-            <div class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 to-indigo-50 p-6 text-center">
-              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
-                <i data-lucide="award" class="h-7 w-7 text-violet-600"></i>
-              </div>
-              <p class="mt-4 text-xs font-black uppercase tracking-[0.18em] text-violet-600">Credential Record</p>
-              <h3 class="mt-2 text-2xl font-black text-slate-950">${SB.esc(c.name)}</h3>
-              <p class="mt-2 text-slate-600">${SB.esc(c.organization || 'Issuer not specified')}</p>
-            </div>
-            <div class="grid gap-4 sm:grid-cols-2">
-              <div class="rounded-2xl bg-slate-50 p-4">
-                <p class="text-xs font-bold uppercase text-slate-400">Credential ID</p>
-                <p class="mt-2 font-bold text-slate-800">${SB.esc(c.credential_id || '—')}</p>
-              </div>
-              <div class="rounded-2xl bg-slate-50 p-4">
-                <p class="text-xs font-bold uppercase text-slate-400">Issue Date</p>
-                <p class="mt-2 font-bold text-slate-800">${SB.esc(c.issue_date || '—')}</p>
-              </div>
-            </div>
-            ${c.credential_url ? `
-              <a href="${SB.esc(c.credential_url)}" target="_blank" class="btn btn-primary">
-                <i data-lucide="external-link" class="h-4 w-4"></i>
-                Open Official Credential
-              </a>
-            ` : `
-              <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                No external credential URL was provided.
-              </div>
-            `}
-          </div>
-        `
-      );
-    };
-
-    window.downloadCertificate = function (id) {
-      const c = currentCertifications.find(x => Number(x.id) === Number(id));
-      if (!c) return;
-
-      printDocument(
-        `${c.name} - Credential Record`,
-        `
-          <div class="certificate">
-            <div class="seal">✓</div>
-            <div class="eyebrow">SKILLBRIDGE AI • CREDENTIAL RECORD</div>
-            <h1>${escapePrint(c.name)}</h1>
-            <p class="issuer">Issued by ${escapePrint(c.organization || 'Issuer not specified')}</p>
-            <div class="certificate-grid">
-              <div>
-                <span>Credential ID</span>
-                <strong>${escapePrint(c.credential_id)}</strong>
-              </div>
-              <div>
-                <span>Issue Date</span>
-                <strong>${escapePrint(c.issue_date)}</strong>
-              </div>
-              <div class="wide">
-                <span>Verification URL</span>
-                <strong>${escapePrint(c.credential_url)}</strong>
-              </div>
-            </div>
-            <div class="note">
-              This document is a SkillBridge portfolio record generated from the student's saved credential details.
-              It is not a replacement for the certificate issued by the original organization.
-            </div>
-          </div>
-        `
-      );
-    };
-
-    function printDocument(title, content) {
-      const win = window.open('', '_blank');
-      win.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>${escapePrint(title)}</title>
-          <style>
-            body{font-family:Arial,sans-serif;max-width:900px;margin:40px auto;padding:30px;color:#0f172a;background:#fff}
-            h1{font-size:30px;margin:0;color:#312e81}
-            h2{margin-top:30px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}
-            .subtitle{color:#64748b;margin-top:8px}
-            .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:25px}
-            .field{border:1px solid #e2e8f0;border-radius:12px;padding:14px}
-            .field span,.certificate-grid span{display:block;font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700}
-            .field b,.certificate-grid strong{display:block;margin-top:6px}
-            .certificate{border:2px solid #c7d2fe;border-radius:24px;padding:50px;text-align:center;background:linear-gradient(135deg,#ffffff,#eef2ff)}
-            .seal{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#4f46e5;color:#fff;font-size:28px;font-weight:bold}
-            .eyebrow{font-size:12px;letter-spacing:2px;font-weight:bold;color:#6366f1}
-            .issuer{font-size:17px;color:#475569}
-            .certificate-grid{margin-top:35px;display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
-            .certificate-grid>div{border:1px solid #dbeafe;border-radius:14px;padding:16px;background:#fff}
-            .certificate-grid .wide{grid-column:1/-1}
-            .note{margin-top:35px;padding-top:18px;border-top:1px solid #cbd5e1;font-size:12px;line-height:1.6;color:#64748b}
-            @media print{body{margin:0;padding:0}.certificate{break-inside:avoid}}
-          </style>
-        </head>
-        <body>${content}</body>
-        </html>
-      `);
-      win.document.close();
-      setTimeout(() => {
-        win.focus();
-        win.print();
-      }, 350);
-    }
-
-    function escapePrint(value) {
-      return String(value ?? '—')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
-    }
-
-    // Initial load
-    loadPortfolio();
-  </script>
-
-  <script>
-    if (window.lucide) lucide.createIcons();
-  </script>
+  init();
+</script>
 </body>
 </html>

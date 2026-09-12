@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SkillBridge AI — Industry Collaboration">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,265 +15,843 @@
 
 <body class="bg-slate-50 text-slate-900">
 
-    <script>
-        window.SKILLBRIDGE_ROLE = "recruiter";
-    </script>
+<script>
+    window.SKILLBRIDGE_ROLE = "recruiter";
+</script>
 
-    <div id="app-shell">
+<div id="app-shell">
+    <main class="min-h-screen lg:pl-72">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-        <main class="min-h-screen lg:pl-72">
+            <!-- HEADER -->
+            <header class="mb-7">
+                <p class="text-sm font-semibold text-indigo-600">
+                    SkillBridge AI
+                </p>
 
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 class="mt-1 text-3xl font-black tracking-tight">
+                    Industry Collaboration
+                </h1>
 
-                <header class="mb-7">
+                <p class="mt-2 text-slate-500">
+                    Propose workshops, mentorship, hackathons and placement initiatives.
+                </p>
+            </header>
 
-                    <p class="text-sm font-semibold text-indigo-600">
-                        SkillBridge AI
-                    </p>
+            <!-- ACCOUNT STATUS -->
+            <section
+                id="accountStatus"
+                class="mb-5 hidden rounded-2xl border p-4 text-sm"
+            ></section>
 
-                    <h1 class="mt-1 text-3xl font-bold tracking-tight">
-                        Industry Collaboration
-                    </h1>
+            <!-- FORM + HISTORY -->
+            <div class="grid gap-6 xl:grid-cols-[1.35fr_.85fr]">
 
-                    <p class="mt-2 text-slate-500">
-                        Propose workshops, mentorship, hackathons and placement initiatives.
-                    </p>
-
-                </header>
-
-
+                <!-- PROPOSAL FORM -->
                 <section class="card p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl font-black">
+                                Propose collaboration
+                            </h2>
 
-                    <h2 class="text-xl font-black">
-                        Propose collaboration
-                    </h2>
+                            <p class="mt-1 text-sm text-slate-500">
+                                Send a collaboration proposal to a registered college.
+                            </p>
+                        </div>
 
+                        <span
+                            id="roleBadge"
+                            class="hidden rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-black text-indigo-700"
+                        ></span>
+                    </div>
 
                     <form
-                        id="form"
-                        class="mt-5 grid gap-4 sm:grid-cols-2"
+                        id="collaborationForm"
+                        class="mt-6 grid gap-4 sm:grid-cols-2"
                     >
+                        <div>
+                            <label class="label">
+                                College ID
+                            </label>
 
-                        <input
-                            class="input"
-                            type="number"
-                            name="college_id"
-                            placeholder="College ID"
-                            required
-                        >
+                            <input
+                                id="collegeId"
+                                class="input"
+                                type="number"
+                                name="college_id"
+                                min="1"
+                                placeholder="Enter registered college ID"
+                                required
+                            >
 
+                            <p class="mt-1 text-xs text-slate-400">
+                                Use the ID of an existing SkillBridge college.
+                            </p>
+                        </div>
 
-                        <select
-                            class="input"
-                            name="collaboration_type"
-                        >
+                        <div>
+                            <label class="label">
+                                Collaboration Type
+                            </label>
 
-                            <option value="workshop">
-                                Workshop
-                            </option>
+                            <select
+                                id="collaborationType"
+                                class="input"
+                                name="collaboration_type"
+                                required
+                            >
+                                <option value="workshop">Workshop</option>
+                                <option value="guest_lecture">Guest Lecture</option>
+                                <option value="hackathon">Hackathon</option>
+                                <option value="mentorship">Mentorship</option>
+                                <option value="industry_project">Industry Project</option>
+                                <option value="internship_drive">Internship Drive</option>
+                                <option value="placement_drive">Placement Drive</option>
+                            </select>
+                        </div>
 
-                            <option value="guest_lecture">
-                                Guest Lecture
-                            </option>
+                        <div class="sm:col-span-2">
+                            <label class="label">
+                                Title
+                            </label>
 
-                            <option value="hackathon">
-                                Hackathon
-                            </option>
+                            <input
+                                id="title"
+                                class="input"
+                                name="title"
+                                placeholder="e.g. AI & Backend Development Workshop"
+                                required
+                            >
+                        </div>
 
-                            <option value="mentorship">
-                                Mentorship
-                            </option>
+                        <div class="sm:col-span-2">
+                            <label class="label">
+                                Description
+                            </label>
 
-                            <option value="industry_project">
-                                Industry Project
-                            </option>
+                            <textarea
+                                id="description"
+                                class="input min-h-[130px]"
+                                name="description"
+                                placeholder="Describe the objective, audience and expected outcome..."
+                            ></textarea>
+                        </div>
 
-                            <option value="internship_drive">
-                                Internship Drive
-                            </option>
+                        <div>
+                            <label class="label">
+                                Proposed Date & Time
+                            </label>
 
-                            <option value="placement_drive">
-                                Placement Drive
-                            </option>
+                            <input
+                                id="proposedDate"
+                                class="input"
+                                name="proposed_date"
+                                type="datetime-local"
+                            >
+                        </div>
 
-                        </select>
+                        <div>
+                            <label class="label">
+                                Location
+                            </label>
 
+                            <input
+                                id="location"
+                                class="input"
+                                name="location"
+                                placeholder="e.g. Noida, Uttar Pradesh"
+                            >
+                        </div>
 
-                        <input
-                            class="input sm:col-span-2"
-                            name="title"
-                            placeholder="Title"
-                            required
-                        >
+                        <div>
+                            <label class="label">
+                                Mode
+                            </label>
 
+                            <select
+                                id="mode"
+                                class="input"
+                                name="mode"
+                                required
+                            >
+                                <option value="online">Online</option>
+                                <option value="offline">Offline</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
 
-                        <textarea
-                            class="input sm:col-span-2"
-                            name="description"
-                            placeholder="Description"
-                        ></textarea>
+                        <div>
+                            <label class="label">
+                                Skills
+                            </label>
 
+                            <input
+                                id="skills"
+                                class="input"
+                                name="skills"
+                                placeholder="Python, FastAPI, PostgreSQL, Docker"
+                            >
 
-                        <input
-                            class="input"
-                            name="proposed_date"
-                            type="datetime-local"
-                        >
-
-
-                        <input
-                            class="input"
-                            name="location"
-                            placeholder="Location"
-                        >
-
-
-                        <select
-                            class="input"
-                            name="mode"
-                        >
-
-                            <option value="online">
-                                Online
-                            </option>
-
-                            <option value="offline">
-                                Offline
-                            </option>
-
-                            <option value="hybrid">
-                                Hybrid
-                            </option>
-
-                        </select>
-
-
-                        <input
-                            class="input"
-                            name="skills"
-                            placeholder="Skills, comma separated"
-                        >
-
+                            <p class="mt-1 text-xs text-slate-400">
+                                Separate skills using commas.
+                            </p>
+                        </div>
 
                         <button
-                            class="btn btn-primary sm:col-span-2"
+                            id="submitBtn"
+                            type="submit"
+                            class="btn btn-primary sm:col-span-2 justify-center py-3.5"
                         >
-                            Send proposal
+                            <i data-lucide="send" class="h-4 w-4"></i>
+                            Send Proposal
                         </button>
 
-
-                        <p
+                        <div
                             id="msg"
-                            class="sm:col-span-2 text-sm"
-                        ></p>
-
+                            class="hidden sm:col-span-2 rounded-xl border p-4 text-sm"
+                        ></div>
                     </form>
-
                 </section>
 
+                <!-- PROPOSAL HISTORY -->
+                <aside class="card overflow-hidden">
+                    <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-5">
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-wider text-indigo-500">
+                                Manage
+                            </p>
+
+                            <h2 class="mt-1 text-lg font-black text-slate-900">
+                                Proposal History
+                            </h2>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                Newly sent proposals appear here automatically.
+                            </p>
+                        </div>
+
+                        <button
+                            id="refreshHistoryBtn"
+                            type="button"
+                            class="rounded-xl border border-slate-200 p-2.5 text-slate-500 transition hover:bg-slate-50 hover:text-indigo-600"
+                            title="Refresh history"
+                        >
+                            <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+
+                    <div id="historyLoading" class="hidden p-8 text-center">
+                        <div class="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"></div>
+                        <p class="mt-3 text-sm text-slate-500">
+                            Loading proposals...
+                        </p>
+                    </div>
+
+                    <div id="historyEmpty" class="hidden p-8 text-center">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                            <i data-lucide="inbox" class="h-5 w-5"></i>
+                        </div>
+
+                        <p class="mt-3 font-black text-slate-800">
+                            No proposals yet
+                        </p>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Send your first collaboration proposal.
+                        </p>
+                    </div>
+
+                    <div
+                        id="proposalHistory"
+                        class="max-h-[760px] space-y-3 overflow-y-auto p-4"
+                    ></div>
+                </aside>
             </div>
+        </div>
+    </main>
+</div>
 
-        </main>
+<!-- COMMON JS -->
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
 
-    </div>
+<script>
+    const form = document.getElementById("collaborationForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const msg = document.getElementById("msg");
+    const accountStatus = document.getElementById("accountStatus");
+    const roleBadge = document.getElementById("roleBadge");
+    const proposalHistory = document.getElementById("proposalHistory");
+    const historyLoading = document.getElementById("historyLoading");
+    const historyEmpty = document.getElementById("historyEmpty");
+    const refreshHistoryBtn = document.getElementById("refreshHistoryBtn");
+
+    let currentUser = null;
 
 
-    <script src="/assets/js/config.js"></script>
-    <script src="/assets/js/api.js"></script>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/shell.js"></script>
+    /* ======================================================
+       MESSAGE HELPERS
+    ====================================================== */
+
+    function showMessage(type, text) {
+        msg.classList.remove("hidden");
+
+        if (type === "success") {
+            msg.className =
+                "sm:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700";
+        } else if (type === "warning") {
+            msg.className =
+                "sm:col-span-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700";
+        } else {
+            msg.className =
+                "sm:col-span-2 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
+        }
+
+        msg.textContent = text;
+    }
 
 
-    <script>
+    function showAccountStatus(type, html) {
+        accountStatus.classList.remove("hidden");
 
-        form.onsubmit = async e => {
+        if (type === "success") {
+            accountStatus.className =
+                "mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700";
+        } else {
+            accountStatus.className =
+                "mb-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
+        }
 
-            e.preventDefault();
+        accountStatus.innerHTML = html;
+    }
 
-            const f =
-                new FormData(
-                    e.target
+
+    /* ======================================================
+       NORMALIZE ROLE
+    ====================================================== */
+
+    function getRole(user) {
+        return (
+            user?.role?.value ||
+            user?.role ||
+            ""
+        )
+            .toString()
+            .trim()
+            .toLowerCase();
+    }
+
+
+    /* ======================================================
+       CHECK ACTUAL BACKEND ACCOUNT ROLE
+    ====================================================== */
+
+    async function checkRecruiterAccess() {
+        try {
+            currentUser = await Auth.me();
+
+            const role = getRole(currentUser);
+
+            roleBadge.textContent =
+                `Logged in as: ${role || "unknown"}`;
+
+            roleBadge.classList.remove("hidden");
+
+            if (role !== "recruiter") {
+                submitBtn.disabled = true;
+
+                showAccountStatus(
+                    "error",
+                    `
+                        <strong>Recruiter account required.</strong><br>
+                        Your actual backend account role is:
+                        <strong>${SB.esc(role || "unknown")}</strong>.<br>
+                        Please logout and login using a Recruiter account.
+                    `
                 );
 
-            const b = {
+                return false;
+            }
 
-                college_id:
-                    Number(
-                        f.get('college_id')
-                    ),
+            submitBtn.disabled = false;
 
-                collaboration_type:
-                    f.get('collaboration_type'),
+            showAccountStatus(
+                "success",
+                `
+                    <strong>Recruiter account verified.</strong>
+                    You can send collaboration proposals.
+                `
+            );
 
-                title:
-                    f.get('title'),
+            return true;
 
-                description:
-                    f.get('description') || null,
+        } catch (error) {
+            console.error(
+                "Recruiter access check failed:",
+                error
+            );
 
-                proposed_date:
-                    f.get('proposed_date') || null,
+            submitBtn.disabled = true;
 
-                location:
-                    f.get('location') || null,
+            showAccountStatus(
+                "error",
+                `
+                    <strong>Unable to verify your account.</strong><br>
+                    Please login again with a Recruiter account.
+                `
+            );
 
-                mode:
-                    f.get('mode'),
-
-                skills:
-                    String(
-                        f.get('skills') || ''
-                    )
-                        .split(',')
-                        .map(
-                            x => x.trim()
-                        )
-                        .filter(Boolean)
-
-            };
+            return false;
+        }
+    }
 
 
-            try {
+    /* ======================================================
+       PROPOSAL HISTORY
+    ====================================================== */
 
-                const r =
-                    await SB.post(
-                        '/recruiters/collaborations',
-                        b
+    function normalizeList(response) {
+        if (Array.isArray(response)) {
+            return response;
+        }
+
+        if (Array.isArray(response?.data)) {
+            return response.data;
+        }
+
+        if (Array.isArray(response?.data?.data)) {
+            return response.data.data;
+        }
+
+        if (Array.isArray(response?.collaborations)) {
+            return response.collaborations;
+        }
+
+        return [];
+    }
+
+
+    function readableValue(value) {
+        if (value && typeof value === "object" && "value" in value) {
+            return value.value;
+        }
+
+        return value ?? "";
+    }
+
+
+    function prettyLabel(value) {
+        return String(readableValue(value) || "—")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+
+    function formatProposalDate(value) {
+        if (!value) {
+            return "Date not set";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+
+        return date.toLocaleString("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short"
+        });
+    }
+
+
+    function statusClasses(status) {
+        const value = String(readableValue(status) || "").toLowerCase();
+
+        if (
+            value === "approved" ||
+            value === "accepted" ||
+            value === "ongoing"
+        ) {
+            return "bg-emerald-50 text-emerald-700 border-emerald-200";
+        }
+
+        if (
+            value === "rejected" ||
+            value === "cancelled"
+        ) {
+            return "bg-rose-50 text-rose-700 border-rose-200";
+        }
+
+        return "bg-amber-50 text-amber-700 border-amber-200";
+    }
+
+
+    function renderProposalHistory(items) {
+        proposalHistory.innerHTML = "";
+
+        if (!items.length) {
+            historyEmpty.classList.remove("hidden");
+            return;
+        }
+
+        historyEmpty.classList.add("hidden");
+
+        proposalHistory.innerHTML = items
+            .map(item => {
+                const proposalId =
+                    item.id ??
+                    item.collaboration_id ??
+                    "—";
+
+                const type =
+                    item.collaboration_type ??
+                    item.type ??
+                    "Collaboration";
+
+                const status =
+                    item.status ??
+                    "pending";
+
+                const collegeName =
+                    item.college?.name ??
+                    item.college_name ??
+                    (
+                        item.college_id
+                            ? `College #${item.college_id}`
+                            : "College"
                     );
 
+                const mode =
+                    item.mode ??
+                    null;
 
-                msg.className =
-                    'sm:col-span-2 text-sm text-emerald-600';
+                const location =
+                    item.location ??
+                    null;
 
-                msg.textContent =
-                    `Proposal #${r.id} sent.`;
+                const proposedDate =
+                    item.proposed_date ??
+                    item.event_date ??
+                    null;
 
-                e.target.reset();
+                return `
+                    <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[11px] font-black text-indigo-700">
+                                        ${SB.esc(prettyLabel(type))}
+                                    </span>
 
-            }
+                                    <span class="rounded-full border px-2.5 py-1 text-[11px] font-black ${statusClasses(status)}">
+                                        ${SB.esc(prettyLabel(status))}
+                                    </span>
+                                </div>
 
-            catch (err) {
+                                <h3 class="mt-3 font-black text-slate-900">
+                                    ${SB.esc(item.title || "Untitled proposal")}
+                                </h3>
 
-                msg.className =
-                    'sm:col-span-2 text-sm text-rose-600';
+                                <p class="mt-1 text-sm font-semibold text-slate-600">
+                                    ${SB.esc(collegeName)}
+                                </p>
+                            </div>
 
-                msg.textContent =
-                    err.message;
+                            <span class="shrink-0 text-xs font-black text-slate-400">
+                                #${SB.esc(proposalId)}
+                            </span>
+                        </div>
 
-            }
+                        <div class="mt-4 space-y-2 text-xs text-slate-500">
+                            <p class="flex items-center gap-2">
+                                <i data-lucide="calendar-clock" class="h-3.5 w-3.5"></i>
+                                ${SB.esc(formatProposalDate(proposedDate))}
+                            </p>
 
-        };
+                            ${
+                                mode
+                                    ? `
+                                        <p class="flex items-center gap-2">
+                                            <i data-lucide="radio" class="h-3.5 w-3.5"></i>
+                                            ${SB.esc(prettyLabel(mode))}
+                                        </p>
+                                    `
+                                    : ""
+                            }
 
-    </script>
-
-
-    <script>
+                            ${
+                                location
+                                    ? `
+                                        <p class="flex items-center gap-2">
+                                            <i data-lucide="map-pin" class="h-3.5 w-3.5"></i>
+                                            ${SB.esc(location)}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+                        </div>
+                    </article>
+                `;
+            })
+            .join("");
 
         if (window.lucide) {
             lucide.createIcons();
         }
+    }
 
-    </script>
+
+    async function loadProposalHistory() {
+        historyLoading.classList.remove("hidden");
+        historyEmpty.classList.add("hidden");
+        proposalHistory.innerHTML = "";
+
+        try {
+            const response =
+                await SB.get(
+                    "/recruiters/collaborations"
+                );
+
+            const items =
+                normalizeList(response);
+
+            renderProposalHistory(items);
+
+        } catch (error) {
+            console.error(
+                "Proposal history error:",
+                error
+            );
+
+            proposalHistory.innerHTML = `
+                <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                    Could not load proposal history.
+                    ${SB.esc(error.message || "")}
+                </div>
+            `;
+
+        } finally {
+            historyLoading.classList.add("hidden");
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+    }
+
+
+    refreshHistoryBtn.addEventListener(
+        "click",
+        async function () {
+            this.disabled = true;
+
+            try {
+                await loadProposalHistory();
+            } finally {
+                this.disabled = false;
+            }
+        }
+    );
+
+
+    /* ======================================================
+       SUBMIT COLLABORATION
+    ====================================================== */
+
+    form.addEventListener(
+        "submit",
+        async function (event) {
+            event.preventDefault();
+
+            showMessage(
+                "warning",
+                "Checking recruiter permission..."
+            );
+
+            const hasAccess =
+                await checkRecruiterAccess();
+
+            if (!hasAccess) {
+                showMessage(
+                    "error",
+                    "Proposal not sent. This action requires a Recruiter account."
+                );
+
+                return;
+            }
+
+            const formData =
+                new FormData(form);
+
+            const collegeId =
+                Number(
+                    formData.get("college_id")
+                );
+
+            if (
+                !Number.isInteger(collegeId) ||
+                collegeId <= 0
+            ) {
+                showMessage(
+                    "error",
+                    "Please enter a valid College ID."
+                );
+
+                return;
+            }
+
+            const skills =
+                String(
+                    formData.get("skills") || ""
+                )
+                    .split(",")
+                    .map(skill => skill.trim())
+                    .filter(Boolean);
+
+            const payload = {
+                college_id: collegeId,
+
+                collaboration_type:
+                    formData.get(
+                        "collaboration_type"
+                    ),
+
+                title:
+                    String(
+                        formData.get("title") || ""
+                    ).trim(),
+
+                description:
+                    String(
+                        formData.get("description") || ""
+                    ).trim() || null,
+
+                proposed_date:
+                    formData.get("proposed_date") || null,
+
+                location:
+                    String(
+                        formData.get("location") || ""
+                    ).trim() || null,
+
+                mode:
+                    formData.get("mode"),
+
+                skills: skills
+            };
+
+            const originalHtml =
+                submitBtn.innerHTML;
+
+            try {
+                submitBtn.disabled = true;
+
+                submitBtn.innerHTML = `
+                    <span class="h-5 w-5 animate-spin rounded-full border-[3px] border-white/30 border-t-white"></span>
+                    Sending Proposal...
+                `;
+
+                console.log(
+                    "Sending collaboration payload:",
+                    payload
+                );
+
+                const response =
+                    await SB.post(
+                        "/recruiters/collaborations",
+                        payload
+                    );
+
+                console.log(
+                    "Collaboration response:",
+                    response
+                );
+
+                const proposal =
+                    response?.data ||
+                    response ||
+                    {};
+
+                const proposalId =
+                    proposal.id ||
+                    proposal.collaboration_id ||
+                    null;
+
+                showMessage(
+                    "success",
+                    proposalId
+                        ? `Proposal #${proposalId} sent successfully. It has been saved to Proposal History.`
+                        : "Proposal sent successfully. It has been saved to Proposal History."
+                );
+
+                form.reset();
+
+                // Immediately refresh the right-side history from backend.
+                await loadProposalHistory();
+
+            } catch (error) {
+                console.error(
+                    "Collaboration create error:",
+                    error
+                );
+
+                const message =
+                    error?.message ||
+                    "Could not send proposal.";
+
+                if (
+                    message
+                        .toLowerCase()
+                        .includes("permission")
+                ) {
+                    showMessage(
+                        "error",
+                        "Backend returned 403 Forbidden. Your account may not have Recruiter permission, or the backend collaboration route has an incorrect role guard."
+                    );
+                } else {
+                    showMessage(
+                        "error",
+                        message
+                    );
+                }
+
+            } finally {
+                submitBtn.disabled = false;
+
+                submitBtn.innerHTML =
+                    originalHtml;
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            }
+        }
+    );
+
+
+    /* ======================================================
+       INITIALIZE PAGE
+    ====================================================== */
+
+    async function init() {
+        const hasAccess =
+            await checkRecruiterAccess();
+
+        if (hasAccess) {
+            await loadProposalHistory();
+        }
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
+    init();
+</script>
 
 </body>
 </html>

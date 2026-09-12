@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College Student Registry — SkillBridge AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <title>Student Registry | SkillBridge AI</title>
+  <style>
+    body{background:#f8fafc}
+    .panel{border:1px solid #e2e8f0;background:#fff;border-radius:1.5rem;box-shadow:0 14px 42px rgba(15,23,42,.05)}
+    .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:999px;animation:spin .7s linear infinite;display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body class="text-slate-900">
+<script>window.SKILLBRIDGE_ROLE="college";</script>
+
+<div id="app-shell">
+  <main class="min-h-screen lg:pl-72">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+      <header class="mb-7 rounded-[28px] bg-gradient-to-br from-indigo-950 via-indigo-700 to-blue-600 p-7 text-white shadow-xl">
+        <p class="text-sm font-semibold text-indigo-100">SkillBridge AI • College/TPO</p>
+        <h1 class="mt-1 text-3xl font-black">Student Registry</h1>
+        <p class="mt-2 max-w-2xl text-sm text-indigo-100">
+          Add official Student ID / Enrollment Numbers so students can verify their college identity.
+        </p>
+      </header>
+
+      <div id="message" class="mb-6 hidden rounded-2xl border p-4 text-sm"></div>
+
+      <div class="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
+
+        <section class="panel p-6">
+          <h2 class="text-xl font-black">Add Student</h2>
+          <p class="mt-1 text-sm text-slate-500">Use the exact ID issued by your college.</p>
+
+          <form id="registryForm" class="mt-6 space-y-4">
+            <div>
+              <label class="label">Student Name</label>
+              <input class="input" name="student_name" placeholder="e.g. Nitish Kumar">
+            </div>
+
+            <div>
+              <label class="label">Student ID / Enrollment No. *</label>
+              <input class="input uppercase" name="student_id_number" placeholder="e.g. 26CSEAI083" required>
+            </div>
+
+            <div>
+              <label class="label">Department</label>
+              <select class="input" id="departmentSelect" name="department_id">
+                <option value="">Select department</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="label">Year</label>
+              <select class="input" name="year">
+                <option value="">Select year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+              </select>
+            </div>
+
+            <button id="addBtn" type="submit" class="btn btn-primary w-full justify-center">
+              <i data-lucide="user-plus" class="h-4 w-4"></i>
+              Add Student
+            </button>
+          </form>
+        </section>
+
+        <section class="panel overflow-hidden">
+          <div class="flex flex-col gap-3 border-b border-slate-100 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-xl font-black">Registered Students</h2>
+              <p class="text-sm text-slate-500">Students added by your college.</p>
+            </div>
+
+            <button id="refreshBtn" type="button" class="btn btn-soft">
+              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+              Refresh
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[760px] text-left text-sm">
+              <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-6 py-4">Student</th>
+                  <th class="px-6 py-4">Student ID</th>
+                  <th class="px-6 py-4">Department</th>
+                  <th class="px-6 py-4">Year</th>
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="registryBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+<script>
+  const form=document.getElementById("registryForm");
+  const body=document.getElementById("registryBody");
+  const addBtn=document.getElementById("addBtn");
+  const departmentSelect=document.getElementById("departmentSelect");
+
+  function arr(r){
+    if(Array.isArray(r)) return r;
+    if(Array.isArray(r?.data)) return r.data;
+    return [];
+  }
+
+  function msg(type,text){
+    const el=document.getElementById("message");
+    el.classList.remove("hidden");
+    el.className=type==="success"
+      ?"mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700"
+      :"mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
+    el.textContent=text;
+  }
+
+  async function loadDepartments(){
+    try{
+      const response=await SB.get("/colleges/departments");
+      const rows=arr(response);
+      departmentSelect.innerHTML='<option value="">Select department</option>'+
+        rows.map(x=>`<option value="${x.id}">${SB.esc(x.name)}${x.code?` (${SB.esc(x.code)})`:""}</option>`).join("");
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  async function loadRegistry(){
+    body.innerHTML='<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400">Loading...</td></tr>';
+
+    try{
+      const response=await SB.get("/colleges/student-registry");
+      const rows=arr(response);
+
+      body.innerHTML=rows.length?rows.map(x=>`
+        <tr class="hover:bg-slate-50/70">
+          <td class="px-6 py-4">
+            <div class="font-bold text-slate-900">${SB.esc(x.student_name||"—")}</div>
+            <div class="mt-1 text-xs text-slate-400">Registry #${x.id}</div>
+          </td>
+          <td class="px-6 py-4 font-mono font-semibold">${SB.esc(x.student_id_number)}</td>
+          <td class="px-6 py-4">${SB.esc(x.department_name||x.department_code||"—")}</td>
+          <td class="px-6 py-4">${x.year?`${x.year}${x.year===1?"st":x.year===2?"nd":x.year===3?"rd":"th"} Year`:"—"}</td>
+          <td class="px-6 py-4">
+            <div class="flex flex-wrap gap-2">
+              <span class="${x.is_active?'bg-emerald-50 text-emerald-700':'bg-slate-100 text-slate-500'} rounded-full px-2.5 py-1 text-xs font-bold">
+                ${x.is_active?"Active":"Inactive"}
+              </span>
+              ${x.is_claimed?'<span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">Verified/Claimed</span>':""}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button type="button" onclick="removeRegistry(${x.id})" class="btn btn-soft text-rose-600">
+              <i data-lucide="${x.is_claimed?'user-x':'trash-2'}" class="h-4 w-4"></i>
+              ${x.is_claimed?"Deactivate":"Remove"}
+            </button>
+          </td>
+        </tr>
+      `).join(""):
+      '<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">No students added yet.</td></tr>';
+
+      if(window.lucide) lucide.createIcons();
+    }catch(e){
+      body.innerHTML=`<tr><td colspan="6" class="px-6 py-10 text-center text-rose-600">${SB.esc(e.message)}</td></tr>`;
+    }
+  }
+
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const f=new FormData(form);
+    const old=addBtn.innerHTML;
+    addBtn.disabled=true;
+    addBtn.innerHTML='<span class="spinner"></span> Adding...';
+
+    try{
+      await SB.post("/colleges/student-registry",{
+        student_name:String(f.get("student_name")||"").trim()||null,
+        student_id_number:String(f.get("student_id_number")||"").trim().toUpperCase(),
+        department_id:f.get("department_id")?Number(f.get("department_id")):null,
+        year:f.get("year")?Number(f.get("year")):null
+      });
+
+      form.reset();
+      msg("success","Student added to registry successfully.");
+      await loadRegistry();
+    }catch(e){
+      msg("error",e.message||"Could not add student.");
+    }finally{
+      addBtn.disabled=false;
+      addBtn.innerHTML=old;
+      if(window.lucide) lucide.createIcons();
+    }
+  });
+
+  window.removeRegistry=async function(id){
+    if(!confirm("Remove/deactivate this student registry record?")) return;
+    try{
+      const response=await SB.delete(`/colleges/student-registry/${id}`);
+      msg("success",response?.message||"Registry updated.");
+      await loadRegistry();
+    }catch(e){
+      msg("error",e.message||"Could not update registry.");
+    }
+  };
+
+  document.getElementById("refreshBtn").addEventListener("click",loadRegistry);
+
+  (async()=>{
+    await loadDepartments();
+    await loadRegistry();
+    if(window.lucide) lucide.createIcons();
+  })();
+</script>
+</body>
+</html>

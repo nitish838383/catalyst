@@ -23,12 +23,13 @@ const MENUS = {
     ],
 
     college: [
-        ['dashboard.html', 'layout-dashboard', 'Dashboard'],
-        ['profile.html', 'landmark', 'College Profile'],
-        ['departments.html', 'layers-3', 'Departments'],
-        ['analytics.html', 'chart-no-axes-column-increasing', 'Skill Analytics'],
-        ['collaborations.html', 'handshake', 'Collaborations']
-    ],
+    ['dashboard.html', 'layout-dashboard', 'Dashboard'],
+    ['profile.html', 'landmark', 'College Profile'],
+    ['departments.html', 'layers-3', 'Departments'],
+    ['student-registry.html', 'user-round-check', 'Student Registry'],
+    ['analytics.html', 'chart-no-axes-column-increasing', 'Skill Analytics'],
+    ['collaborations.html', 'handshake', 'Collaborations']
+],
 
     admin: [
         ['dashboard.html', 'shield-check', 'Admin Dashboard']
