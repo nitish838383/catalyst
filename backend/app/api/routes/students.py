@@ -24,6 +24,7 @@ from app.schemas.student import (
     StudentProfileCreate,
     StudentProfileUpdate,
     StudentProfileResponse,
+    StudentCollegeVerifyRequest,
 )
 from app.schemas.skill import AddSkillRequest, AssessmentSubmit
 from app.schemas.project import ProjectCreate, ProjectResponse
