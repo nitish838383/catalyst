@@ -1952,7 +1952,7 @@ body.sb-home svg {
   width: min(420px, calc(100vw - 32px));
   height: min(640px, calc(100vh - 40px));
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto auto 1fr auto;
   overflow: hidden;
   border: 1px solid var(--sb-border);
   border-radius: 26px;
@@ -2701,5 +2701,179 @@ body.sb-home svg {
   .sb-assistant-launcher,
   .sb-assistant-panel {
     transition: none;
+  }
+}
+
+
+/* =========================================================
+   SKILLBRIDGE NAVIGATOR — UNIQUE ASSISTANT ADD-ON
+========================================================= */
+
+.sb-nav-intro {
+  margin: 12px 12px 8px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--sb-primary) 20%, var(--sb-border));
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 88% 8%,
+      color-mix(in srgb, var(--sb-primary) 10%, transparent),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      var(--sb-surface),
+      var(--sb-surface-2)
+    );
+}
+
+.sb-nav-intro-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sb-nav-live,
+.sb-nav-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.sb-nav-live {
+  color: var(--sb-success);
+}
+
+.sb-nav-live > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--sb-success);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--sb-success) 10%, transparent);
+  animation: sb-navigator-pulse 1.8s ease-in-out infinite;
+}
+
+.sb-nav-mode {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--sb-primary);
+  background: var(--sb-primary-soft);
+}
+
+.sb-nav-intro-title {
+  margin: 12px 0 10px;
+  color: var(--sb-text);
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.sb-nav-journey {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.sb-nav-journey::-webkit-scrollbar {
+  display: none;
+}
+
+.sb-nav-journey span {
+  flex: 0 0 auto;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  border: 1px solid var(--sb-border);
+  border-radius: 10px;
+  color: var(--sb-text-soft);
+  background: var(--sb-surface);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.sb-nav-journey svg {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  color: var(--sb-primary);
+}
+
+.sb-assistant-quick button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sb-assistant-quick button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sb-assistant-panel.is-open {
+  animation:
+    sb-navigator-in 0.28s
+    cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes sb-navigator-in {
+  from {
+    opacity: 0;
+    transform:
+      translateY(16px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes sb-navigator-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.72);
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 640px) {
+  .sb-nav-intro {
+    margin: 10px 10px 6px;
+    padding: 12px;
+  }
+
+  .sb-nav-intro-title {
+    font-size: 0.75rem;
+  }
+
+  .sb-nav-journey span {
+    min-height: 28px;
+    font-size: 0.59rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-nav-live > span {
+    animation: none;
+  }
+
+  .sb-assistant-panel.is-open {
+    animation: none;
   }
 }

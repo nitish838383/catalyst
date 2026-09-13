@@ -11,6 +11,28 @@
   <script src="/assets/js/theme.js"></script>
 
   <link rel="stylesheet" href="/assets/css/home.css">
+  <style>
+    .sb-nav-intro{
+      margin:14px 14px 10px;padding:14px;border:1px solid rgba(99,102,241,.16);
+      border-radius:18px;background:radial-gradient(circle at 90% 10%,rgba(99,102,241,.10),transparent 38%),linear-gradient(180deg,#fff,#f8fafc)
+    }
+    .sb-nav-intro-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .sb-nav-live,.sb-nav-mode{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.04em}
+    .sb-nav-live{color:#047857}.sb-nav-live>span{width:8px;height:8px;border-radius:999px;background:#10b981;box-shadow:0 0 0 5px rgba(16,185,129,.10);animation:sbNavigatorPulse 1.8s ease-in-out infinite}
+    .sb-nav-mode{color:#4f46e5;padding:5px 8px;border-radius:999px;background:#eef2ff}
+    .sb-nav-intro-title{margin:12px 0 10px;font-size:14px;font-weight:900;color:#0f172a}
+    .sb-nav-journey{display:flex;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:none}.sb-nav-journey::-webkit-scrollbar{display:none}
+    .sb-nav-journey span{flex:0 0 auto;padding:7px 9px;border-radius:10px;background:#fff;border:1px solid #e2e8f0;color:#334155;font-size:11px;font-weight:800}
+    .sb-nav-journey svg{width:13px;height:13px;color:#818cf8;flex:0 0 auto}
+    .sb-assistant-quick button{display:inline-flex;align-items:center;gap:7px}.sb-assistant-quick button svg{width:14px;height:14px}
+    .sb-assistant-panel.is-open{animation:sbNavigatorIn .28s cubic-bezier(.2,.8,.2,1)}
+    @keyframes sbNavigatorIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes sbNavigatorPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.55}}
+    [data-theme="dark"] .sb-nav-intro{background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.96));border-color:rgba(129,140,248,.20)}
+    [data-theme="dark"] .sb-nav-intro-title{color:#f8fafc}
+    [data-theme="dark"] .sb-nav-journey span{background:rgba(30,41,59,.92);border-color:rgba(148,163,184,.15);color:#cbd5e1}
+  </style>
+
 </head>
 
 <body class="sb-home">
@@ -266,8 +288,8 @@
             </span>
 
             <span class="sb-assistant-label">
-              <strong>Ask SkillBridge</strong>
-              <small>Career platform guide</small>
+              <strong>Open Navigator</strong>
+              <small>Find your next step</small>
             </span>
           </button>
         </div>
@@ -777,8 +799,8 @@
         </span>
 
         <div>
-          <strong>SkillBridge Assistant</strong>
-          <small>Platform guide</small>
+          <strong>SkillBridge Navigator</strong>
+          <small>Skills → Gap → Roadmap → Opportunity</small>
         </div>
       </div>
 
@@ -787,11 +809,38 @@
       </button>
     </div>
 
+    <div class="sb-nav-intro">
+      <div class="sb-nav-intro-top">
+        <span class="sb-nav-live"><span></span> Smart Guide</span>
+        <span class="sb-nav-mode">Public Mode</span>
+      </div>
+
+      <p class="sb-nav-intro-title">What do you want to understand?</p>
+
+      <div class="sb-nav-journey">
+        <span>Skills</span>
+        <i data-lucide="arrow-right"></i>
+        <span>Gap</span>
+        <i data-lucide="arrow-right"></i>
+        <span>Roadmap</span>
+        <i data-lucide="arrow-right"></i>
+        <span>Opportunity</span>
+      </div>
+    </div>
+
     <div class="sb-assistant-quick">
-      <button data-sb-prompt="What is SkillBridge AI?" type="button">What is SkillBridge?</button>
-      <button data-sb-prompt="How does resume analysis work?" type="button">Resume AI</button>
-      <button data-sb-prompt="How does the skill gap process work?" type="button">Skill Gap</button>
-      <button data-sb-prompt="How does SkillBridge help colleges?" type="button">For Colleges</button>
+      <button data-sb-prompt="I am a student. How can SkillBridge help me?" type="button">
+        <i data-lucide="graduation-cap"></i> Student
+      </button>
+      <button data-sb-prompt="I am from a college or TPO. How can SkillBridge help?" type="button">
+        <i data-lucide="school"></i> College / TPO
+      </button>
+      <button data-sb-prompt="I am a recruiter. How can SkillBridge help my company?" type="button">
+        <i data-lucide="building-2"></i> Recruiter
+      </button>
+      <button data-sb-prompt="How does SkillBridge verify resume skills?" type="button">
+        <i data-lucide="shield-check"></i> Skill Trust
+      </button>
     </div>
 
     <div id="sbAssistantMessages" class="sb-assistant-messages"></div>
@@ -978,7 +1027,7 @@
 
       assistantMessages.innerHTML = bubble(
         "assistant",
-        "Hi! I’m the SkillBridge platform guide. Ask me about Resume Analysis, Skill Gap, Career Readiness, Roadmaps, Students, Colleges, Recruiters, Internships or Placement."
+        "Hi! I’m the SkillBridge Navigator. I can explain how Skills → Gap → Roadmap → Opportunity works for students, colleges and recruiters. Choose a quick path above or ask anything about the platform."
       );
 
       assistantReady = true;
@@ -999,6 +1048,22 @@
         hasAny("what is skillbridge", "skillbridge kya hai", "website kya karta")
       ) {
         return "SkillBridge AI is an academia–industry skill intelligence platform. It maps student skills, identifies gaps, builds career roadmaps and connects students with relevant opportunities while helping colleges and recruiters work with clearer skill data.";
+      }
+
+      if (hasAny("i am a student", "for student", "student help")) {
+        return "Student path: Create Profile → Upload Resume → Confirm real skills → See skill gaps → Get a learning roadmap → Discover matched internships/jobs → Apply with context.";
+      }
+
+      if (hasAny("i am from a college", "college or tpo", "for college", "tpo help")) {
+        return "College/TPO path: Maintain the official student registry → verify student identity → view skill-gap trends → understand industry demand → plan targeted training → manage collaborations and placement activity.";
+      }
+
+      if (hasAny("i am a recruiter", "for recruiter", "my company")) {
+        return "Recruiter path: Create company profile → publish internships/jobs → define required skills → receive explainable candidate matches → review applicants → shortlist → interview → select.";
+      }
+
+      if (hasAny("verify resume skills", "skill trust", "fake skill", "fake resume", "verified skill")) {
+        return "SkillBridge does not blindly trust resume claims. Resume skills are first detected, then the student confirms what they genuinely know. A separate skill assessment can later mark skills as verified, making recruiter matching more trustworthy.";
       }
 
       if (hasAny("resume", "cv")) {
@@ -1025,7 +1090,7 @@
         return "SkillBridge compares opportunity requirements with the student's confirmed skill profile and shows why the opportunity matches.";
       }
 
-      return "You can ask me about Resume Analysis, Skill Gap, Career Readiness, Roadmaps, Students, Colleges, Recruiters, Internships or Placement.";
+      return "Try asking: “How does SkillBridge verify skills?”, “What happens after skill-gap analysis?”, “How does matching work for recruiters?”, or “How can a college use SkillBridge before placement season?”";
     }
 
     function openAssistant() {
