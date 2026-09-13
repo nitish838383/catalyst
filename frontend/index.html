@@ -1,795 +1,851 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SkillBridge AI — Academia–Industry Skill Intelligence Platform">
+  <meta name="description" content="SkillBridge AI — Skill intelligence, career readiness, skill-gap analysis and explainable opportunity matching.">
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>SkillBridge AI | Skill Intelligence to Career</title>
+
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/assets/css/app.css">
+  <script src="/assets/js/theme.js"></script>
 
-  <title>Home | SkillBridge AI</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    .gradient-text {
-      background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 40%, #818cf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .card-hover {
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .card-hover:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.28);
-      border-color: rgba(165, 180, 252, 0.25);
-    }
-
-    .feature-icon {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.2));
-    }
-
-    .float-slow {
-      animation: float 7s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .pulse-dot {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    /* Soft gradient border effect */
-    .glow-border {
-      position: relative;
-    }
-    .glow-border::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(129, 140, 248, 0.4), rgba(192, 132, 252, 0.2), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-    }
-  
-    /* Floating SkillBridge AI Chat */
-    .sb-chat-launcher{
-      position:fixed;right:1.25rem;bottom:1.25rem;z-index:90;
-      display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
-      min-width:58px;height:58px;padding:0 1rem;border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:linear-gradient(135deg,#4f46e5,#7c3aed,#2563eb);
-      color:white;font-weight:800;box-shadow:0 20px 45px rgba(79,70,229,.35);
-      transition:.2s;
-    }
-    .sb-chat-launcher:hover{transform:translateY(-2px);box-shadow:0 24px 55px rgba(79,70,229,.45)}
-    .sb-chat-panel{
-      position:fixed;right:1.25rem;bottom:5.9rem;z-index:90;
-      width:min(420px,calc(100vw - 2rem));height:min(620px,calc(100vh - 8rem));
-      display:flex;flex-direction:column;overflow:hidden;
-      border:1px solid rgba(148,163,184,.18);border-radius:1.5rem;
-      background:rgba(15,23,42,.98);box-shadow:0 30px 80px rgba(2,6,23,.55);
-      backdrop-filter:blur(18px);
-    }
-    .sb-chat-panel.hidden{display:none !important;}
-    .sb-chat-panel:not(.hidden){display:flex !important;}
-    .sb-chat-head{padding:1rem;background:linear-gradient(135deg,#312e81,#4f46e5,#2563eb)}
-    .sb-chat-messages{flex:1;overflow-y:auto;padding:1rem;background:linear-gradient(180deg,#0f172a,#111827);scroll-behavior:smooth}
-    .sb-chat-user{
-      max-width:84%;margin-left:auto;padding:.72rem .88rem;
-      border-radius:1rem 1rem .35rem 1rem;color:white;
-      background:linear-gradient(135deg,#4f46e5,#6366f1);
-      box-shadow:0 8px 22px rgba(79,70,229,.18);
-    }
-    .sb-chat-ai{
-      max-width:88%;padding:.72rem .88rem;
-      border:1px solid rgba(148,163,184,.18);
-      border-radius:1rem 1rem 1rem .35rem;
-      color:#e2e8f0;background:rgba(30,41,59,.92);
-    }
-    .sb-chat-quick{
-      border:1px solid rgba(148,163,184,.18);border-radius:999px;
-      padding:.45rem .72rem;font-size:.75rem;font-weight:700;
-      color:#cbd5e1;background:rgba(255,255,255,.04);transition:.18s;
-    }
-    .sb-chat-quick:hover{color:#fff;border-color:rgba(129,140,248,.45);background:rgba(99,102,241,.14)}
-    @media(max-width:640px){
-      .sb-chat-launcher{right:.85rem;bottom:.85rem;width:56px;min-width:56px;padding:0}
-      .sb-chat-launcher span{display:none}
-      .sb-chat-panel{right:.75rem;left:.75rem;bottom:5rem;width:auto;height:min(72vh,620px);border-radius:1.15rem}
-    }
-
-  
-    /* Workspace Hero */
-    .workspace-hero{
-      position:relative;overflow:hidden;border-radius:2rem;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
-      box-shadow:0 35px 90px rgba(2,6,23,.45);
-    }
-    .workspace-hero::after{
-      content:"";position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(90deg,rgba(2,6,23,.22),transparent 38%),
-                 linear-gradient(180deg,transparent 58%,rgba(2,6,23,.30));
-    }
-    .workspace-hero img{
-      display:block;width:100%;height:100%;min-height:460px;
-      object-fit:cover;object-position:center;
-    }
-    .workspace-badge{
-      position:absolute;z-index:2;left:1.25rem;right:1.25rem;bottom:1.25rem;
-      display:flex;align-items:center;justify-content:space-between;gap:1rem;
-      padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.16);
-      border-radius:1.25rem;color:white;background:rgba(15,23,42,.72);
-      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      box-shadow:0 18px 45px rgba(2,6,23,.30);
-    }
-    .workspace-chip{
-      display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .7rem;
-      border-radius:999px;border:1px solid rgba(129,140,248,.25);
-      color:#c7d2fe;background:rgba(99,102,241,.12);
-      font-size:.75rem;font-weight:700;white-space:nowrap;
-    }
-    .live-stat-strip{
-      margin-top:2rem;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
-      overflow:hidden;border:1px solid rgba(255,255,255,.08);
-      border-radius:1.5rem;background:rgba(255,255,255,.04);
-      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-    }
-    .live-stat-item{
-      padding:1.15rem 1rem;text-align:center;
-      border-right:1px solid rgba(255,255,255,.07);
-    }
-    .live-stat-item:last-child{border-right:0}
-    @media(max-width:1024px){
-      .workspace-hero img{min-height:390px}
-      .live-stat-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .live-stat-item:nth-child(3){border-right:0}
-      .live-stat-item:nth-child(-n+3){border-bottom:1px solid rgba(255,255,255,.07)}
-    }
-    @media(max-width:640px){
-      .workspace-hero{border-radius:1.4rem}
-      .workspace-hero img{min-height:320px;object-position:58% center}
-      .workspace-badge{left:.8rem;right:.8rem;bottom:.8rem;padding:.85rem}
-      .workspace-badge .workspace-chips{display:none}
-      .live-stat-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .live-stat-item{border-bottom:1px solid rgba(255,255,255,.07)}
-      .live-stat-item:nth-child(2n){border-right:0}
-      .live-stat-item:nth-last-child(-n+2){border-bottom:0}
-    }
-
-  </style>
+  <link rel="stylesheet" href="/assets/css/home.css">
 </head>
 
-<body class="bg-slate-50 text-slate-900 antialiased">
+<body class="sb-home">
 
-  <div class="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white overflow-x-hidden">
+  <!-- ===================================================== -->
+  <!-- NAVBAR -->
+  <!-- ===================================================== -->
+  <header class="sb-nav-shell">
+    <div class="sb-container sb-nav">
 
-    <!-- Ambient Background Glow -->
-    <div class="pointer-events-none fixed inset-0 overflow-hidden">
-      <div class="absolute -left-40 top-20 h-[520px] w-[520px] rounded-full bg-indigo-600/20 blur-[130px]"></div>
-      <div class="absolute -right-32 bottom-10 h-[420px] w-[420px] rounded-full bg-violet-600/15 blur-[110px]"></div>
-      <div class="absolute left-1/2 top-1/3 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-fuchsia-600/10 blur-[100px]"></div>
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- Navbar -->
-    <!-- ===================================================== -->
-    <nav class="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-      <a class="text-xl font-black tracking-tight flex items-center gap-2" href="/">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20">
-          <i data-lucide="sparkles" class="h-4 w-4 text-indigo-300"></i>
+      <a href="/" class="sb-brand" aria-label="SkillBridge AI home">
+        <span class="sb-brand-logo">
+          <span class="sb-brand-logo-core"></span>
         </span>
-        SkillBridge AI
+
+        <span class="sb-brand-text">
+          <strong>SkillBridge</strong>
+          <small>AI</small>
+        </span>
       </a>
 
-      <div class="hidden items-center gap-8 md:flex">
-        <a href="#features" class="text-sm font-medium text-slate-300 transition hover:text-white">Features</a>
-        <a href="#how-it-works" class="text-sm font-medium text-slate-300 transition hover:text-white">How it works</a>
-        <a href="#roles" class="text-sm font-medium text-slate-300 transition hover:text-white">For Everyone</a>
-      </div>
+      <nav class="sb-nav-links" aria-label="Primary navigation">
+        <a href="#platform">Platform</a>
+        <a href="#journey">Journey</a>
+        <a href="#roles">Solutions</a>
+        <a href="#why">Why SkillBridge</a>
+      </nav>
 
-      <div class="flex gap-3">
-        <a class="btn border border-white/15 bg-white/5 hover:bg-white/10 transition" href="/login.html">
+      <div class="sb-nav-actions">
+        <button
+          class="sb-theme-btn"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch theme"
+        >
+          <span data-theme-icon class="sb-theme-icon">
+            <i data-lucide="moon"></i>
+          </span>
+          <span data-theme-label>Dark</span>
+        </button>
+
+        <a href="/login.html" class="sb-login-btn">
+          <i data-lucide="log-in"></i>
           Login
         </a>
-        <a class="btn btn-primary shadow-lg shadow-indigo-500/25" href="/register.html">
-          Get Started
+
+        <a href="/register.html" class="sb-primary-btn sb-primary-btn-nav">
+          Get started
+          <i data-lucide="arrow-up-right"></i>
         </a>
+
+        <button
+          id="sbMobileMenuBtn"
+          class="sb-menu-btn"
+          type="button"
+          aria-label="Open mobile menu"
+          aria-expanded="false"
+        >
+          <i data-lucide="menu"></i>
+        </button>
       </div>
-    </nav>
+    </div>
 
-    <!-- ===================================================== -->
-    <!-- Hero Section -->
-    <!-- ===================================================== -->
-    <section class="relative z-10 mx-auto max-w-7xl px-6 pb-10 pt-12 lg:pb-14 lg:pt-20">
-      <div class="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+    <div id="sbMobileMenu" class="sb-mobile-menu" hidden>
+      <div class="sb-container sb-mobile-menu-inner">
+        <a href="#platform">Platform</a>
+        <a href="#journey">Journey</a>
+        <a href="#roles">Solutions</a>
+        <a href="#why">Why SkillBridge</a>
 
-        <div>
-          <div class="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
-            <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 pulse-dot"></span>
-            Skill Intelligence • Career Matching • Collaboration
+        <div class="sb-mobile-actions">
+          <a href="/login.html" class="sb-login-btn">Login</a>
+          <a href="/register.html" class="sb-primary-btn">Create account</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main>
+    <!-- ===================================================== -->
+    <!-- HERO -->
+    <!-- ===================================================== -->
+    <section class="sb-hero">
+      <div class="sb-hero-noise" aria-hidden="true"></div>
+      <div class="sb-hero-orb sb-hero-orb-a" aria-hidden="true"></div>
+      <div class="sb-hero-orb sb-hero-orb-b" aria-hidden="true"></div>
+
+      <div class="sb-container sb-hero-grid">
+        <div class="sb-hero-copy">
+          <div class="sb-hero-kicker">
+            <span class="sb-kicker-dot"></span>
+            Skill Intelligence for Students, Colleges & Industry
           </div>
 
-          <h1 class="mt-7 text-5xl font-black leading-[1.06] tracking-tight sm:text-6xl lg:text-[4rem]">
-            Know Your Skills.<br>
-            <span class="gradient-text">Bridge Your Gap.</span><br>
-            Build Your Career.
+          <h1>
+            Build a career from
+            <span class="sb-gradient-text">real skills,</span>
+            not guesswork.
           </h1>
 
-          <p class="mt-7 max-w-xl text-lg leading-relaxed text-slate-300/90">
-            SkillBridge AI connects students, colleges and companies through skill-gap analysis,
-            explainable opportunity matching and personalized career roadmaps.
+          <p class="sb-hero-sub">
+            SkillBridge AI maps student skills, identifies the gap against real industry requirements,
+            creates a focused career roadmap and explains why each opportunity matches.
           </p>
 
-          <div class="mt-9 flex flex-wrap gap-4">
-            <a class="btn btn-primary flex items-center gap-2 px-7 py-3.5 text-base shadow-xl shadow-indigo-500/30" href="/register.html">
-              Get Started
-              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          <div class="sb-hero-actions">
+            <a href="/register.html" class="sb-primary-btn sb-primary-btn-lg">
+              Start building your profile
+              <i data-lucide="arrow-right"></i>
             </a>
-            <a class="btn border border-white/15 bg-white/5 px-7 py-3.5 text-base hover:bg-white/10 transition" href="/login.html">
-              Open Dashboard
+
+            <a href="/login.html" class="sb-secondary-btn sb-secondary-btn-lg">
+              <i data-lucide="layout-dashboard"></i>
+              Open dashboard
             </a>
           </div>
 
-          <div class="mt-10 grid max-w-xl gap-3 sm:grid-cols-3">
-            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-              <div class="flex items-center gap-2 text-sm font-bold text-white">
-                <i data-lucide="file-search" class="h-4 w-4 text-indigo-300"></i>
-                Resume Analysis
-              </div>
-              <p class="mt-1 text-xs text-slate-400">Detect profile skills</p>
-            </div>
-
-            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-              <div class="flex items-center gap-2 text-sm font-bold text-white">
-                <i data-lucide="git-compare" class="h-4 w-4 text-violet-300"></i>
-                Skill Gap
-              </div>
-              <p class="mt-1 text-xs text-slate-400">See what is missing</p>
-            </div>
-
-            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-              <div class="flex items-center gap-2 text-sm font-bold text-white">
-                <i data-lucide="briefcase-business" class="h-4 w-4 text-cyan-300"></i>
-                Smart Matching
-              </div>
-              <p class="mt-1 text-xs text-slate-400">Find relevant roles</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="workspace-hero">
-          <img src="/assets/images/sih.png" alt="Student using SkillBridge AI on a laptop">
-
-          <div class="workspace-badge">
-            <div class="min-w-0">
-              <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-200">
-                SkillBridge Experience
-              </p>
-              <p class="mt-1 truncate text-sm font-black text-white sm:text-base">
-                Skills → Gap → Roadmap → Opportunity
-              </p>
-            </div>
-
-            <div class="workspace-chips hidden gap-2 xl:flex">
-              <span class="workspace-chip">
-                <i data-lucide="brain-circuit" class="h-3.5 w-3.5"></i>
-                Skill Intelligence
+          <div class="sb-proof-line">
+            <div>
+              <i data-lucide="shield-check"></i>
+              <span>
+                <strong>Verified college identity</strong>
+                <small>Registry-based verification</small>
               </span>
-              <span class="workspace-chip">
-                <i data-lucide="target" class="h-3.5 w-3.5"></i>
-                Career Match
+            </div>
+
+            <div>
+              <i data-lucide="scan-search"></i>
+              <span>
+                <strong>Explainable skill match</strong>
+                <small>Matched + missing skills</small>
+              </span>
+            </div>
+
+            <div>
+              <i data-lucide="route"></i>
+              <span>
+                <strong>Actionable roadmap</strong>
+                <small>Know what to learn next</small>
               </span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="mt-8 flex items-center justify-between gap-3">
-        <div>
-          <p class="text-sm font-black text-white">Live Platform Data</p>
-          <p class="mt-1 text-xs text-slate-400">Real counts loaded directly from the SkillBridge backend.</p>
-        </div>
-        <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 pulse-dot"></span>
-          LIVE
-        </span>
-      </div>
 
-      <div class="live-stat-strip !mt-4" aria-label="Live platform statistics">
-        <div class="live-stat-item">
-          <div id="statStudents" class="text-2xl font-black text-indigo-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Students</div>
-        </div>
-        <div class="live-stat-item">
-          <div id="statColleges" class="text-2xl font-black text-violet-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Colleges</div>
-        </div>
-        <div class="live-stat-item">
-          <div id="statCompanies" class="text-2xl font-black text-fuchsia-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Industry</div>
-        </div>
-        <div class="live-stat-item">
-          <div id="statOpportunities" class="text-2xl font-black text-cyan-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Opportunities</div>
-        </div>
-        <div class="live-stat-item">
-          <div id="statSkills" class="text-2xl font-black text-emerald-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Skills Tracked</div>
-        </div>
-        <div class="live-stat-item">
-          <div id="statApplications" class="text-2xl font-black text-amber-300">—</div>
-          <div class="mt-1 text-xs font-semibold text-slate-400">Applications</div>
+        <!-- ================================================= -->
+        <!-- HERO INTELLIGENCE CONSOLE -->
+        <!-- ================================================= -->
+        <div class="sb-intel-stage">
+          <div class="sb-intel-shadow" aria-hidden="true"></div>
+
+          <div class="sb-intel-console">
+            <div class="sb-intel-topbar">
+              <div class="sb-intel-topbar-left">
+                <span class="sb-console-dot"></span>
+                <span class="sb-console-dot"></span>
+                <span class="sb-console-dot"></span>
+              </div>
+
+              <div class="sb-intel-title">
+                Career Intelligence
+              </div>
+
+              <div class="sb-intel-status">
+                <span></span>
+                Live
+              </div>
+            </div>
+
+            <div class="sb-intel-body">
+              <div class="sb-intel-main">
+                <div class="sb-radar-wrap">
+                  <div class="sb-radar-ring sb-radar-ring-1"></div>
+                  <div class="sb-radar-ring sb-radar-ring-2"></div>
+                  <div class="sb-radar-ring sb-radar-ring-3"></div>
+                  <div class="sb-radar-sweep"></div>
+
+                  <div class="sb-radar-core">
+                    <i data-lucide="brain-circuit"></i>
+                    <strong>Skill Map</strong>
+                    <small>Backend Developer</small>
+                  </div>
+
+                  <span class="sb-radar-tag sb-radar-tag-a">Python</span>
+                  <span class="sb-radar-tag sb-radar-tag-b">FastAPI</span>
+                  <span class="sb-radar-tag sb-radar-tag-c">SQL</span>
+                  <span class="sb-radar-tag sb-radar-tag-d">Docker</span>
+                  <span class="sb-radar-tag sb-radar-tag-e">Testing</span>
+                </div>
+
+                <div class="sb-intel-sidecards">
+                  <article class="sb-mini-card">
+                    <span class="sb-mini-icon sb-mini-icon-teal">
+                      <i data-lucide="gauge"></i>
+                    </span>
+                    <div>
+                      <small>Career readiness</small>
+                      <strong>Role-based</strong>
+                    </div>
+                  </article>
+
+                  <article class="sb-mini-card">
+                    <span class="sb-mini-icon sb-mini-icon-blue">
+                      <i data-lucide="git-compare-arrows"></i>
+                    </span>
+                    <div>
+                      <small>Opportunity match</small>
+                      <strong>Explainable</strong>
+                    </div>
+                  </article>
+
+                  <article class="sb-mini-card">
+                    <span class="sb-mini-icon sb-mini-icon-amber">
+                      <i data-lucide="triangle-alert"></i>
+                    </span>
+                    <div>
+                      <small>Priority gap</small>
+                      <strong>Docker + Testing</strong>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="sb-match-card">
+                <div class="sb-match-left">
+                  <span class="sb-company-mark">
+                    <i data-lucide="building-2"></i>
+                  </span>
+
+                  <div>
+                    <small>Recommended opportunity</small>
+                    <strong>Backend Engineering Internship</strong>
+                  </div>
+                </div>
+
+                <div class="sb-match-right">
+                  <small>Match reason</small>
+                  <strong>6 skills aligned</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating assistant lamp/orb -->
+          <button id="sbAssistantLauncher" class="sb-assistant-launcher" type="button" aria-label="Open SkillBridge assistant">
+            <span class="sb-assistant-lamp">
+              <span class="sb-assistant-light"></span>
+              <span class="sb-assistant-face">
+                <span></span>
+                <span></span>
+              </span>
+            </span>
+
+            <span class="sb-assistant-label">
+              <strong>Ask SkillBridge</strong>
+              <small>Career platform guide</small>
+            </span>
+          </button>
         </div>
       </div>
     </section>
 
+
     <!-- ===================================================== -->
-    <!-- Features Section -->
+    <!-- LIVE PLATFORM -->
     <!-- ===================================================== -->
-    <section id="features" class="relative z-10 border-t border-white/5 bg-slate-950/40 py-24">
-      <div class="mx-auto max-w-7xl px-6">
-        <div class="text-center">
-          <span class="inline-flex items-center rounded-full border border-indigo-400/20 bg-indigo-500/10 px-4 py-1.5 text-sm font-semibold text-indigo-300">
-            Platform Features
-          </span>
-          <h2 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">
-            Everything you need to grow
-          </h2>
-          <p class="mx-auto mt-4 max-w-2xl text-slate-400">
-            From skill analysis to industry matching — one intelligent platform for students, colleges and companies.
+    <section class="sb-live-section">
+      <div class="sb-container">
+        <div class="sb-live-panel">
+          <div class="sb-live-head">
+            <div>
+              <span class="sb-section-kicker">Live Platform</span>
+              <h2>Real activity from your SkillBridge backend.</h2>
+            </div>
+
+            <span class="sb-live-badge">
+              <span></span>
+              Backend connected
+            </span>
+          </div>
+
+          <div class="sb-live-grid">
+            <div class="sb-live-stat">
+              <i data-lucide="graduation-cap"></i>
+              <strong id="statStudents">—</strong>
+              <span>Students</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="school"></i>
+              <strong id="statColleges">—</strong>
+              <span>Colleges</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="building-2"></i>
+              <strong id="statCompanies">—</strong>
+              <span>Industry</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="briefcase-business"></i>
+              <strong id="statOpportunities">—</strong>
+              <span>Opportunities</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="blocks"></i>
+              <strong id="statSkills">—</strong>
+              <span>Skills tracked</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="send"></i>
+              <strong id="statApplications">—</strong>
+              <span>Applications</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- PLATFORM -->
+    <!-- ===================================================== -->
+    <section id="platform" class="sb-section">
+      <div class="sb-container">
+        <div class="sb-section-head sb-section-head-split">
+          <div>
+            <span class="sb-section-kicker">Core Platform</span>
+            <h2>One system that connects skills, gaps and opportunities.</h2>
+          </div>
+
+          <p>
+            SkillBridge does not stop at job discovery. It explains readiness,
+            highlights the skill gap and gives each user the next useful action.
           </p>
         </div>
 
-        <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <!-- Feature 1 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="brain-circuit" class="h-6 w-6 text-indigo-300"></i>
+        <div class="sb-feature-grid">
+          <article class="sb-feature-card sb-feature-card-xl">
+            <div class="sb-feature-icon">
+              <i data-lucide="file-scan"></i>
             </div>
-            <h3 class="text-lg font-bold">AI Skill Gap Analysis</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Identify the skills you already have and discover the exact skills required for your target career.
-            </p>
-          </div>
 
-          <!-- Feature 2 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="git-compare" class="h-6 w-6 text-indigo-300"></i>
-            </div>
-            <h3 class="text-lg font-bold">Explainable Matching</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Understand why an internship or job matches your profile through clear matched and missing skills.
-            </p>
-          </div>
+            <span class="sb-feature-index">01</span>
 
-          <!-- Feature 3 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="map" class="h-6 w-6 text-indigo-300"></i>
-            </div>
-            <h3 class="text-lg font-bold">Personalized Roadmaps</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Get step-by-step learning paths tailored to your current skills and target career role.
-            </p>
-          </div>
+            <h3>Resume + Skill Intelligence</h3>
 
-          <!-- Feature 4 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="users" class="h-6 w-6 text-indigo-300"></i>
-            </div>
-            <h3 class="text-lg font-bold">Role-Based Dashboards</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Dedicated dashboards for Students, Colleges, Industry partners and platform administrators.
+            <p>
+              Detect skills from resumes, let students confirm what they genuinely know,
+              and build a cleaner skill profile for future analysis.
             </p>
-          </div>
 
-          <!-- Feature 5 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="briefcase" class="h-6 w-6 text-indigo-300"></i>
+            <div class="sb-token-cloud">
+              <span>Python</span>
+              <span>FastAPI</span>
+              <span>REST APIs</span>
+              <span>PostgreSQL</span>
+              <span>Git</span>
             </div>
-            <h3 class="text-lg font-bold">Industry Collaboration</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Companies can create internships, jobs, challenges and collaboration opportunities.
-            </p>
-          </div>
+          </article>
 
-          <!-- Feature 6 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-7">
-            <div class="feature-icon mb-5 flex h-12 w-12 items-center justify-center rounded-xl">
-              <i data-lucide="bar-chart-3" class="h-6 w-6 text-indigo-300"></i>
+          <article class="sb-feature-card">
+            <div class="sb-feature-icon">
+              <i data-lucide="target"></i>
             </div>
-            <h3 class="text-lg font-bold">Progress Analytics</h3>
-            <p class="mt-2.5 text-sm leading-relaxed text-slate-400">
-              Colleges and students can track skill growth, readiness scores and industry demand trends.
+
+            <span class="sb-feature-index">02</span>
+
+            <h3>Skill Gap Analysis</h3>
+
+            <p>
+              Compare student skills with target-role and opportunity requirements.
             </p>
-          </div>
+          </article>
+
+          <article class="sb-feature-card">
+            <div class="sb-feature-icon">
+              <i data-lucide="route"></i>
+            </div>
+
+            <span class="sb-feature-index">03</span>
+
+            <h3>Personalized Roadmap</h3>
+
+            <p>
+              Turn missing skills into a focused learning path and project plan.
+            </p>
+          </article>
+
+          <article class="sb-feature-card sb-feature-card-wide">
+            <div>
+              <div class="sb-feature-icon">
+                <i data-lucide="git-compare-arrows"></i>
+              </div>
+
+              <span class="sb-feature-index">04</span>
+
+              <h3>Explainable Matching</h3>
+
+              <p>
+                Every opportunity match is supported by clear matched and missing skills,
+                so the score is understandable instead of mysterious.
+              </p>
+            </div>
+
+            <div class="sb-match-demo">
+              <div>
+                <small>Matched skills</small>
+                <strong>Python · FastAPI · Git · REST</strong>
+              </div>
+
+              <div>
+                <small>Missing skills</small>
+                <strong>Docker · Testing</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="sb-feature-card">
+            <div class="sb-feature-icon">
+              <i data-lucide="handshake"></i>
+            </div>
+
+            <span class="sb-feature-index">05</span>
+
+            <h3>Industry Collaboration</h3>
+
+            <p>
+              Workshops, mentorship, hackathons, projects and placement initiatives.
+            </p>
+          </article>
         </div>
       </div>
     </section>
 
+
     <!-- ===================================================== -->
-    <!-- How It Works -->
+    <!-- JOURNEY -->
     <!-- ===================================================== -->
-    <section id="how-it-works" class="relative z-10 py-24">
-      <div class="mx-auto max-w-7xl px-6">
-        <div class="text-center">
-          <span class="inline-flex items-center rounded-full border border-indigo-400/20 bg-indigo-500/10 px-4 py-1.5 text-sm font-semibold text-indigo-300">
-            How It Works
-          </span>
-          <h2 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">
-            From profile to opportunity
-          </h2>
-          <p class="mx-auto mt-4 max-w-2xl text-slate-400">
-            SkillBridge AI turns student skills into actionable career insights and connects them with real industry opportunities.
+    <section id="journey" class="sb-section sb-section-soft">
+      <div class="sb-container">
+        <div class="sb-section-head">
+          <span class="sb-section-kicker">Student Journey</span>
+          <h2>From profile to placement, every step has a purpose.</h2>
+          <p>
+            The platform keeps the journey simple while connecting each step to real skill evidence.
           </p>
         </div>
 
-        <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <!-- Step 1 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/20">
-                <i data-lucide="user-plus" class="h-6 w-6 text-indigo-400"></i>
-              </div>
-              <span class="text-3xl font-black text-white/10">01</span>
+        <div class="sb-journey">
+          <article class="sb-journey-step">
+            <span class="sb-journey-num">01</span>
+            <div class="sb-journey-icon">
+              <i data-lucide="id-card"></i>
             </div>
-            <h3 class="text-lg font-bold">Create Profile</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Student registers and adds academic, career and profile information.
-            </p>
-          </div>
+            <h3>Create Profile</h3>
+            <p>Academic details, career goals and verified college identity.</p>
+          </article>
 
-          <!-- Step 2 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/20">
-                <i data-lucide="file-search" class="h-6 w-6 text-violet-400"></i>
-              </div>
-              <span class="text-3xl font-black text-white/10">02</span>
+          <article class="sb-journey-step">
+            <span class="sb-journey-num">02</span>
+            <div class="sb-journey-icon">
+              <i data-lucide="brain-circuit"></i>
             </div>
-            <h3 class="text-lg font-bold">Add Your Skills</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Add skills manually or upload a resume to automatically identify technical skills.
-            </p>
-          </div>
+            <h3>Map Skills</h3>
+            <p>Manual skills, resume detection, projects and certificates.</p>
+          </article>
 
-          <!-- Step 3 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-fuchsia-500/20">
-                <i data-lucide="brain-circuit" class="h-6 w-6 text-fuchsia-400"></i>
-              </div>
-              <span class="text-3xl font-black text-white/10">03</span>
+          <article class="sb-journey-step">
+            <span class="sb-journey-num">03</span>
+            <div class="sb-journey-icon">
+              <i data-lucide="scan-search"></i>
             </div>
-            <h3 class="text-lg font-bold">Analyze Skill Gap</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Compare current skills with target-role and real industry skill requirements.
-            </p>
-          </div>
+            <h3>Find the Gap</h3>
+            <p>Compare your profile with role and industry requirements.</p>
+          </article>
 
-          <!-- Step 4 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/20">
-                <i data-lucide="git-compare" class="h-6 w-6 text-cyan-400"></i>
-              </div>
-              <span class="text-3xl font-black text-white/10">04</span>
+          <article class="sb-journey-step">
+            <span class="sb-journey-num">04</span>
+            <div class="sb-journey-icon">
+              <i data-lucide="map-pinned"></i>
             </div>
-            <h3 class="text-lg font-bold">Match Opportunities</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Get matched with internships and jobs based on required and missing skills.
-            </p>
-          </div>
+            <h3>Follow Roadmap</h3>
+            <p>Prioritize skills, practice, projects and interview preparation.</p>
+          </article>
 
-          <!-- Step 5 -->
-          <div class="card-hover glass rounded-2xl border border-white/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
-                <i data-lucide="rocket" class="h-6 w-6 text-emerald-400"></i>
-              </div>
-              <span class="text-3xl font-black text-white/10">05</span>
+          <article class="sb-journey-step">
+            <span class="sb-journey-num">05</span>
+            <div class="sb-journey-icon">
+              <i data-lucide="rocket"></i>
             </div>
-            <h3 class="text-lg font-bold">Build Your Career</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Follow your roadmap, improve skills, apply and track your career progress.
-            </p>
-          </div>
-
-          <!-- Result -->
-          <div class="card-hover rounded-2xl border border-indigo-400/25 bg-gradient-to-br from-indigo-500/15 to-violet-500/10 p-6">
-            <div class="mb-5 flex items-center justify-between">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/25">
-                <i data-lucide="sparkles" class="h-6 w-6 text-indigo-300"></i>
-              </div>
-              <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Result</span>
-            </div>
-            <h3 class="text-lg font-bold">Career Growth</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-400">
-              Improve readiness and build stronger connections between education, skills and industry.
-            </p>
-          </div>
-        </div>
-
-        <!-- Flow Summary -->
-        <div class="mt-12 rounded-2xl border border-white/10 bg-white/5 px-6 py-5">
-          <div class="flex flex-wrap items-center justify-center gap-3 text-center text-sm font-semibold">
-            <span class="text-indigo-300">Profile</span>
-            <i data-lucide="arrow-right" class="h-4 w-4 text-slate-600"></i>
-            <span class="text-violet-300">Skills</span>
-            <i data-lucide="arrow-right" class="h-4 w-4 text-slate-600"></i>
-            <span class="text-fuchsia-300">Gap Analysis</span>
-            <i data-lucide="arrow-right" class="h-4 w-4 text-slate-600"></i>
-            <span class="text-cyan-300">Opportunity Match</span>
-            <i data-lucide="arrow-right" class="h-4 w-4 text-slate-600"></i>
-            <span class="text-emerald-300">Career Growth</span>
-          </div>
+            <h3>Match & Apply</h3>
+            <p>Discover opportunities and understand why they match.</p>
+          </article>
         </div>
       </div>
     </section>
 
+
     <!-- ===================================================== -->
-    <!-- Roles -->
+    <!-- ROLES -->
     <!-- ===================================================== -->
-    <section id="roles" class="relative z-10 border-t border-white/5 bg-slate-950/50 py-24">
-      <div class="mx-auto max-w-7xl px-6">
-        <div class="text-center">
-          <span class="inline-flex items-center rounded-full border border-indigo-400/20 bg-indigo-500/10 px-4 py-1.5 text-sm font-semibold text-indigo-300">
-            Built for Everyone
-          </span>
-          <h2 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">
-            One platform. Three powerful roles.
-          </h2>
-          <p class="mx-auto mt-4 max-w-2xl text-slate-400">
-            Students, colleges and industry work together through a connected skill intelligence ecosystem.
+    <section id="roles" class="sb-section">
+      <div class="sb-container">
+        <div class="sb-section-head">
+          <span class="sb-section-kicker">Connected Roles</span>
+          <h2>One platform. Three perspectives.</h2>
+          <p>
+            Students, colleges and recruiters use different dashboards while sharing the same skill intelligence layer.
           </p>
         </div>
 
-        <div class="mt-16 grid gap-7 lg:grid-cols-3">
-          <!-- Student -->
-          <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-b from-indigo-500/10 to-transparent p-8">
-            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/20">
-              <i data-lucide="graduation-cap" class="h-7 w-7 text-indigo-300"></i>
+        <div class="sb-role-grid">
+          <article class="sb-role-card">
+            <div class="sb-role-card-head">
+              <span class="sb-role-icon">
+                <i data-lucide="graduation-cap"></i>
+              </span>
+              <span class="sb-role-chip">Student</span>
             </div>
-            <h3 class="text-xl font-bold">For Students</h3>
-            <p class="mt-3 text-slate-400 leading-relaxed">
-              Understand your skills, identify gaps and discover opportunities aligned with your profile.
+
+            <h3>Know your skills. Build with direction.</h3>
+
+            <p>
+              Understand readiness, close gaps and apply to better-matched opportunities.
             </p>
-            <ul class="mt-6 space-y-3 text-sm text-slate-300">
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-indigo-400 shrink-0"></i>
-                Resume skill extraction
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-indigo-400 shrink-0"></i>
-                Skill-gap analysis
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-indigo-400 shrink-0"></i>
-                Personalized roadmaps
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-indigo-400 shrink-0"></i>
-                Internship & job matching
-              </li>
+
+            <ul>
+              <li><i data-lucide="check"></i>Resume skill detection</li>
+              <li><i data-lucide="check"></i>College verification</li>
+              <li><i data-lucide="check"></i>Readiness + roadmap</li>
+              <li><i data-lucide="check"></i>Opportunity matching</li>
             </ul>
+          </article>
+
+          <article class="sb-role-card sb-role-card-featured">
+            <div class="sb-role-card-head">
+              <span class="sb-role-icon">
+                <i data-lucide="school"></i>
+              </span>
+              <span class="sb-role-chip">College / TPO</span>
+            </div>
+
+            <h3>See student readiness before placement season.</h3>
+
+            <p>
+              Use verified student data and skill-gap insights to plan better training and industry collaboration.
+            </p>
+
+            <ul>
+              <li><i data-lucide="check"></i>Official student registry</li>
+              <li><i data-lucide="check"></i>Skill-gap analytics</li>
+              <li><i data-lucide="check"></i>Industry demand insights</li>
+              <li><i data-lucide="check"></i>Collaboration management</li>
+            </ul>
+          </article>
+
+          <article class="sb-role-card">
+            <div class="sb-role-card-head">
+              <span class="sb-role-icon">
+                <i data-lucide="building-2"></i>
+              </span>
+              <span class="sb-role-chip">Recruiter</span>
+            </div>
+
+            <h3>Define skills clearly. Shortlist with context.</h3>
+
+            <p>
+              Publish roles, define requirements and review applicants using explainable skill matches.
+            </p>
+
+            <ul>
+              <li><i data-lucide="check"></i>Create jobs & internships</li>
+              <li><i data-lucide="check"></i>Required skill mapping</li>
+              <li><i data-lucide="check"></i>Application workflow</li>
+              <li><i data-lucide="check"></i>Challenges & collaborations</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- WHY -->
+    <!-- ===================================================== -->
+    <section id="why" class="sb-section sb-why-section">
+      <div class="sb-container sb-why-grid">
+        <div class="sb-why-copy">
+          <span class="sb-section-kicker sb-section-kicker-dark">Why SkillBridge</span>
+
+          <h2>Not another job board.</h2>
+
+          <p>
+            SkillBridge is built around one practical question:
+            <strong>What skills are missing, and what should happen next?</strong>
+          </p>
+
+          <div class="sb-why-list">
+            <div>
+              <i data-lucide="circle-check-big"></i>
+              <span>
+                <strong>Skill-first</strong>
+                <small>Profile evidence is connected to role requirements.</small>
+              </span>
+            </div>
+
+            <div>
+              <i data-lucide="circle-check-big"></i>
+              <span>
+                <strong>Explainable</strong>
+                <small>Matched and missing skills remain visible.</small>
+              </span>
+            </div>
+
+            <div>
+              <i data-lucide="circle-check-big"></i>
+              <span>
+                <strong>Action-oriented</strong>
+                <small>Insights lead to a roadmap, not just a score.</small>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-pipeline-card">
+          <div class="sb-pipeline-head">
+            <span>Career Pipeline</span>
+            <i data-lucide="workflow"></i>
           </div>
 
-          <!-- College -->
-          <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-b from-violet-500/10 to-transparent p-8">
-            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/20">
-              <i data-lucide="building-2" class="h-7 w-7 text-violet-300"></i>
+          <div class="sb-pipeline">
+            <div class="sb-pipeline-node">
+              <span><i data-lucide="id-card"></i></span>
+              <div>
+                <strong>Profile</strong>
+                <small>Academic + verified identity</small>
+              </div>
             </div>
-            <h3 class="text-xl font-bold">For Colleges</h3>
-            <p class="mt-3 text-slate-400 leading-relaxed">
-              Understand student skill readiness and build stronger connections with industry.
-            </p>
-            <ul class="mt-6 space-y-3 text-sm text-slate-300">
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-violet-400 shrink-0"></i>
-                Student skill analytics
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-violet-400 shrink-0"></i>
-                Industry demand analysis
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-violet-400 shrink-0"></i>
-                Skill-gap insights
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-violet-400 shrink-0"></i>
-                Industry collaborations
-              </li>
-            </ul>
-          </div>
 
-          <!-- Industry -->
-          <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-b from-fuchsia-500/10 to-transparent p-8">
-            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-500/20">
-              <i data-lucide="briefcase" class="h-7 w-7 text-fuchsia-300"></i>
+            <div class="sb-pipeline-line"></div>
+
+            <div class="sb-pipeline-node">
+              <span><i data-lucide="blocks"></i></span>
+              <div>
+                <strong>Skills</strong>
+                <small>Resume + manual + projects</small>
+              </div>
             </div>
-            <h3 class="text-xl font-bold">For Industry</h3>
-            <p class="mt-3 text-slate-400 leading-relaxed">
-              Create opportunities and identify candidates according to real skill requirements.
-            </p>
-            <ul class="mt-6 space-y-3 text-sm text-slate-300">
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-fuchsia-400 shrink-0"></i>
-                Create jobs & internships
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-fuchsia-400 shrink-0"></i>
-                Skill-based candidate matching
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-fuchsia-400 shrink-0"></i>
-                Manage applications
-              </li>
-              <li class="flex items-center gap-2.5">
-                <i data-lucide="check" class="h-4 w-4 text-fuchsia-400 shrink-0"></i>
-                Challenges & collaborations
-              </li>
-            </ul>
+
+            <div class="sb-pipeline-line"></div>
+
+            <div class="sb-pipeline-node">
+              <span><i data-lucide="scan-search"></i></span>
+              <div>
+                <strong>Gap</strong>
+                <small>Compared against target requirements</small>
+              </div>
+            </div>
+
+            <div class="sb-pipeline-line"></div>
+
+            <div class="sb-pipeline-node">
+              <span><i data-lucide="route"></i></span>
+              <div>
+                <strong>Roadmap</strong>
+                <small>Focused next learning steps</small>
+              </div>
+            </div>
+
+            <div class="sb-pipeline-line"></div>
+
+            <div class="sb-pipeline-node">
+              <span><i data-lucide="briefcase-business"></i></span>
+              <div>
+                <strong>Opportunity</strong>
+                <small>Explainable matching</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
 
     <!-- ===================================================== -->
     <!-- CTA -->
     <!-- ===================================================== -->
-    <section class="relative z-10 py-24">
-      <div class="mx-auto max-w-5xl px-6">
-        <div class="relative overflow-hidden rounded-3xl border border-indigo-400/25 bg-gradient-to-br from-indigo-600/25 via-violet-600/15 to-transparent px-6 py-16 text-center shadow-2xl sm:px-14">
-          <div class="pointer-events-none absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-500/25 blur-[100px]"></div>
-
-          <div class="relative">
-            <span class="inline-flex rounded-full border border-indigo-400/25 bg-indigo-500/15 px-4 py-1.5 text-sm font-semibold text-indigo-300">
-              Start Building Your Future
-            </span>
-
-            <h2 class="mt-6 text-3xl font-black tracking-tight sm:text-4xl">
-              Ready to bridge the skill gap?
-            </h2>
-
-            <p class="mx-auto mt-4 max-w-2xl text-slate-300/90">
-              Connect skills, education and industry opportunities through one intelligent platform.
+    <section class="sb-cta-section">
+      <div class="sb-container">
+        <div class="sb-cta-card">
+          <div>
+            <span class="sb-section-kicker">Start now</span>
+            <h2>Build a profile that leads somewhere.</h2>
+            <p>
+              Connect your skills, career goals and opportunities through one intelligent workflow.
             </p>
+          </div>
 
-            <div class="mt-9 flex flex-wrap justify-center gap-4">
-              <a class="btn btn-primary flex items-center gap-2 px-8 py-3.5 text-base shadow-xl shadow-indigo-500/30" href="/register.html">
-                Create free account
-                <i data-lucide="arrow-right" class="h-4 w-4"></i>
-              </a>
-              <a class="btn border border-white/15 bg-white/5 px-8 py-3.5 text-base hover:bg-white/10 transition" href="/login.html">
-                Login to dashboard
-              </a>
-            </div>
+          <div class="sb-cta-actions">
+            <a href="/register.html" class="sb-primary-btn sb-primary-btn-lg">
+              Create account
+              <i data-lucide="arrow-right"></i>
+            </a>
+
+            <a href="/login.html" class="sb-secondary-btn sb-secondary-btn-lg">
+              <i data-lucide="log-in"></i>
+              Login
+            </a>
           </div>
         </div>
       </div>
     </section>
+  </main>
 
-    <!-- ===================================================== -->
-    <!-- Footer -->
-    <!-- ===================================================== -->
-    <footer class="relative z-10 border-t border-white/5 py-10">
-      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
-        <a href="/" class="flex items-center gap-2 text-lg font-black">
-          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/20">
-            <i data-lucide="sparkles" class="h-3.5 w-3.5 text-indigo-300"></i>
+
+  <!-- ===================================================== -->
+  <!-- FOOTER -->
+  <!-- ===================================================== -->
+  <footer class="sb-footer">
+    <div class="sb-container sb-footer-grid">
+      <div>
+        <a href="/" class="sb-brand">
+          <span class="sb-brand-logo">
+            <span class="sb-brand-logo-core"></span>
           </span>
-          SkillBridge AI
+
+          <span class="sb-brand-text">
+            <strong>SkillBridge</strong>
+            <small>AI</small>
+          </span>
         </a>
-        <p class="text-sm text-slate-500">
-          © 2026 SkillBridge AI. Bridging academia and industry.
-        </p>
+
+        <p>Know Your Skills. Bridge Your Gap. Build Your Career.</p>
       </div>
-    </footer>
 
-  </div>
+      <div class="sb-footer-links">
+        <a href="#platform">Platform</a>
+        <a href="#journey">Journey</a>
+        <a href="#roles">Solutions</a>
+        <a href="/login.html">Login</a>
+      </div>
+
+      <small class="sb-footer-copy">
+        © 2026 SkillBridge AI. Bridging academia and industry.
+      </small>
+    </div>
+  </footer>
 
 
-  <!-- Floating SkillBridge AI Chat -->
-  <button id="sbChatLauncher" type="button" class="sb-chat-launcher" aria-label="Open SkillBridge AI Assistant">
-    <i data-lucide="message-circle" class="h-5 w-5"></i>
-    <span>Ask SkillBridge AI</span>
-  </button>
+  <!-- ===================================================== -->
+  <!-- ASSISTANT PANEL -->
+  <!-- ===================================================== -->
+  <section id="sbAssistantPanel" class="sb-assistant-panel" aria-hidden="true">
+    <div class="sb-assistant-panel-head">
+      <div class="sb-assistant-panel-title">
+        <span class="sb-panel-bot">
+          <span class="sb-panel-eye"></span>
+          <span class="sb-panel-eye"></span>
+        </span>
 
-  <section id="sbChatPanel" class="sb-chat-panel hidden" aria-label="SkillBridge AI Assistant">
-    <div class="sb-chat-head">
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-            <i data-lucide="bot" class="h-5 w-5"></i>
-          </div>
-          <div>
-            <h2 class="font-black text-white">SkillBridge AI Assistant</h2>
-            <p id="sbChatStatus" class="text-xs text-indigo-100">Platform guide</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-1">
-          <button id="sbChatNew" type="button" class="hidden rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="New chat">
-            <i data-lucide="message-square-plus" class="h-4 w-4"></i>
-          </button>
-          <button id="sbChatClose" type="button" class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="Close">
-            <i data-lucide="x" class="h-4 w-4"></i>
-          </button>
+        <div>
+          <strong>SkillBridge Assistant</strong>
+          <small>Platform guide</small>
         </div>
       </div>
+
+      <button id="sbAssistantClose" type="button" aria-label="Close assistant">
+        <i data-lucide="x"></i>
+      </button>
     </div>
 
-    <div class="flex flex-wrap gap-2 border-b border-white/10 bg-slate-900 px-3 py-3">
-      <button type="button" class="sb-chat-quick" data-sb-prompt="What is SkillBridge AI?">What is SkillBridge?</button>
-      <button type="button" class="sb-chat-quick" data-sb-prompt="How does resume analysis work?">Resume AI</button>
-      <button type="button" class="sb-chat-quick" data-sb-prompt="How does the skill gap process work?">Skill Gap</button>
-      <button type="button" class="sb-chat-quick" data-sb-prompt="How does SkillBridge help students?">For Students</button>
-      <button type="button" class="sb-chat-quick" data-sb-prompt="How does SkillBridge help colleges?">For Colleges</button>
-      <button type="button" class="sb-chat-quick" data-sb-prompt="How does SkillBridge help recruiters?">For Recruiters</button>
+    <div class="sb-assistant-quick">
+      <button data-sb-prompt="What is SkillBridge AI?" type="button">What is SkillBridge?</button>
+      <button data-sb-prompt="How does resume analysis work?" type="button">Resume AI</button>
+      <button data-sb-prompt="How does the skill gap process work?" type="button">Skill Gap</button>
+      <button data-sb-prompt="How does SkillBridge help colleges?" type="button">For Colleges</button>
     </div>
 
-    <div id="sbChatMessages" class="sb-chat-messages space-y-3"></div>
+    <div id="sbAssistantMessages" class="sb-assistant-messages"></div>
 
-    <form id="sbChatForm" class="border-t border-white/10 bg-slate-950 p-3">
-      <div class="flex items-end gap-2">
-        <textarea id="sbChatInput" rows="1"
-          class="min-h-[44px] max-h-28 flex-1 resize-none rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
-          placeholder="Ask about SkillBridge..." required></textarea>
-        <button id="sbChatSend" type="submit"
-          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white transition hover:bg-indigo-500 disabled:opacity-60"
-          aria-label="Send message">
-          <i data-lucide="send" class="h-4 w-4"></i>
-        </button>
-      </div>
+    <form id="sbAssistantForm" class="sb-assistant-form">
+      <textarea id="sbAssistantInput" rows="1" placeholder="Ask about SkillBridge..." required></textarea>
+
+      <button id="sbAssistantSend" type="submit" aria-label="Send message">
+        <i data-lucide="send"></i>
+      </button>
     </form>
   </section>
 
 
-  <!-- Scripts -->
+  <!-- ===================================================== -->
+  <!-- SCRIPTS -->
+  <!-- ===================================================== -->
   <script src="/assets/js/config.js"></script>
   <script src="/assets/js/api.js"></script>
   <script src="/assets/js/auth.js"></script>
 
   <script>
+    // -----------------------------------------------------
+    // Mobile menu
+    // -----------------------------------------------------
+    const mobileBtn = document.getElementById("sbMobileMenuBtn");
+    const mobileMenu = document.getElementById("sbMobileMenu");
+
+    if (mobileBtn && mobileMenu) {
+      mobileBtn.addEventListener("click", () => {
+        const open = mobileMenu.hidden;
+        mobileMenu.hidden = !open;
+        mobileBtn.setAttribute("aria-expanded", String(open));
+        mobileBtn.innerHTML = open
+          ? '<i data-lucide="x"></i>'
+          : '<i data-lucide="menu"></i>';
+
+        if (window.lucide) lucide.createIcons();
+      });
+
+      mobileMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          mobileMenu.hidden = true;
+          mobileBtn.setAttribute("aria-expanded", "false");
+          mobileBtn.innerHTML = '<i data-lucide="menu"></i>';
+          if (window.lucide) lucide.createIcons();
+        });
+      });
+    }
+
+
+    // -----------------------------------------------------
+    // Live platform stats
+    // -----------------------------------------------------
     function getStatsPayload(response) {
       if (response?.data?.data && typeof response.data.data === "object") {
         return response.data.data;
@@ -799,31 +855,19 @@
         return response.data;
       }
 
-      if (response && typeof response === "object") {
-        return response;
-      }
-
-      return {};
+      return response && typeof response === "object" ? response : {};
     }
 
-    function formatLiveCount(value) {
+    function formatCount(value) {
       const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "0";
-      }
-
-      return number.toLocaleString("en-IN");
+      return Number.isFinite(number)
+        ? number.toLocaleString("en-IN")
+        : "0";
     }
 
-    function setLiveStat(id, value) {
-      const element = document.getElementById(id);
-
-      if (!element) {
-        return;
-      }
-
-      element.textContent = formatLiveCount(value);
+    function setStat(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = formatCount(value);
     }
 
     async function loadPlatformStats() {
@@ -831,71 +875,117 @@
         const response = await SB.get("/opportunities/platform/stats");
         const data = getStatsPayload(response);
 
-        setLiveStat("statStudents", data.students ?? data.total_students ?? 0);
-        setLiveStat("statColleges", data.colleges ?? data.total_colleges ?? 0);
-        setLiveStat("statCompanies", data.companies ?? data.total_companies ?? data.recruiters ?? 0);
-        setLiveStat("statOpportunities", data.opportunities ?? data.total_opportunities ?? 0);
-        setLiveStat("statSkills", data.skills ?? data.total_skills ?? 0);
-        setLiveStat("statApplications", data.applications ?? data.total_applications ?? 0);
-
-        console.log("SkillBridge live platform stats:", data);
+        setStat("statStudents", data.students ?? data.total_students ?? 0);
+        setStat("statColleges", data.colleges ?? data.total_colleges ?? 0);
+        setStat("statCompanies", data.companies ?? data.total_companies ?? data.recruiters ?? 0);
+        setStat("statOpportunities", data.opportunities ?? data.total_opportunities ?? 0);
+        setStat("statSkills", data.skills ?? data.total_skills ?? 0);
+        setStat("statApplications", data.applications ?? data.total_applications ?? 0);
       } catch (error) {
         console.error("Platform stats error:", error);
 
-        // Keep the section usable if the API is temporarily unavailable.
-        ["statStudents", "statColleges", "statCompanies", "statOpportunities", "statSkills", "statApplications"]
-          .forEach(id => {
-            const element = document.getElementById(id);
-            if (element && element.textContent.trim() === "—") {
-              element.textContent = "0";
-            }
-          });
+        [
+          "statStudents",
+          "statColleges",
+          "statCompanies",
+          "statOpportunities",
+          "statSkills",
+          "statApplications"
+        ].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.textContent.trim() === "—") {
+            el.textContent = "0";
+          }
+        });
       }
     }
 
 
-    let sbChatInitialized = false;
-    let sbChatSending = false;
+    // -----------------------------------------------------
+    // Scroll reveal
+    // -----------------------------------------------------
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const sbChatLauncher = document.getElementById("sbChatLauncher");
-    const sbChatPanel = document.getElementById("sbChatPanel");
-    const sbChatClose = document.getElementById("sbChatClose");
-    const sbChatStatus = document.getElementById("sbChatStatus");
-    const sbChatMessages = document.getElementById("sbChatMessages");
-    const sbChatForm = document.getElementById("sbChatForm");
-    const sbChatInput = document.getElementById("sbChatInput");
-    const sbChatSend = document.getElementById("sbChatSend");
+    function initReveal() {
+      const targets = document.querySelectorAll(
+        ".sb-hero-copy > *, .sb-intel-stage, .sb-live-panel, .sb-section-head, .sb-feature-card, .sb-journey-step, .sb-role-card, .sb-why-copy > *, .sb-pipeline-card, .sb-cta-card"
+      );
 
-    function sbChatBubble(message) {
-      const isUser = (message.role || message.sender) === "user";
-      const content = message.content || message.message || "";
+      targets.forEach((el, index) => {
+        el.classList.add("sb-reveal");
+        el.style.setProperty("--delay", `${Math.min(index % 6, 5) * 70}ms`);
+      });
 
+      if (reduceMotion || !("IntersectionObserver" in window)) {
+        targets.forEach(el => el.classList.add("is-visible"));
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        {
+          threshold: 0.12,
+          rootMargin: "0px 0px -8% 0px"
+        }
+      );
+
+      targets.forEach(el => observer.observe(el));
+    }
+
+
+    // -----------------------------------------------------
+    // Assistant
+    // -----------------------------------------------------
+    const assistantLauncher = document.getElementById("sbAssistantLauncher");
+    const assistantPanel = document.getElementById("sbAssistantPanel");
+    const assistantClose = document.getElementById("sbAssistantClose");
+    const assistantMessages = document.getElementById("sbAssistantMessages");
+    const assistantForm = document.getElementById("sbAssistantForm");
+    const assistantInput = document.getElementById("sbAssistantInput");
+    const assistantSend = document.getElementById("sbAssistantSend");
+
+    let assistantReady = false;
+    let assistantSending = false;
+
+    function escapeHtml(value) {
+      if (window.SB?.esc) return SB.esc(String(value ?? ""));
+
+      const div = document.createElement("div");
+      div.textContent = String(value ?? "");
+      return div.innerHTML;
+    }
+
+    function bubble(role, content) {
       return `
-        <div class="flex ${isUser ? "justify-end" : "justify-start"}">
-          <div class="${isUser ? "sb-chat-user" : "sb-chat-ai"} whitespace-pre-wrap break-words text-sm leading-6">
-            ${SB.esc(content)}
-          </div>
+        <div class="sb-chat-row ${role === "user" ? "is-user" : "is-ai"}">
+          <div class="sb-chat-bubble">${escapeHtml(content)}</div>
         </div>
       `;
     }
 
-    function sbChatScroll() {
-      sbChatMessages.scrollTop = sbChatMessages.scrollHeight;
+    function scrollChat() {
+      assistantMessages.scrollTop = assistantMessages.scrollHeight;
     }
 
-    function sbPublicWelcome() {
-      sbChatMessages.innerHTML = sbChatBubble({
-        role: "assistant",
-        content:
-          "Hi! 👋 I’m the SkillBridge AI platform guide.\n\n" +
-          "Ask me about Resume Analysis, Skill Gap, Career Readiness, Roadmaps, Internships, Placements, Student, College or Recruiter features."
-      });
+    function initAssistant() {
+      if (assistantReady) return;
 
-      sbChatStatus.textContent = "Platform Guide · SkillBridge Help";
-      sbChatScroll();
+      assistantMessages.innerHTML = bubble(
+        "assistant",
+        "Hi! I’m the SkillBridge platform guide. Ask me about Resume Analysis, Skill Gap, Career Readiness, Roadmaps, Students, Colleges, Recruiters, Internships or Placement."
+      );
+
+      assistantReady = true;
+      scrollChat();
     }
 
-    function sbPublicResponse(message) {
+    function assistantResponse(message) {
       const text = String(message || "")
         .trim()
         .toLowerCase()
@@ -904,183 +994,164 @@
 
       const hasAny = (...terms) => terms.some(term => text.includes(term));
 
-      if (["hi", "hii", "hello", "hey", "namaste"].includes(text) ||
-          hasAny("what is skillbridge", "skillbridge kya hai", "website kya karta", "website ka kaam")) {
-        return "Hi 👋 Welcome to SkillBridge AI!\n\nSkillBridge AI ek Academia–Industry Skill Intelligence Platform hai. Ye students ki skills identify karta hai, target role ke against skill gap dikhata hai, personalized roadmap banata hai aur relevant internships/jobs ke saath match karta hai. Colleges ko student skill-gap aur industry-demand insights milte hain, aur recruiters skill requirements ke basis par relevant candidates identify kar sakte hain.";
-      }
-
-      if (hasAny("how it works", "kaise kaam", "workflow", "process", "flow")) {
-        return "SkillBridge flow:\n\n1. Target role select\n2. Resume upload\n3. Skills detect\n4. Student actual skills confirm\n5. Skill gap + career readiness\n6. Personalized roadmap\n7. Internship/job match %\n8. Apply and track application";
-      }
-
-      if (hasAny("fake resume", "fake skill", "verify skill", "skill verification", "verified skill", "galat skill")) {
-        return "SkillBridge resume-listed skills ko blindly trust nahi karta. Resume skills detect hone ke baad student sirf wahi skills confirm karta hai jo use actually aati hain. Strong verification flow: Resume Detected → Student Confirmed → Assessment Verified.";
+      if (
+        ["hi", "hii", "hello", "hey", "namaste"].includes(text) ||
+        hasAny("what is skillbridge", "skillbridge kya hai", "website kya karta")
+      ) {
+        return "SkillBridge AI is an academia–industry skill intelligence platform. It maps student skills, identifies gaps, builds career roadmaps and connects students with relevant opportunities while helping colleges and recruiters work with clearer skill data.";
       }
 
       if (hasAny("resume", "cv")) {
-        return "Resume AI PDF resume se skills detect karta hai. Detected skills automatically verified nahi hoti. Student pehle actual skills select/confirm karta hai; uske baad career readiness, skill gap, roadmap aur opportunity matching generate hoti hai.";
+        return "Resume Analysis detects skills from a PDF resume. The student then confirms the skills they actually know before career analysis and matching.";
       }
 
-      if (hasAny("skill gap", "missing skill", "missing skills", "gap analysis")) {
-        return "Skill Gap batata hai ki target role ya opportunity ke required skills me se kaunsi skills student ke paas hain aur kaunsi missing hain. Example: Python + FastAPI available hain, lekin PostgreSQL + Docker required hain, to wo missing gap me show honge.";
-      }
-
-      if (hasAny("readiness", "career score", "readiness score")) {
-        return "Career Readiness selected target role ke against student ki current preparation ka indicator hai. SkillBridge skills, projects, certifications aur profile completeness jaise factors ko combine karta hai. Opportunity Match % isse alag metric hai.";
+      if (hasAny("skill gap", "missing skill", "gap analysis")) {
+        return "Skill Gap compares a student's current skills with a target role or opportunity and clearly shows matched and missing skills.";
       }
 
       if (hasAny("roadmap", "learn next", "kya sikhu", "kya seekhu")) {
-        return "Personalized Roadmap missing skills ke basis par next learning steps suggest karta hai: priority skills → practice → project → deployment → interview preparation.";
-      }
-
-      if (hasAny("student")) {
-        return "Students profile aur career goal manage kar sakte hain, resume skills detect/confirm kar sakte hain, skill gap aur readiness dekh sakte hain, roadmap generate kar sakte hain, matching internships/jobs discover kar sakte hain aur applications track kar sakte hain.";
+        return "The roadmap converts missing skills into focused next steps such as learning priorities, practice, projects and interview preparation.";
       }
 
       if (hasAny("college", "tpo", "placement cell")) {
-        return "College/TPO student skills, common skill gaps, career readiness, industry demand aur collaborations track kar sakta hai. Isse targeted training, workshops aur placement preparation plan karna easier hota hai.";
+        return "College/TPO teams can maintain an official student registry, verify student identity, analyze skill gaps, track readiness and manage industry collaborations.";
       }
 
-      if (hasAny("company", "recruiter", "industry", "employer")) {
-        return "Recruiters jobs/internships create kar sakte hain, required skills define kar sakte hain, applicants ka explainable skill-match dekh sakte hain aur shortlist/interview/selection workflow manage kar sakte hain.";
+      if (hasAny("recruiter", "industry", "company")) {
+        return "Recruiters can publish jobs and internships, define required skills, review explainable matches and manage application status.";
       }
 
       if (hasAny("internship", "job", "opportunity")) {
-        return "SkillBridge active internships/jobs ko student ke confirmed skills ke against compare karta hai. Match %, matched skills aur missing skills show hote hain taaki relevance clear rahe.";
+        return "SkillBridge compares opportunity requirements with the student's confirmed skill profile and shows why the opportunity matches.";
       }
 
-      if (hasAny("placement")) {
-        return "SkillBridge placement cell ko replace nahi karta. Ye student skill gaps, career readiness, industry demand aur recruiter requirements ko connect karke placement process ko data-driven banata hai.";
-      }
-
-      if (hasAny("match percentage", "match %", "matching", "match score")) {
-        return "Opportunity Match % company ke required skills aur student ke confirmed skills ke comparison se calculate hota hai. Matched aur missing skills bhi show hote hain, isliye score explainable rehta hai.";
-      }
-
-      if (hasAny("application", "apply", "shortlist", "interview")) {
-        return "Student opportunity par apply karta hai. Recruiter status ko Applied → Under Review → Shortlisted → Interview → Selected/Rejected tak manage kar sakta hai.";
-      }
-
-      if (hasAny("collaboration", "workshop", "mentorship", "training", "hackathon")) {
-        return "SkillBridge college–industry collaborations support karta hai, jaise workshops, mentorship, training, hackathons, industry projects aur placement drives.";
-      }
-
-      if (hasAny("usp", "unique", "different", "internshala", "linkedin", "naukri")) {
-        return "SkillBridge ka USP skill-first approach hai: Skills → Gaps → Learning → Opportunities → Placement. Focus sirf opportunity listing par nahi, balki skill-gap intelligence aur explainable matching par hai.";
-      }
-
-      if (hasAny("register", "registration", "create account", "login", "signup", "sign up")) {
-        return "New user Create Account se Student, College ya Recruiter role choose karke account bana sakta hai. Existing users Login se apne role-based dashboard me ja sakte hain.";
-      }
-
-      return "Main SkillBridge AI platform guide hoon. Aap Resume Analysis, Skill Gap, Career Readiness, Roadmap, Internship, Placement, Student, College ya Recruiter features ke baare me puch sakte hain.";
+      return "You can ask me about Resume Analysis, Skill Gap, Career Readiness, Roadmaps, Students, Colleges, Recruiters, Internships or Placement.";
     }
 
-    function sbInitChat() {
-      if (sbChatInitialized) return;
-      sbPublicWelcome();
-      sbChatInitialized = true;
+    function openAssistant() {
+      initAssistant();
 
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+      assistantPanel.classList.add("is-open");
+      assistantPanel.setAttribute("aria-hidden", "false");
+      assistantLauncher.classList.add("is-hidden");
+
+      setTimeout(() => assistantInput.focus(), 220);
     }
 
-    function sbOpenChat() {
-      sbChatPanel.classList.remove("hidden");
-      sbChatLauncher.classList.add("hidden");
-      sbInitChat();
-      window.setTimeout(() => sbChatInput.focus(), 0);
+    function closeAssistant() {
+      assistantPanel.classList.remove("is-open");
+      assistantPanel.setAttribute("aria-hidden", "true");
+      assistantLauncher.classList.remove("is-hidden");
     }
 
-    function sbCloseChat() {
-      sbChatPanel.classList.add("hidden");
-      sbChatLauncher.classList.remove("hidden");
-    }
+    assistantLauncher?.addEventListener("click", openAssistant);
+    assistantClose?.addEventListener("click", closeAssistant);
 
-    if (sbChatLauncher && sbChatPanel) {
-      sbChatLauncher.addEventListener("click", sbOpenChat);
-    }
+    async function sendAssistantMessage(message) {
+      const clean = String(message || "").trim();
+      if (!clean || assistantSending) return;
 
-    if (sbChatClose) {
-      sbChatClose.addEventListener("click", sbCloseChat);
-    }
+      assistantSending = true;
+      assistantMessages.innerHTML += bubble("user", clean);
 
-    async function sbSendMessage(text) {
-      const cleanText = String(text || "").trim();
-      if (!cleanText || sbChatSending) return;
-
-      sbChatSending = true;
-      sbChatMessages.innerHTML += sbChatBubble({ role: "user", content: cleanText });
-      sbChatMessages.innerHTML += `
-        <div id="sbTypingBubble" class="flex justify-start">
-          <div class="sb-chat-ai">
-            <div class="flex items-center gap-1.5">
-              <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400"></span>
-              <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400" style="animation-delay:120ms"></span>
-              <span class="h-2 w-2 animate-bounce rounded-full bg-slate-400" style="animation-delay:240ms"></span>
-            </div>
+      assistantMessages.innerHTML += `
+        <div id="sbTyping" class="sb-chat-row is-ai">
+          <div class="sb-chat-bubble sb-chat-typing">
+            <span></span><span></span><span></span>
           </div>
-        </div>`;
+        </div>
+      `;
 
-      sbChatScroll();
-      sbChatSend.disabled = true;
+      assistantSend.disabled = true;
+      scrollChat();
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 150));
-        const answer = sbPublicResponse(cleanText);
+        await new Promise(resolve => setTimeout(resolve, 180));
 
-        document.getElementById("sbTypingBubble")?.remove();
-        sbChatMessages.innerHTML += sbChatBubble({ role: "assistant", content: answer });
-        sbChatScroll();
-      } catch (error) {
-        document.getElementById("sbTypingBubble")?.remove();
-        sbChatMessages.innerHTML += sbChatBubble({
-          role: "assistant",
-          content: "Sorry, I could not process that request."
-        });
+        document.getElementById("sbTyping")?.remove();
+
+        assistantMessages.innerHTML += bubble(
+          "assistant",
+          assistantResponse(clean)
+        );
+
+        scrollChat();
       } finally {
-        sbChatSending = false;
-        sbChatSend.disabled = false;
-        if (window.lucide) lucide.createIcons();
-        sbChatInput.focus();
+        assistantSending = false;
+        assistantSend.disabled = false;
+        assistantInput.focus();
       }
     }
 
-    if (sbChatForm) {
-      sbChatForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-        const text = sbChatInput.value;
-        sbChatInput.value = "";
-        await sbSendMessage(text);
-      });
-    }
+    assistantForm?.addEventListener("submit", async event => {
+      event.preventDefault();
 
-    if (sbChatInput) {
-      sbChatInput.addEventListener("keydown", function(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-          sbChatForm.requestSubmit();
-        }
-      });
-    }
+      const text = assistantInput.value;
+      assistantInput.value = "";
+
+      await sendAssistantMessage(text);
+    });
+
+    assistantInput?.addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        assistantForm.requestSubmit();
+      }
+    });
 
     document.querySelectorAll("[data-sb-prompt]").forEach(button => {
-      button.addEventListener("click", function() {
-        sbChatInput.value = this.dataset.sbPrompt || "";
-        sbChatInput.focus();
+      button.addEventListener("click", () => {
+        assistantInput.value = button.dataset.sbPrompt || "";
+        assistantInput.focus();
       });
     });
 
-    loadPlatformStats();
 
-    // Refresh live counts every 30 seconds.
-    window.setInterval(loadPlatformStats, 30000);
+    // -----------------------------------------------------
+    // Theme icon sync for the home button
+    // -----------------------------------------------------
+    function syncThemeButton() {
+      const isDark = document.documentElement.dataset.theme === "dark";
+
+      document.querySelectorAll("[data-theme-toggle]").forEach(button => {
+        const label = button.querySelector("[data-theme-label]");
+        const icon = button.querySelector("[data-theme-icon]");
+
+        if (label) {
+          label.textContent = isDark ? "Light" : "Dark";
+        }
+
+        if (icon) {
+          icon.innerHTML = isDark
+            ? '<i data-lucide="sun"></i>'
+            : '<i data-lucide="moon"></i>';
+        }
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    new MutationObserver(syncThemeButton).observe(
+      document.documentElement,
+      {
+        attributes: true,
+        attributeFilter: ["data-theme"]
+      }
+    );
+
+
+    // -----------------------------------------------------
+    // Start
+    // -----------------------------------------------------
+    initReveal();
+    loadPlatformStats();
+    setInterval(loadPlatformStats, 60000);
 
     if (window.lucide) {
       lucide.createIcons();
     }
-  </script>
 
+    syncThemeButton();
+  </script>
 </body>
 </html>

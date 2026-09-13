@@ -821,3 +821,163 @@ select.input {
         border-radius: 1.25rem;
     }
 }
+
+/* ===== Shared theme colours ===== */
+
+:root,
+html[data-theme="light"] {
+  --theme-bg: #f8fafc;
+  --theme-surface: #ffffff;
+  --theme-soft: #eef2ff;
+  --theme-text: #0f172a;
+  --theme-muted: #475569;
+  --theme-border: #dbe3ef;
+  --theme-input: #ffffff;
+
+  --sb-slate: #0f172a;
+  --sb-slate-soft: #64748b;
+}
+
+html[data-theme="dark"] {
+  --theme-bg: #020617;
+  --theme-surface: #0f172a;
+  --theme-soft: #1e293b;
+  --theme-text: #f1f5f9;
+  --theme-muted: #a8b6cc;
+  --theme-border: #334155;
+  --theme-input: #111c30;
+
+  --sb-slate: #f1f5f9;
+  --sb-slate-soft: #a8b6cc;
+}
+
+/* Shared page styles */
+
+html[data-theme] body {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+html[data-theme] :is(
+  .card,
+  .modal,
+  .mobile-header,
+  .dashboard-stat,
+  .theme-surface
+) {
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-theme] :is(.empty-state, .theme-soft) {
+  background: var(--theme-soft);
+  color: var(--theme-muted);
+  border-color: var(--theme-border);
+}
+
+html[data-theme] .input {
+  background-color: var(--theme-input);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-theme] .input::placeholder {
+  color: var(--theme-muted);
+}
+
+html[data-theme] :is(.input:disabled, .input[readonly]) {
+  background-color: var(--theme-soft);
+  color: var(--theme-muted);
+}
+
+html[data-theme] :is(.label, .section-title, .theme-heading) {
+  color: var(--theme-text);
+}
+
+html[data-theme] :is(.section-subtitle, .theme-muted) {
+  color: var(--theme-muted);
+}
+
+html[data-theme] .divider {
+  background: var(--theme-border);
+}
+
+/* Toggle button */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--theme-soft);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 3px;
+}
+
+/* Explicitly dark image captions / promotional sections */
+
+html[data-theme] .theme-dark-panel {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+html[data-theme] .theme-dark-panel .theme-muted {
+  color: #cbd5e1;
+}
+
+
+/* =========================================================
+   SIDEBAR SAFETY — keeps icon/text aligned on every app page
+========================================================= */
+
+.app-sidebar .sidebar-link {
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+    width: 100%;
+}
+
+.app-sidebar .sidebar-link > svg,
+.app-sidebar .sidebar-link > i,
+.app-sidebar .sidebar-link [data-lucide] {
+    width: 1.2rem;
+    height: 1.2rem;
+    min-width: 1.2rem;
+    flex: 0 0 auto;
+}
+
+.app-sidebar .sidebar-link > span {
+    min-width: 0;
+}
+
+.app-sidebar {
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .app-sidebar {
+    background: #020617;
+}
+
+html[data-theme="light"] .app-sidebar {
+    background: #020617;
+}
+
+/* Home-only CSS belongs in home.css, never here. */
