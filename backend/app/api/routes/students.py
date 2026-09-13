@@ -3,6 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.college_student_registry import CollegeStudentRegistry
+from app.models.college import College
+from app.models.department import Department
 
 from app.db.session import get_db
 from app.api.deps import require_roles
@@ -921,144 +923,201 @@ def recommended_opportunities(
 def verify_college(
     data: StudentCollegeVerifyRequest,
     db: Session = Depends(get_db),
-    user: User = Depends(
-        require_roles(UserRole.student)
-    )
+    user: User = Depends(require_roles(UserRole.student)),
 ):
-    # ---------------------------------------------
-    # Get logged-in student's profile
-    # ---------------------------------------------
-    student = (
-        db.query(Student)
-        .filter(
-            Student.user_id == user.id
-        )
+    """
+    Verify a student's official college identity using the
+    CollegeStudentRegistry maintained by the college/TPO.
+    """
+
+    student = get_student(db, user.id)
+
+    # 1) College must exist.
+    college = (
+        db.query(College)
+        .filter(College.id == data.college_id)
         .first()
     )
 
-    if not student:
+    if not college:
         raise HTTPException(
             status_code=404,
-            detail="Create student profile first"
+            detail="Selected college not found",
         )
 
-    # ---------------------------------------------
-    # Normalize entered ID
-    # ---------------------------------------------
-    entered_id = (
-        data.student_id_number
-        .strip()
-        .lower()
-    )
+    # 2) Normalize the official ID exactly like the college registry.
+    entered_id = data.student_id_number.strip().upper()
 
     if not entered_id:
         raise HTTPException(
             status_code=400,
-            detail="Student ID is required"
+            detail="Student ID / Enrollment Number is required",
         )
 
-    # ---------------------------------------------
-    # Find student in selected college registry
-    # BOTH college ID + student ID must match
-    # ---------------------------------------------
+    # 3) Match selected college + official student ID + active record.
     registry = (
         db.query(CollegeStudentRegistry)
         .filter(
-            CollegeStudentRegistry.college_id ==
-            data.college_id,
-
-            CollegeStudentRegistry.is_active ==
-            True
+            CollegeStudentRegistry.college_id == college.id,
+            CollegeStudentRegistry.student_id_number == entered_id,
+            CollegeStudentRegistry.is_active == True,
         )
-        .all()
+        .first()
     )
 
-    matched_registry = None
-
-    for row in registry:
-
-        saved_id = (
-            row.student_id_number
-            .strip()
-            .lower()
+    if not registry:
+        raise HTTPException(
+            status_code=404,
+            detail="Student ID not found in the selected college registry",
         )
 
-        if saved_id == entered_id:
-            matched_registry = row
-            break
-
-    # ---------------------------------------------
-    # Wrong ID
-    # ---------------------------------------------
-    if not matched_registry:
-
-        student.college_verified = False
-
-        db.commit()
-
-        return {
-            "success": True,
-            "verified": False,
-            "message":
-                "Student ID not found in the selected college registry."
-        }
-
-    # ---------------------------------------------
-    # Already claimed by another SkillBridge user
-    # ---------------------------------------------
+    # 4) One official ID can belong to only one SkillBridge student account.
     if (
-        matched_registry.claimed_student_id
-        and
-        matched_registry.claimed_student_id
-        != student.id
+        registry.claimed_student_id is not None
+        and registry.claimed_student_id != student.id
     ):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "This Student ID is already linked "
+                "to another SkillBridge account"
+            ),
+        )
 
-        student.college_verified = False
-
-        db.commit()
-
-        return {
-            "success": True,
-            "verified": False,
-            "message":
-                "This Student ID is already linked to another account."
-        }
-
-    # ---------------------------------------------
-    # VERIFIED
-    # ---------------------------------------------
-    student.college_id = (
-        matched_registry.college_id
+    # 5) One SkillBridge student account should claim only one registry row.
+    another_claim = (
+        db.query(CollegeStudentRegistry)
+        .filter(
+            CollegeStudentRegistry.claimed_student_id == student.id,
+            CollegeStudentRegistry.id != registry.id,
+        )
+        .first()
     )
 
-    student.department_id = (
-        matched_registry.department_id
-    )
+    if another_claim:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Your SkillBridge account is already verified "
+                "with another college registry record"
+            ),
+        )
 
-    student.student_id_number = (
-        matched_registry.student_id_number
-    )
+    # 6) Load official department, if assigned by college.
+    department = None
 
+    if registry.department_id is not None:
+        department = (
+            db.query(Department)
+            .filter(
+                Department.id == registry.department_id,
+                Department.college_id == college.id,
+            )
+            .first()
+        )
+
+    # 7) Claim the official college registry record.
+    registry.claimed_student_id = student.id
+
+    # 8) Save official registry data in the student profile.
+    student.college_id = college.id
+    student.college_name = college.name
+    student.department_id = registry.department_id
+    student.student_id_number = registry.student_id_number
     student.college_verified = True
 
-    matched_registry.claimed_student_id = (
-        student.id
-    )
+    if registry.year is not None:
+        student.year = registry.year
+
+    if department is not None:
+        student.branch = department.name
 
     db.commit()
+    db.refresh(student)
+    db.refresh(registry)
 
     return {
         "success": True,
         "verified": True,
-        "message":
-            "College student identity verified successfully.",
-
-        "college_id":
-            matched_registry.college_id,
-
-        "department_id":
-            matched_registry.department_id,
-
-        "student_id_number":
-            matched_registry.student_id_number
+        "message": "College student identity verified successfully",
+        "data": {
+            "college": {
+                "id": college.id,
+                "name": college.name,
+                "university": getattr(college, "university", None),
+            },
+            "student": {
+                "student_id_number": registry.student_id_number,
+                "official_name": registry.student_name,
+                "year": registry.year,
+            },
+            "department": {
+                "id": department.id if department else None,
+                "name": department.name if department else None,
+                "code": department.code if department else None,
+            },
+        },
     }
+
+
+@router.get("/college-verification")
+def get_college_verification(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles(UserRole.student)),
+):
+    """
+    Return the logged-in student's college verification status.
+    """
+
+    student = get_student(db, user.id)
+
+    registry = (
+        db.query(CollegeStudentRegistry)
+        .filter(
+            CollegeStudentRegistry.claimed_student_id == student.id
+        )
+        .first()
+    )
+
+    if not registry:
+        return {
+            "success": True,
+            "data": {
+                "verified": False,
+            },
+        }
+
+    college = (
+        db.query(College)
+        .filter(College.id == registry.college_id)
+        .first()
+    )
+
+    department = None
+
+    if registry.department_id is not None:
+        department = (
+            db.query(Department)
+            .filter(Department.id == registry.department_id)
+            .first()
+        )
+
+    return {
+        "success": True,
+        "data": {
+            "verified": True,
+            "student_id_number": registry.student_id_number,
+            "student_name": registry.student_name,
+            "year": registry.year,
+            "college": {
+                "id": college.id if college else None,
+                "name": college.name if college else None,
+            },
+            "department": {
+                "id": department.id if department else None,
+                "name": department.name if department else None,
+                "code": department.code if department else None,
+            },
+        },
+    }
+

@@ -4,106 +4,423 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Student Profile — SkillBridge AI">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/assets/css/app.css">
+
   <title>Student Profile | SkillBridge AI</title>
+
   <style>
-    body{background:radial-gradient(circle at 8% 0%,rgba(99,102,241,.08),transparent 28%),radial-gradient(circle at 92% 12%,rgba(14,165,233,.06),transparent 30%),#f8fafc}
-    .hero{border-radius:28px;padding:2rem;color:#fff;background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.14),transparent 25%),linear-gradient(135deg,#1e1b4b,#4338ca 48%,#2563eb);box-shadow:0 24px 60px rgba(37,99,235,.18)}
-    .panel{border:1px solid #e2e8f0;background:rgba(255,255,255,.97);border-radius:24px;box-shadow:0 14px 42px rgba(15,23,42,.05)}
-    .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:999px;animation:spin .7s linear infinite;display:inline-block}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    body{
+      background:
+        radial-gradient(circle at 8% 0%,rgba(99,102,241,.08),transparent 28%),
+        radial-gradient(circle at 92% 12%,rgba(14,165,233,.06),transparent 30%),
+        #f8fafc;
+    }
+
+    .hero{
+      border-radius:28px;
+      padding:2rem;
+      color:#fff;
+      background:
+        radial-gradient(circle at 85% 10%,rgba(255,255,255,.14),transparent 25%),
+        linear-gradient(135deg,#1e1b4b,#4338ca 48%,#2563eb);
+      box-shadow:0 24px 60px rgba(37,99,235,.18);
+    }
+
+    .panel{
+      border:1px solid #e2e8f0;
+      background:rgba(255,255,255,.97);
+      border-radius:24px;
+      box-shadow:0 14px 42px rgba(15,23,42,.05);
+    }
+
+    .verification-choice{
+      border:1px solid #e2e8f0;
+      border-radius:16px;
+      padding:14px;
+      cursor:pointer;
+      transition:.18s ease;
+      background:#fff;
+    }
+
+    .verification-choice:hover{
+      border-color:#c7d2fe;
+      background:#f8faff;
+    }
+
+    .verification-choice:has(input:checked){
+      border-color:#818cf8;
+      background:#eef2ff;
+      box-shadow:0 0 0 3px rgba(99,102,241,.08);
+    }
+
+    .official-field{
+      background:#f8fafc !important;
+      color:#475569 !important;
+      cursor:not-allowed;
+    }
+
+    .spinner{
+      width:16px;
+      height:16px;
+      border:2.5px solid rgba(255,255,255,.3);
+      border-top-color:#fff;
+      border-radius:999px;
+      animation:spin .7s linear infinite;
+      display:inline-block;
+    }
+
+    .spinner-dark{
+      width:16px;
+      height:16px;
+      border:2.5px solid rgba(79,70,229,.18);
+      border-top-color:#4f46e5;
+      border-radius:999px;
+      animation:spin .7s linear infinite;
+      display:inline-block;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
   </style>
 </head>
 
 <body class="text-slate-900">
-<script>window.SKILLBRIDGE_ROLE="student";</script>
+
+<script>
+  window.SKILLBRIDGE_ROLE = "student";
+</script>
 
 <div id="app-shell">
+
   <main class="min-h-screen lg:pl-72">
+
     <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
 
+      <!-- ================================================= -->
+      <!-- HERO -->
+      <!-- ================================================= -->
       <header class="hero mb-7">
-        <p class="text-sm font-semibold text-indigo-100">SkillBridge AI</p>
-        <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">Student Profile</h1>
-        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-indigo-100 sm:text-base">
-          Maintain your academic profile, college identity and career information.
-        </p>
+
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+
+          <div>
+            <p class="text-sm font-semibold text-indigo-100">
+              SkillBridge AI
+            </p>
+
+            <h1 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+              Student Profile
+            </h1>
+
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-indigo-100 sm:text-base">
+              Maintain your career profile and verify your official college identity
+              using records added by your College / TPO.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div class="flex items-center gap-2 text-sm font-bold text-indigo-50">
+              <i data-lucide="shield-check" class="h-4 w-4"></i>
+              Registry-based verification
+            </div>
+          </div>
+
+        </div>
+
       </header>
 
-      <div id="pageMsg" class="mb-6 hidden rounded-2xl border p-4 text-sm"></div>
+
+      <!-- ================================================= -->
+      <!-- PAGE MESSAGE -->
+      <!-- ================================================= -->
+      <div
+        id="pageMsg"
+        class="mb-6 hidden rounded-2xl border p-4 text-sm"
+      ></div>
+
 
       <div class="grid gap-6 lg:grid-cols-[1fr_.75fr]">
 
+        <!-- ================================================= -->
+        <!-- MAIN PROFILE PANEL -->
+        <!-- ================================================= -->
         <section class="panel p-6">
+
           <div class="flex items-start justify-between gap-4">
+
             <div>
-              <h2 class="text-xl font-black">Academic & Career Profile</h2>
-              <p class="mt-1 text-sm text-slate-500">Keep your information accurate for matching and analytics.</p>
+              <h2 class="text-xl font-black">
+                Academic & Career Profile
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                College identity fields are controlled by official College / TPO records.
+              </p>
             </div>
-            <span id="profileState" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">Loading</span>
+
+            <span
+              id="profileState"
+              class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600"
+            >
+              Loading
+            </span>
+
           </div>
 
-          <form id="profileForm" class="mt-6 grid gap-4 sm:grid-cols-2">
 
+          <form
+            id="profileForm"
+            class="mt-6 grid gap-4 sm:grid-cols-2"
+          >
+
+            <!-- Account details -->
             <div>
               <label class="label">Name</label>
-              <input id="fullName" class="input bg-slate-50" type="text" readonly>
+              <input
+                id="fullName"
+                class="input bg-slate-50"
+                type="text"
+                readonly
+              >
             </div>
 
             <div>
               <label class="label">Email</label>
-              <input id="email" class="input bg-slate-50" type="email" readonly>
+              <input
+                id="email"
+                class="input bg-slate-50"
+                type="email"
+                readonly
+              >
             </div>
 
-            <div>
-              <label class="label">College</label>
-              <select id="collegeSelect" class="input" name="college_id">
-                <option value="">Independent / Other</option>
-              </select>
-            </div>
 
-            <div>
-              <label class="label">Department</label>
-              <select id="departmentSelect" class="input" name="department_id" disabled>
-                <option value="">Select department</option>
-              </select>
-            </div>
-
+            <!-- ================================================= -->
+            <!-- COLLEGE VERIFICATION MODE -->
+            <!-- ================================================= -->
             <div class="sm:col-span-2">
-              <label class="label">Student ID / Enrollment Number</label>
-              <div class="flex gap-2">
-                <input id="studentIdNumber" class="input flex-1" name="student_id_number" placeholder="Enter college-issued student ID" autocomplete="off">
-                <button id="verifyCollegeBtn" type="button" class="btn btn-soft shrink-0">
-                  <i data-lucide="badge-check" class="h-4 w-4"></i>
-                  Verify
-                </button>
+
+              <div class="mb-3">
+                <label class="label">
+                  College Verification
+                </label>
+
+                <p class="mt-1 text-xs text-slate-500">
+                  Choose whether you want to verify your official college identity now.
+                </p>
               </div>
-              <p id="verificationText" class="mt-2 text-xs text-slate-500">
-                Select a registered college and enter your college-issued ID.
-              </p>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+
+                <label class="verification-choice">
+
+                  <div class="flex items-start gap-3">
+
+                    <input
+                      id="modeVerify"
+                      type="radio"
+                      name="collegeVerificationMode"
+                      value="verify"
+                      class="mt-1 h-4 w-4 accent-indigo-600"
+                      checked
+                    >
+
+                    <div>
+                      <p class="font-bold text-slate-900">
+                        Verify with my college
+                      </p>
+
+                      <p class="mt-1 text-xs leading-5 text-slate-500">
+                        Select your college and verify your official Student ID.
+                      </p>
+                    </div>
+
+                  </div>
+
+                </label>
+
+
+                <label class="verification-choice">
+
+                  <div class="flex items-start gap-3">
+
+                    <input
+                      id="modeSkip"
+                      type="radio"
+                      name="collegeVerificationMode"
+                      value="skip"
+                      class="mt-1 h-4 w-4 accent-indigo-600"
+                    >
+
+                    <div>
+                      <p class="font-bold text-slate-900">
+                        Skip verification for now
+                      </p>
+
+                      <p class="mt-1 text-xs leading-5 text-slate-500">
+                        Use SkillBridge without claiming a college identity yet.
+                      </p>
+                    </div>
+
+                  </div>
+
+                </label>
+
+              </div>
+
             </div>
 
-            <div>
-              <label class="label">Branch</label>
-              <input class="input" name="branch" placeholder="e.g. CSE (AI & ML)">
-            </div>
 
-            <div>
-              <label class="label">Year</label>
-              <select class="input" name="year">
-                <option value="">Select year</option>
-                <option value="1">1st Year</option>
-                <option value="2">2nd Year</option>
-                <option value="3">3rd Year</option>
-                <option value="4">4th Year</option>
+            <!-- ================================================= -->
+            <!-- COLLEGE SELECT -->
+            <!-- ================================================= -->
+            <div class="sm:col-span-2">
+
+              <label class="label">
+                College
+              </label>
+
+              <select
+                id="collegeSelect"
+                class="input"
+              >
+                <option value="">
+                  Select your college
+                </option>
               </select>
+
+              <p
+                id="collegeSelectHelp"
+                class="mt-2 text-xs text-slate-500"
+              >
+                Student ID will unlock only after selecting a college.
+              </p>
+
             </div>
 
+
+            <!-- ================================================= -->
+            <!-- OFFICIAL STUDENT ID -->
+            <!-- ================================================= -->
+            <div class="sm:col-span-2">
+
+              <label class="label">
+                Student ID / Enrollment Number
+              </label>
+
+              <div class="flex flex-col gap-2 sm:flex-row">
+
+                <input
+                  id="studentIdNumber"
+                  class="input flex-1 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                  type="text"
+                  placeholder="Select college first"
+                  autocomplete="off"
+                  disabled
+                >
+
+                <button
+                  id="verifyCollegeBtn"
+                  type="button"
+                  class="btn btn-primary shrink-0 justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
+                >
+                  <i data-lucide="badge-check" class="h-4 w-4"></i>
+                  Verify College ID
+                </button>
+
+              </div>
+
+              <p
+                id="verificationText"
+                class="mt-2 text-xs text-slate-500"
+              >
+                Select a registered college first.
+              </p>
+
+              <div
+                id="verifyResult"
+                class="mt-3 hidden rounded-xl border px-4 py-3 text-sm font-semibold"
+                role="status"
+                aria-live="polite"
+              ></div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- OFFICIAL REGISTRY FIELDS -->
+            <!-- ================================================= -->
             <div>
-              <label class="label">Semester</label>
-              <select class="input" name="semester">
+              <label class="label">
+                Department
+                <span class="ml-1 text-[10px] font-bold uppercase tracking-wide text-indigo-500">
+                  Official
+                </span>
+              </label>
+
+              <input
+                id="officialDepartment"
+                class="input official-field"
+                type="text"
+                value="Set after verification"
+                readonly
+              >
+            </div>
+
+
+            <div>
+              <label class="label">
+                Branch
+                <span class="ml-1 text-[10px] font-bold uppercase tracking-wide text-indigo-500">
+                  Official
+                </span>
+              </label>
+
+              <input
+                id="officialBranch"
+                class="input official-field"
+                type="text"
+                value="Set after verification"
+                readonly
+              >
+            </div>
+
+
+            <div>
+              <label class="label">
+                Academic Year
+                <span class="ml-1 text-[10px] font-bold uppercase tracking-wide text-indigo-500">
+                  Official
+                </span>
+              </label>
+
+              <input
+                id="officialYear"
+                class="input official-field"
+                type="text"
+                value="Set after verification"
+                readonly
+              >
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- STUDENT EDITABLE FIELDS -->
+            <!-- ================================================= -->
+            <div>
+              <label class="label">
+                Semester
+              </label>
+
+              <select
+                class="input"
+                name="semester"
+              >
                 <option value="">Select semester</option>
                 <option value="1">Semester 1</option>
                 <option value="2">Semester 2</option>
@@ -116,288 +433,1528 @@
               </select>
             </div>
 
-            <div>
-              <label class="label">Career Goal</label>
-              <input class="input" name="career_goal" placeholder="e.g. Backend Developer">
-            </div>
 
             <div class="sm:col-span-2">
-              <label class="label">Bio</label>
-              <textarea class="input min-h-[110px]" name="bio" placeholder="Briefly describe yourself..."></textarea>
+              <label class="label">
+                Career Goal
+              </label>
+
+              <input
+                class="input"
+                name="career_goal"
+                placeholder="e.g. Backend Developer"
+              >
             </div>
 
-            <div>
-              <label class="label">GitHub URL</label>
-              <input class="input" name="github_url" placeholder="https://github.com/...">
-            </div>
-
-            <div>
-              <label class="label">LinkedIn URL</label>
-              <input class="input" name="linkedin_url" placeholder="https://linkedin.com/in/...">
-            </div>
 
             <div class="sm:col-span-2">
-              <label class="label">Portfolio URL</label>
-              <input class="input" name="portfolio_url" placeholder="https://...">
+              <label class="label">
+                Bio
+              </label>
+
+              <textarea
+                class="input min-h-[110px]"
+                name="bio"
+                placeholder="Briefly describe yourself..."
+              ></textarea>
             </div>
 
-            <button id="saveBtn" type="submit" class="btn btn-primary sm:col-span-2 justify-center py-3">
+
+            <div>
+              <label class="label">
+                GitHub URL
+              </label>
+
+              <input
+                class="input"
+                name="github_url"
+                placeholder="https://github.com/..."
+              >
+            </div>
+
+
+            <div>
+              <label class="label">
+                LinkedIn URL
+              </label>
+
+              <input
+                class="input"
+                name="linkedin_url"
+                placeholder="https://linkedin.com/in/..."
+              >
+            </div>
+
+
+            <div class="sm:col-span-2">
+              <label class="label">
+                Portfolio URL
+              </label>
+
+              <input
+                class="input"
+                name="portfolio_url"
+                placeholder="https://..."
+              >
+            </div>
+
+
+            <button
+              id="saveBtn"
+              type="submit"
+              class="btn btn-primary sm:col-span-2 justify-center py-3"
+            >
               <i data-lucide="save" class="h-4 w-4"></i>
               Save Profile
             </button>
+
           </form>
+
         </section>
 
+
+        <!-- ================================================= -->
+        <!-- SIDEBAR -->
+        <!-- ================================================= -->
         <aside class="space-y-6">
+
+          <!-- Verification status -->
           <section class="panel p-6">
+
             <div class="flex items-center gap-3">
-              <div id="verifyIcon" class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+
+              <div
+                id="verifyIcon"
+                class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700"
+              >
                 <i data-lucide="shield-alert" class="h-5 w-5"></i>
               </div>
+
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">College Status</p>
-                <h2 id="verifyTitle" class="mt-1 text-lg font-black text-slate-900">Not Verified</h2>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  College Status
+                </p>
+
+                <h2
+                  id="verifyTitle"
+                  class="mt-1 text-lg font-black text-slate-900"
+                >
+                  Not Verified
+                </h2>
               </div>
+
             </div>
-            <p id="verifyDescription" class="mt-4 text-sm leading-6 text-slate-500">
-              Verify your college identity using the Student ID added by your college.
+
+            <p
+              id="verifyDescription"
+              class="mt-4 text-sm leading-6 text-slate-500"
+            >
+              Select your college and verify the Student ID added by your College / TPO.
             </p>
+
+
+            <!-- Official verified details -->
+            <div
+              id="verifiedDetails"
+              class="mt-5 hidden rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4"
+            >
+
+              <div class="grid gap-3 text-sm">
+
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                    Official Name
+                  </p>
+                  <p id="verifiedStudentName" class="mt-1 font-bold text-slate-900">—</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                    Student ID
+                  </p>
+                  <p id="verifiedStudentId" class="mt-1 font-bold text-slate-900">—</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                    College
+                  </p>
+                  <p id="verifiedCollegeName" class="mt-1 font-bold text-slate-900">—</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                    Department
+                  </p>
+                  <p id="verifiedDepartmentName" class="mt-1 font-bold text-slate-900">—</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                    Year
+                  </p>
+                  <p id="verifiedYear" class="mt-1 font-bold text-slate-900">—</p>
+                </div>
+
+              </div>
+
+            </div>
+
           </section>
 
+
+          <!-- Flow -->
           <section class="panel p-6">
-            <h2 class="text-lg font-black">Why verify your college?</h2>
-            <div class="mt-4 space-y-4 text-sm text-slate-600">
-              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Access college-specific industry collaborations.</p></div>
-              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Improve authenticity for recruiters.</p></div>
-              <div class="flex gap-3"><i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i><p>Connect your profile with college analytics.</p></div>
+
+            <h2 class="text-lg font-black">
+              How verification works
+            </h2>
+
+            <div class="mt-5 space-y-4">
+
+              <div class="flex gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-black text-indigo-700">
+                  1
+                </div>
+                <p class="pt-1 text-sm text-slate-600">
+                  College / TPO adds your official record.
+                </p>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-black text-indigo-700">
+                  2
+                </div>
+                <p class="pt-1 text-sm text-slate-600">
+                  You select the same college and enter your official Student ID.
+                </p>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-black text-indigo-700">
+                  3
+                </div>
+                <p class="pt-1 text-sm text-slate-600">
+                  Department and year are taken directly from the official registry.
+                </p>
+              </div>
+
             </div>
+
           </section>
+
+
+          <!-- Why verify -->
+          <section class="panel p-6">
+
+            <h2 class="text-lg font-black">
+              Why verify your college?
+            </h2>
+
+            <div class="mt-4 space-y-4 text-sm text-slate-600">
+
+              <div class="flex gap-3">
+                <i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+                <p>Access college-specific industry collaborations.</p>
+              </div>
+
+              <div class="flex gap-3">
+                <i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+                <p>Improve profile authenticity for recruiters.</p>
+              </div>
+
+              <div class="flex gap-3">
+                <i data-lucide="check-circle-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+                <p>Connect your profile with college analytics.</p>
+              </div>
+
+            </div>
+
+          </section>
+
         </aside>
 
       </div>
+
     </div>
+
   </main>
+
 </div>
 
+
+<!-- ========================================================= -->
+<!-- PROJECT SCRIPTS -->
+<!-- ========================================================= -->
 <script src="/assets/js/config.js"></script>
 <script src="/assets/js/api.js"></script>
 <script src="/assets/js/auth.js"></script>
 <script src="/assets/js/shell.js"></script>
 
-<script>
-  const profileForm=document.getElementById("profileForm");
-  const saveBtn=document.getElementById("saveBtn");
-  const collegeSelect=document.getElementById("collegeSelect");
-  const departmentSelect=document.getElementById("departmentSelect");
-  const studentIdNumber=document.getElementById("studentIdNumber");
-  const verifyCollegeBtn=document.getElementById("verifyCollegeBtn");
-  let currentProfile=null;
 
-  function arrayData(response){
-    if(Array.isArray(response)) return response;
-    if(Array.isArray(response?.data)) return response.data;
+<script>
+  const profileForm =
+    document.getElementById("profileForm");
+
+  const saveBtn =
+    document.getElementById("saveBtn");
+
+  const collegeSelect =
+    document.getElementById("collegeSelect");
+
+  const studentIdNumber =
+    document.getElementById("studentIdNumber");
+
+  const verifyCollegeBtn =
+    document.getElementById("verifyCollegeBtn");
+
+  const modeVerify =
+    document.getElementById("modeVerify");
+
+  const modeSkip =
+    document.getElementById("modeSkip");
+
+  const officialDepartment =
+    document.getElementById("officialDepartment");
+
+  const officialBranch =
+    document.getElementById("officialBranch");
+
+  const officialYear =
+    document.getElementById("officialYear");
+
+  const VERIFICATION_MODE_KEY =
+    "skillbridge_college_verification_mode";
+
+  let currentProfile = null;
+  let verificationStatus = null;
+
+
+  // =========================================================
+  // Helpers
+  // =========================================================
+
+  function arrayData(response) {
+
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    if (Array.isArray(response?.data)) {
+      return response.data;
+    }
+
     return [];
   }
 
-  function showMessage(type,text){
-    const el=document.getElementById("pageMsg");
+
+  function showMessage(type, text) {
+
+    const el =
+      document.getElementById("pageMsg");
+
     el.classList.remove("hidden");
-    el.className=type==="success"
-      ?"mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700"
-      :"mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
-    el.textContent=text;
-  }
 
-  function setVerificationUI(verified){
-    const title=document.getElementById("verifyTitle");
-    const description=document.getElementById("verifyDescription");
-    const text=document.getElementById("verificationText");
-    const icon=document.getElementById("verifyIcon");
+    if (type === "success") {
 
-    if(verified){
-      title.textContent="College Verified";
-      description.textContent="Your student identity has been verified with your selected college.";
-      text.textContent="Verified with college registry.";
-      text.className="mt-2 text-xs font-semibold text-emerald-600";
-      icon.className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700";
-      icon.innerHTML='<i data-lucide="badge-check" class="h-5 w-5"></i>';
-    }else{
-      title.textContent="Not Verified";
-      description.textContent="Verify your college identity using the Student ID added by your college.";
-      text.textContent="Select a registered college and enter your college-issued ID.";
-      text.className="mt-2 text-xs text-slate-500";
-      icon.className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700";
-      icon.innerHTML='<i data-lucide="shield-alert" class="h-5 w-5"></i>';
+      el.className =
+        "mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700";
+
+    } else if (type === "info") {
+
+      el.className =
+        "mb-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-sm text-indigo-700";
+
+    } else {
+
+      el.className =
+        "mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
+
     }
-    if(window.lucide) lucide.createIcons();
+
+    el.textContent = text;
   }
 
-  async function loadUser(){
-    try{
-      const me=await Auth.me();
-      document.getElementById("fullName").value=me?.full_name||me?.name||"";
-      document.getElementById("email").value=me?.email||"";
-    }catch(error){
-      console.error("User load failed:",error);
-    }
-  }
 
-  async function loadColleges(){
-    try{
-      const response=await SB.get("/colleges/student-directory");
-      const colleges=arrayData(response);
-      collegeSelect.innerHTML='<option value="">Independent / Other</option>'+
-        colleges.map(c=>`<option value="${c.id}">${SB.esc(c.name)}</option>`).join("");
-    }catch(error){
-      console.error("College directory error:",error);
-    }
-  }
+  function showVerifyResult(type, text) {
 
-  async function loadDepartments(collegeId,selectedId=null){
-    departmentSelect.innerHTML='<option value="">Select department</option>';
-    if(!collegeId){
-      departmentSelect.disabled=true;
+    const el =
+      document.getElementById("verifyResult");
+
+    if (!el) {
       return;
     }
-    try{
-      const response=await SB.get(`/colleges/${collegeId}/student-departments`);
-      const departments=arrayData(response);
-      departmentSelect.innerHTML='<option value="">Select department</option>'+
-        departments.map(d=>`<option value="${d.id}">${SB.esc(d.name)}${d.code?` (${SB.esc(d.code)})`:""}</option>`).join("");
-      departmentSelect.disabled=false;
-      if(selectedId) departmentSelect.value=String(selectedId);
-    }catch(error){
-      console.error("Department load failed:",error);
-      departmentSelect.disabled=true;
+
+    el.classList.remove("hidden");
+
+    if (type === "success") {
+
+      el.className =
+        "mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700";
+
+      el.innerHTML =
+        `<div class="flex items-start gap-2">
+          <i data-lucide="circle-check" class="mt-0.5 h-4 w-4 shrink-0"></i>
+          <span>${SB.esc(String(text))}</span>
+        </div>`;
+
+    } else if (type === "loading") {
+
+      el.className =
+        "mt-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700";
+
+      el.innerHTML =
+        `<div class="flex items-center gap-2">
+          <span class="spinner-dark"></span>
+          <span>${SB.esc(String(text))}</span>
+        </div>`;
+
+    } else {
+
+      el.className =
+        "mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700";
+
+      el.innerHTML =
+        `<div class="flex items-start gap-2">
+          <i data-lucide="circle-x" class="mt-0.5 h-4 w-4 shrink-0"></i>
+          <span>${SB.esc(String(text))}</span>
+        </div>`;
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
     }
   }
 
-  async function loadProfile(){
-    try{
-      const response=await SB.get("/students/profile");
-      currentProfile=response?.data||response;
-      if(!currentProfile) return;
 
-      document.getElementById("profileState").textContent="Saved";
+  function getApiErrorMessage(error) {
 
-      ["student_id_number","branch","year","semester","career_goal","bio","github_url","linkedin_url","portfolio_url"].forEach(name=>{
-        const el=profileForm.elements[name];
-        if(el) el.value=currentProfile[name]??"";
-      });
-
-      if(currentProfile.college_id){
-        collegeSelect.value=String(currentProfile.college_id);
-        await loadDepartments(currentProfile.college_id,currentProfile.department_id);
-      }
-
-      setVerificationUI(Boolean(currentProfile.college_verified));
-    }catch(error){
-      currentProfile=null;
-      document.getElementById("profileState").textContent="New Profile";
-      console.log("Profile not available yet:",error);
-    }
+    return (
+      error?.detail ||
+      error?.data?.detail ||
+      error?.response?.data?.detail ||
+      error?.response?.detail ||
+      error?.message ||
+      "College verification failed."
+    );
   }
 
-  collegeSelect.addEventListener("change",async function(){
-    setVerificationUI(false);
-    await loadDepartments(this.value);
-  });
 
-  profileForm.addEventListener("submit",async function(event){
-    event.preventDefault();
-    const f=new FormData(profileForm);
+  function getVerificationResponse(response) {
 
-    const payload={
-      college_id:f.get("college_id")?Number(f.get("college_id")):null,
-      department_id:f.get("department_id")?Number(f.get("department_id")):null,
-      student_id_number:String(f.get("student_id_number")||"").trim()||null,
-      college_name:null,
-      branch:String(f.get("branch")||"").trim()||null,
-      year:f.get("year")?Number(f.get("year")):null,
-      semester:f.get("semester")?Number(f.get("semester")):null,
-      career_goal:String(f.get("career_goal")||"").trim()||null,
-      bio:String(f.get("bio")||"").trim()||null,
-      github_url:String(f.get("github_url")||"").trim()||null,
-      linkedin_url:String(f.get("linkedin_url")||"").trim()||null,
-      portfolio_url:String(f.get("portfolio_url")||"").trim()||null
+    // Support direct backend JSON and common nested API wrappers.
+    if (typeof response?.verified === "boolean") {
+      return response;
+    }
+
+    if (
+      response?.data &&
+      typeof response.data?.verified === "boolean"
+    ) {
+      return response.data;
+    }
+
+    if (
+      response?.data?.data &&
+      typeof response.data.data?.verified === "boolean"
+    ) {
+      return response.data.data;
+    }
+
+    return response || {};
+  }
+
+
+  function editableProfilePayload() {
+
+    const form =
+      new FormData(profileForm);
+
+    return {
+      semester:
+        form.get("semester")
+          ? Number(form.get("semester"))
+          : null,
+
+      career_goal:
+        String(
+          form.get("career_goal") || ""
+        ).trim() || null,
+
+      bio:
+        String(
+          form.get("bio") || ""
+        ).trim() || null,
+
+      github_url:
+        String(
+          form.get("github_url") || ""
+        ).trim() || null,
+
+      linkedin_url:
+        String(
+          form.get("linkedin_url") || ""
+        ).trim() || null,
+
+      portfolio_url:
+        String(
+          form.get("portfolio_url") || ""
+        ).trim() || null,
     };
+  }
 
-    const old=saveBtn.innerHTML;
-    saveBtn.disabled=true;
-    saveBtn.innerHTML='<span class="spinner"></span> Saving...';
 
-    try{
-      const response=currentProfile?.id
-        ?await SB.patch("/students/profile",payload)
-        :await SB.post("/students/profile",payload);
+  function yearLabel(year) {
 
-      currentProfile=response?.data||response||currentProfile;
-      document.getElementById("profileState").textContent="Saved";
-      showMessage("success","Profile saved successfully.");
-      await loadProfile();
-    }catch(error){
-      showMessage("error",error.message||"Could not save profile.");
-    }finally{
-      saveBtn.disabled=false;
-      saveBtn.innerHTML=old;
-      if(window.lucide) lucide.createIcons();
+    if (!year) {
+      return "—";
     }
-  });
 
-  verifyCollegeBtn.addEventListener("click",async function(){
-    const collegeId=Number(collegeSelect.value);
-    const studentId=studentIdNumber.value.trim();
+    const n =
+      Number(year);
 
-    if(!collegeId){
-      showMessage("error","Please select a registered college first.");
+    if (n === 1) return "1st Year";
+    if (n === 2) return "2nd Year";
+    if (n === 3) return "3rd Year";
+    if (n === 4) return "4th Year";
+
+    return `Year ${year}`;
+  }
+
+
+  function getVerificationMode() {
+
+    return document.querySelector(
+      'input[name="collegeVerificationMode"]:checked'
+    )?.value || "verify";
+  }
+
+
+  function setMode(mode) {
+
+    const safeMode =
+      mode === "skip"
+        ? "skip"
+        : "verify";
+
+    modeVerify.checked =
+      safeMode === "verify";
+
+    modeSkip.checked =
+      safeMode === "skip";
+
+    localStorage.setItem(
+      VERIFICATION_MODE_KEY,
+      safeMode
+    );
+  }
+
+
+  // =========================================================
+  // Verification UI
+  // =========================================================
+
+  function clearOfficialDetails() {
+
+    officialDepartment.value =
+      "Set after verification";
+
+    officialBranch.value =
+      "Set after verification";
+
+    officialYear.value =
+      "Set after verification";
+
+    document
+      .getElementById("verifiedDetails")
+      .classList.add("hidden");
+  }
+
+
+  function populateOfficialDetails(data) {
+
+    if (!data) {
       return;
     }
-    if(!studentId){
-      showMessage("error","Please enter your Student ID / Enrollment Number.");
+
+    const department =
+      data.department?.name ||
+      currentProfile?.branch ||
+      "—";
+
+    const branch =
+      currentProfile?.branch ||
+      data.department?.name ||
+      "—";
+
+    const year =
+      data.year ??
+      data.student?.year ??
+      currentProfile?.year ??
+      null;
+
+    officialDepartment.value =
+      department;
+
+    officialBranch.value =
+      branch;
+
+    officialYear.value =
+      yearLabel(year);
+
+    document
+      .getElementById("verifiedStudentName")
+      .textContent =
+        data.student_name ||
+        data.student?.official_name ||
+        "—";
+
+    document
+      .getElementById("verifiedStudentId")
+      .textContent =
+        data.student_id_number ||
+        data.student?.student_id_number ||
+        currentProfile?.student_id_number ||
+        "—";
+
+    document
+      .getElementById("verifiedCollegeName")
+      .textContent =
+        data.college?.name ||
+        currentProfile?.college_name ||
+        "—";
+
+    document
+      .getElementById("verifiedDepartmentName")
+      .textContent =
+        data.department?.name ||
+        currentProfile?.branch ||
+        "—";
+
+    document
+      .getElementById("verifiedYear")
+      .textContent =
+        yearLabel(year);
+
+    document
+      .getElementById("verifiedDetails")
+      .classList.remove("hidden");
+  }
+
+
+  function setVerificationUI(
+    verified,
+    data = null
+  ) {
+
+    const title =
+      document.getElementById("verifyTitle");
+
+    const description =
+      document.getElementById("verifyDescription");
+
+    const text =
+      document.getElementById("verificationText");
+
+    const icon =
+      document.getElementById("verifyIcon");
+
+    if (verified) {
+
+      title.textContent =
+        "College Verified";
+
+      description.textContent =
+        "Your identity is linked to the official record added by your College / TPO.";
+
+      text.textContent =
+        "Verified with the official college registry.";
+
+      text.className =
+        "mt-2 text-xs font-semibold text-emerald-600";
+
+      icon.className =
+        "flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700";
+
+      icon.innerHTML =
+        '<i data-lucide="badge-check" class="h-5 w-5"></i>';
+
+      populateOfficialDetails(
+        data || verificationStatus
+      );
+
+    } else {
+
+      clearOfficialDetails();
+
+      if (getVerificationMode() === "skip") {
+
+        title.textContent =
+          "Verification Skipped";
+
+        description.textContent =
+          "You can use SkillBridge now and verify your college identity later.";
+
+        text.textContent =
+          "College verification is currently skipped.";
+
+        text.className =
+          "mt-2 text-xs font-semibold text-slate-500";
+
+        icon.className =
+          "flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-600";
+
+        icon.innerHTML =
+          '<i data-lucide="circle-minus" class="h-5 w-5"></i>';
+
+      } else {
+
+        title.textContent =
+          "Not Verified";
+
+        description.textContent =
+          "Select your college and enter the Student ID added by your College / TPO.";
+
+        text.textContent =
+          collegeSelect.value
+            ? "Enter your official Student ID / Enrollment Number."
+            : "Select a registered college first.";
+
+        text.className =
+          "mt-2 text-xs text-slate-500";
+
+        icon.className =
+          "flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700";
+
+        icon.innerHTML =
+          '<i data-lucide="shield-alert" class="h-5 w-5"></i>';
+
+      }
+
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+
+  function updateVerificationControls() {
+
+    const verified =
+      Boolean(
+        verificationStatus?.verified ||
+        currentProfile?.college_verified
+      );
+
+    const mode =
+      getVerificationMode();
+
+    const hasCollege =
+      Boolean(collegeSelect.value);
+
+    const hasStudentId =
+      Boolean(studentIdNumber.value.trim());
+
+    if (verified) {
+
+      modeVerify.checked = true;
+      modeVerify.disabled = true;
+      modeSkip.disabled = true;
+
+      collegeSelect.disabled = true;
+      studentIdNumber.disabled = true;
+      verifyCollegeBtn.disabled = true;
+
+      document
+        .getElementById("collegeSelectHelp")
+        .textContent =
+          "College identity is locked after successful verification.";
+
+      studentIdNumber.placeholder =
+        "Verified Student ID";
+
       return;
     }
 
-    const old=verifyCollegeBtn.innerHTML;
-    verifyCollegeBtn.disabled=true;
-    verifyCollegeBtn.innerHTML='<span class="spinner"></span> Verifying...';
+    modeVerify.disabled = false;
+    modeSkip.disabled = false;
 
-    try{
-      const response=await SB.post("/students/verify-college",{
-        college_id:collegeId,
-        student_id_number:studentId
+    if (mode === "skip") {
+
+      collegeSelect.disabled = true;
+
+      studentIdNumber.disabled = true;
+      studentIdNumber.value = "";
+
+      verifyCollegeBtn.disabled = true;
+
+      studentIdNumber.placeholder =
+        "Verification skipped";
+
+      document
+        .getElementById("collegeSelectHelp")
+        .textContent =
+          "Verification is optional. You can enable it later.";
+
+      setVerificationUI(false);
+
+      return;
+    }
+
+    collegeSelect.disabled = false;
+
+    studentIdNumber.disabled =
+      !hasCollege;
+
+    verifyCollegeBtn.disabled =
+      !(hasCollege && hasStudentId);
+
+    studentIdNumber.placeholder =
+      hasCollege
+        ? "Enter official Student ID / Enrollment No."
+        : "Select college first";
+
+    document
+      .getElementById("collegeSelectHelp")
+      .textContent =
+        hasCollege
+          ? "Now enter the Student ID issued by this college."
+          : "Student ID will unlock only after selecting a college.";
+
+    setVerificationUI(false);
+  }
+
+
+  // =========================================================
+  // Load user
+  // =========================================================
+
+  async function loadUser() {
+
+    try {
+
+      const me =
+        await Auth.me();
+
+      document
+        .getElementById("fullName")
+        .value =
+          me?.full_name ||
+          me?.name ||
+          "";
+
+      document
+        .getElementById("email")
+        .value =
+          me?.email ||
+          "";
+
+    } catch (error) {
+
+      console.error(
+        "User load failed:",
+        error
+      );
+
+    }
+
+  }
+
+
+  // =========================================================
+  // Load colleges
+  // =========================================================
+
+  async function loadColleges() {
+
+    try {
+
+      const response =
+        await SB.get(
+          "/colleges/student-directory"
+        );
+
+      const colleges =
+        arrayData(response);
+
+      collegeSelect.innerHTML =
+        '<option value="">Select your college</option>' +
+        colleges.map(
+          college => `
+            <option value="${college.id}">
+              ${SB.esc(college.name)}
+              ${
+                college.university
+                  ? ` — ${SB.esc(college.university)}`
+                  : ""
+              }
+            </option>
+          `
+        ).join("");
+
+    } catch (error) {
+
+      console.error(
+        "College directory error:",
+        error
+      );
+
+      collegeSelect.innerHTML =
+        '<option value="">Could not load colleges</option>';
+
+    }
+
+  }
+
+
+  // =========================================================
+  // Load profile
+  // =========================================================
+
+  async function loadProfile() {
+
+    try {
+
+      const response =
+        await SB.get(
+          "/students/profile"
+        );
+
+      currentProfile =
+        response?.data ||
+        response;
+
+      if (!currentProfile?.id) {
+        throw new Error(
+          "Profile not found"
+        );
+      }
+
+      document
+        .getElementById("profileState")
+        .textContent =
+          "Saved";
+
+      [
+        "semester",
+        "career_goal",
+        "bio",
+        "github_url",
+        "linkedin_url",
+        "portfolio_url"
+      ].forEach(name => {
+
+        const element =
+          profileForm.elements[name];
+
+        if (element) {
+          element.value =
+            currentProfile[name] ?? "";
+        }
+
       });
 
-      const result=response?.data||response;
 
-      if(result?.verified){
-        setVerificationUI(true);
-        if(result.department_id){
-          await loadDepartments(collegeId,result.department_id);
-        }
-        showMessage("success",result.message||"College verified successfully.");
-        await loadProfile();
-      }else{
-        setVerificationUI(false);
-        showMessage("error",result?.message||"Student ID could not be verified.");
+      if (currentProfile.college_id) {
+
+        collegeSelect.value =
+          String(
+            currentProfile.college_id
+          );
+
       }
-    }catch(error){
-      setVerificationUI(false);
-      showMessage("error",error.message||"College verification failed.");
-    }finally{
-      verifyCollegeBtn.disabled=false;
-      verifyCollegeBtn.innerHTML=old;
-      if(window.lucide) lucide.createIcons();
-    }
-  });
 
-  async function init(){
+
+      if (currentProfile.student_id_number) {
+
+        studentIdNumber.value =
+          currentProfile.student_id_number;
+
+      }
+
+
+      officialDepartment.value =
+        currentProfile.branch ||
+        "Set after verification";
+
+      officialBranch.value =
+        currentProfile.branch ||
+        "Set after verification";
+
+      officialYear.value =
+        currentProfile.year
+          ? yearLabel(currentProfile.year)
+          : "Set after verification";
+
+
+    } catch (error) {
+
+      currentProfile =
+        null;
+
+      document
+        .getElementById("profileState")
+        .textContent =
+          "New Profile";
+
+      console.log(
+        "Student profile does not exist yet.",
+        error
+      );
+
+    }
+
+  }
+
+
+  // =========================================================
+  // Load official verification status
+  // =========================================================
+
+  async function loadVerificationStatus() {
+
+    if (!currentProfile?.id) {
+
+      verificationStatus = {
+        verified: false
+      };
+
+      setVerificationUI(false);
+      updateVerificationControls();
+
+      return;
+    }
+
+    try {
+
+      const response =
+        await SB.get(
+          "/students/college-verification"
+        );
+
+      const data =
+        response?.data ||
+        response;
+
+      verificationStatus =
+        data || {
+          verified: false
+        };
+
+
+      if (verificationStatus.verified) {
+
+        setMode("verify");
+
+        if (
+          verificationStatus.college?.id
+        ) {
+
+          collegeSelect.value =
+            String(
+              verificationStatus.college.id
+            );
+
+        }
+
+
+        if (
+          verificationStatus.student_id_number
+        ) {
+
+          studentIdNumber.value =
+            verificationStatus.student_id_number;
+
+        }
+
+
+        setVerificationUI(
+          true,
+          verificationStatus
+        );
+
+      } else {
+
+        setVerificationUI(false);
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "College verification status load failed:",
+        error
+      );
+
+      verificationStatus = {
+        verified:
+          Boolean(
+            currentProfile?.college_verified
+          )
+      };
+
+      setVerificationUI(
+        verificationStatus.verified,
+        null
+      );
+
+    }
+
+    updateVerificationControls();
+
+  }
+
+
+  // =========================================================
+  // Ensure student profile exists before verification
+  // =========================================================
+
+  async function ensureProfileExists() {
+
+    if (currentProfile?.id) {
+      return currentProfile;
+    }
+
+    const response =
+      await SB.post(
+        "/students/profile",
+        editableProfilePayload()
+      );
+
+    currentProfile =
+      response?.data ||
+      response;
+
+    document
+      .getElementById("profileState")
+      .textContent =
+        "Saved";
+
+    return currentProfile;
+
+  }
+
+
+  // =========================================================
+  // Events - verification mode
+  // =========================================================
+
+  document
+    .querySelectorAll(
+      'input[name="collegeVerificationMode"]'
+    )
+    .forEach(radio => {
+
+      radio.addEventListener(
+        "change",
+        function() {
+
+          setMode(
+            this.value
+          );
+
+          const verifyResult =
+            document.getElementById("verifyResult");
+
+          if (verifyResult) {
+            verifyResult.classList.add("hidden");
+          }
+
+          updateVerificationControls();
+
+        }
+      );
+
+    });
+
+
+  // =========================================================
+  // Events - college select
+  // =========================================================
+
+  collegeSelect.addEventListener(
+    "change",
+    function() {
+
+      if (
+        verificationStatus?.verified ||
+        currentProfile?.college_verified
+      ) {
+        return;
+      }
+
+      studentIdNumber.value =
+        "";
+
+      const verifyResult =
+        document.getElementById("verifyResult");
+
+      if (verifyResult) {
+        verifyResult.classList.add("hidden");
+      }
+
+      updateVerificationControls();
+
+    }
+  );
+
+
+  // =========================================================
+  // Events - Student ID typing
+  // =========================================================
+
+  studentIdNumber.addEventListener(
+    "input",
+    function() {
+
+      this.value =
+        this.value.toUpperCase();
+
+      const verifyResult =
+        document.getElementById("verifyResult");
+
+      if (verifyResult) {
+        verifyResult.classList.add("hidden");
+      }
+
+      updateVerificationControls();
+
+    }
+  );
+
+
+  // =========================================================
+  // Save profile
+  // Only student-editable fields are sent.
+  // Official college fields are NEVER sent here.
+  // =========================================================
+
+  profileForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const payload =
+        editableProfilePayload();
+
+      const old =
+        saveBtn.innerHTML;
+
+      saveBtn.disabled =
+        true;
+
+      saveBtn.innerHTML =
+        '<span class="spinner"></span> Saving...';
+
+      try {
+
+        const response =
+          currentProfile?.id
+            ? await SB.patch(
+                "/students/profile",
+                payload
+              )
+            : await SB.post(
+                "/students/profile",
+                payload
+              );
+
+        currentProfile =
+          response?.data ||
+          response ||
+          currentProfile;
+
+        document
+          .getElementById("profileState")
+          .textContent =
+            "Saved";
+
+        showMessage(
+          "success",
+          "Profile saved successfully."
+        );
+
+        await loadProfile();
+        await loadVerificationStatus();
+
+      } catch (error) {
+
+        showMessage(
+          "error",
+          error.message ||
+          "Could not save profile."
+        );
+
+      } finally {
+
+        saveBtn.disabled =
+          false;
+
+        saveBtn.innerHTML =
+          old;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+    }
+  );
+
+
+  // =========================================================
+  // Verify college identity
+  // =========================================================
+
+  verifyCollegeBtn.addEventListener(
+    "click",
+    async function() {
+
+      const collegeId =
+        Number(
+          collegeSelect.value
+        );
+
+      const studentId =
+        studentIdNumber
+          .value
+          .trim()
+          .toUpperCase();
+
+
+      if (
+        getVerificationMode() !== "verify"
+      ) {
+
+        showVerifyResult(
+          "error",
+          "Please choose “Verify with my college” first."
+        );
+
+        return;
+      }
+
+
+      if (!collegeId) {
+
+        showVerifyResult(
+          "error",
+          "Please select your college first."
+        );
+
+        return;
+      }
+
+
+      if (!studentId) {
+
+        showVerifyResult(
+          "error",
+          "Please enter your official Student ID / Enrollment Number."
+        );
+
+        return;
+      }
+
+
+      const old =
+        verifyCollegeBtn.innerHTML;
+
+      verifyCollegeBtn.disabled =
+        true;
+
+      verifyCollegeBtn.innerHTML =
+        '<span class="spinner"></span> Verifying...';
+
+      showVerifyResult(
+        "loading",
+        "Checking your Student ID with the official college registry..."
+      );
+
+
+      try {
+
+        // Verification requires a Student row.
+        // Create the basic profile automatically for a new account.
+        await ensureProfileExists();
+
+
+        const response =
+          await SB.post(
+            "/students/verify-college",
+            {
+              college_id:
+                collegeId,
+
+              student_id_number:
+                studentId
+            }
+          );
+
+        console.log(
+          "[College Verification] API response:",
+          response
+        );
+
+        const result =
+          getVerificationResponse(
+            response
+          );
+
+        const verified =
+          result?.verified === true;
+
+
+        if (!verified) {
+
+          const failureMessage =
+            result?.message ||
+            result?.detail ||
+            "Student ID not found in the selected college registry.";
+
+          verificationStatus = {
+            verified: false
+          };
+
+          setVerificationUI(false);
+
+          showVerifyResult(
+            "error",
+            failureMessage
+          );
+
+          showMessage(
+            "error",
+            failureMessage
+          );
+
+          return;
+        }
+
+
+        const successMessage =
+          result?.message ||
+          response?.message ||
+          "College ID verified successfully.";
+
+        showVerifyResult(
+          "success",
+          successMessage
+        );
+
+        showMessage(
+          "success",
+          successMessage
+        );
+
+        verificationStatus = {
+          verified: true,
+          ...(result?.data || {})
+        };
+
+        setVerificationUI(
+          true,
+          result?.data || result
+        );
+
+
+        // Refresh saved profile + official verification details.
+        // Verification remains successful even if a follow-up refresh fails.
+        try {
+
+          await loadProfile();
+          await loadVerificationStatus();
+
+        } catch (refreshError) {
+
+          console.warn(
+            "[College Verification] Verified, but refresh failed:",
+            refreshError
+          );
+
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "[College Verification] Failed:",
+          error
+        );
+
+        verificationStatus = {
+          verified: false
+        };
+
+        setVerificationUI(false);
+
+        const message =
+          getApiErrorMessage(
+            error
+          );
+
+        showVerifyResult(
+          "error",
+          message
+        );
+
+        showMessage(
+          "error",
+          message
+        );
+
+
+      } finally {
+
+        verifyCollegeBtn.innerHTML =
+          old;
+
+        updateVerificationControls();
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+    }
+  );
+
+
+  // =========================================================
+  // Init
+  // =========================================================
+
+  async function init() {
+
+    const storedMode =
+      localStorage.getItem(
+        VERIFICATION_MODE_KEY
+      );
+
+    setMode(
+      storedMode === "skip"
+        ? "skip"
+        : "verify"
+    );
+
     await loadUser();
     await loadColleges();
     await loadProfile();
-    if(window.lucide) lucide.createIcons();
+    await loadVerificationStatus();
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
   }
+
 
   init();
 </script>
+
 </body>
 </html>

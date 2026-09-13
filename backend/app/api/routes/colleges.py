@@ -9,6 +9,7 @@ from app.models.college import College
 from app.models.department import Department
 from app.models.collaboration import Collaboration
 from app.models.college_student_registry import CollegeStudentRegistry
+from app.models.student import Student
 
 from app.schemas.college import (
     CollegeProfileCreate,
@@ -351,6 +352,8 @@ def create_student_registry(
         user.id
     )
 
+    # Department is mandatory in the create schema and must
+    # belong to the logged-in college.
     validate_department_for_college(
         db,
         current_college.id,
@@ -360,12 +363,6 @@ def create_student_registry(
     normalized_id = normalize_student_id(
         data.student_id_number
     )
-
-    if not normalized_id:
-        raise HTTPException(
-            status_code=400,
-            detail="Student ID / Enrollment Number is required"
-        )
 
     existing = (
         db.query(CollegeStudentRegistry)
@@ -388,11 +385,7 @@ def create_student_registry(
         college_id=current_college.id,
         department_id=data.department_id,
         student_id_number=normalized_id,
-        student_name=(
-            data.student_name.strip()
-            if data.student_name
-            else None
-        ),
+        student_name=data.student_name.strip(),
         year=data.year,
         is_active=True,
     )
@@ -413,6 +406,7 @@ def create_student_registry(
             "year": row.year,
             "is_active": row.is_active,
             "claimed_student_id": row.claimed_student_id,
+            "is_claimed": row.claimed_student_id is not None,
         },
     }
 
@@ -542,20 +536,35 @@ def update_student_registry(
     )
 
     if "department_id" in update_data:
+        # update schema allows None, but for an official active
+        # registry record we do not allow removing the department.
+        if update_data["department_id"] is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Department is required for a student registry record"
+            )
+
         validate_department_for_college(
             db,
             current_college.id,
             update_data["department_id"],
         )
 
-    if (
-        "student_name" in update_data
-        and update_data["student_name"]
-        is not None
-    ):
+    if "student_name" in update_data:
+        if update_data["student_name"] is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Student name is required"
+            )
+
         update_data["student_name"] = (
-            update_data["student_name"]
-            .strip()
+            update_data["student_name"].strip()
+        )
+
+    if "year" in update_data and update_data["year"] is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Year is required"
         )
 
     for field, value in update_data.items():
@@ -564,6 +573,41 @@ def update_student_registry(
             field,
             value
         )
+
+    # If this registry row is already claimed, keep the linked
+    # SkillBridge student profile synchronized with the official
+    # college/TPO registry.
+    linked_student = None
+
+    if row.claimed_student_id is not None:
+        linked_student = (
+            db.query(Student)
+            .filter(
+                Student.id == row.claimed_student_id
+            )
+            .first()
+        )
+
+    if linked_student:
+        linked_student.college_id = current_college.id
+        linked_student.college_name = current_college.name
+        linked_student.department_id = row.department_id
+        linked_student.student_id_number = row.student_id_number
+        linked_student.year = row.year
+        linked_student.college_verified = bool(row.is_active)
+
+        if row.department_id is not None:
+            department = (
+                db.query(Department)
+                .filter(
+                    Department.id == row.department_id,
+                    Department.college_id == current_college.id,
+                )
+                .first()
+            )
+
+            if department:
+                linked_student.branch = department.name
 
     db.commit()
     db.refresh(row)
@@ -575,16 +619,12 @@ def update_student_registry(
             "id": row.id,
             "college_id": row.college_id,
             "department_id": row.department_id,
-            "student_id_number":
-                row.student_id_number,
-            "student_name":
-                row.student_name,
-            "year":
-                row.year,
-            "is_active":
-                row.is_active,
-            "claimed_student_id":
-                row.claimed_student_id,
+            "student_id_number": row.student_id_number,
+            "student_name": row.student_name,
+            "year": row.year,
+            "is_active": row.is_active,
+            "claimed_student_id": row.claimed_student_id,
+            "is_claimed": row.claimed_student_id is not None,
         },
     }
 
@@ -619,15 +659,31 @@ def delete_student_registry(
             detail="Student registry record not found"
         )
 
-    # Keep claimed records for audit/history.
+    # Claimed records are kept for audit/history.
+    # Deactivate the official record and revoke verification
+    # on the linked SkillBridge student profile.
     if row.claimed_student_id is not None:
         row.is_active = False
+
+        linked_student = (
+            db.query(Student)
+            .filter(
+                Student.id == row.claimed_student_id
+            )
+            .first()
+        )
+
+        if linked_student:
+            linked_student.college_verified = False
+
         db.commit()
 
         return {
             "success": True,
-            "message":
-                "Verified student record deactivated successfully"
+            "message": (
+                "Verified student record deactivated and "
+                "college verification revoked successfully"
+            ),
         }
 
     db.delete(row)
