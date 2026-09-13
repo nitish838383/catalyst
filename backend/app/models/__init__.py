@@ -1,1 +1,0 @@
-from app.models.college_student_registry import CollegeStudentRegistry
