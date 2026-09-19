@@ -56,7 +56,7 @@ for r in [
     resumes,
     career,
     chat,
-    recruiter_chat,   # ✅ ADD THIS
+    recruiter_chat,   
     notifications,
     colleges,
     collaborations,

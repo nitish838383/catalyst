@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -919,23 +920,119 @@ def recommended_opportunities(
         "data": results[:10],
     }
 
-@router.post("/verify-college")
+# ======================================================
+# COLLEGE IDENTITY VERIFICATION
+#
+# Canonical APIs:
+#   POST /students/college-verification/claim
+#   GET  /students/college-verification/status
+#
+# Old endpoints are kept as hidden aliases so existing
+# frontend code does not break immediately.
+# ======================================================
+
+def is_verified_college(college: College) -> bool:
+    return (
+        getattr(college, "verification_status", None) == "verified"
+        or bool(getattr(college, "is_verified", False))
+    )
+
+
+def serialize_verified_college(
+    college: College,
+) -> dict:
+    return {
+        # Internal database relation ID
+        "id": college.id,
+
+        # College-entered public ID
+        "college_public_id": getattr(
+            college,
+            "college_public_id",
+            None,
+        ),
+
+        # Official college logo/profile image.
+        # This belongs to College, not Student.
+        "college_logo_url": getattr(
+            college,
+            "college_logo_url",
+            None,
+        ),
+
+        "name": college.name,
+
+        "college_code": getattr(
+            college,
+            "college_code",
+            None,
+        ),
+
+        "aishe_code": getattr(
+            college,
+            "aishe_code",
+            None,
+        ),
+
+        "university": getattr(
+            college,
+            "university",
+            None,
+        ),
+
+        "city": getattr(
+            college,
+            "city",
+            None,
+        ),
+
+        "state": getattr(
+            college,
+            "state",
+            None,
+        ),
+
+        "verification_status": "verified",
+    }
+
+
+@router.post("/college-verification/claim")
+@router.post(
+    "/verify-college",
+    include_in_schema=False,
+)
 def verify_college(
     data: StudentCollegeVerifyRequest,
     db: Session = Depends(get_db),
-    user: User = Depends(require_roles(UserRole.student)),
+    user: User = Depends(
+        require_roles(UserRole.student)
+    ),
 ):
     """
-    Verify a student's official college identity using the
-    CollegeStudentRegistry maintained by the college/TPO.
+    Claim an official college/TPO registry record.
+
+    Student sends only:
+        - selected verified college_id
+        - Student ID / Enrollment Number
+
+    Department, year and official student identity are taken
+    from CollegeStudentRegistry, not trusted from the student.
     """
 
-    student = get_student(db, user.id)
+    student = get_student(
+        db,
+        user.id,
+    )
 
-    # 1) College must exist.
+    # ------------------------------------------------------
+    # 1) Selected college must exist
+    # ------------------------------------------------------
+
     college = (
         db.query(College)
-        .filter(College.id == data.college_id)
+        .filter(
+            College.id == data.college_id
+        )
         .first()
     )
 
@@ -945,22 +1042,43 @@ def verify_college(
             detail="Selected college not found",
         )
 
-    # 2) Normalize the official ID exactly like the college registry.
-    entered_id = data.student_id_number.strip().upper()
+    # ------------------------------------------------------
+    # 2) Students can claim only a VERIFIED institution
+    # ------------------------------------------------------
 
-    if not entered_id:
+    if not is_verified_college(college):
         raise HTTPException(
-            status_code=400,
-            detail="Student ID / Enrollment Number is required",
+            status_code=403,
+            detail=(
+                "This institution is not verified yet. "
+                "Select a verified college."
+            ),
         )
 
-    # 3) Match selected college + official student ID + active record.
+    # Schema already normalizes this, but normalize again at
+    # the trust boundary for safety / legacy callers.
+    entered_id = (
+        data.student_id_number
+        .strip()
+        .upper()
+    )
+
+    # ------------------------------------------------------
+    # 3) Match selected college + official enrollment ID
+    # ------------------------------------------------------
+
     registry = (
         db.query(CollegeStudentRegistry)
         .filter(
-            CollegeStudentRegistry.college_id == college.id,
-            CollegeStudentRegistry.student_id_number == entered_id,
-            CollegeStudentRegistry.is_active == True,
+            CollegeStudentRegistry.college_id
+            == college.id,
+
+            CollegeStudentRegistry.student_id_number
+            == entered_id,
+
+            CollegeStudentRegistry.is_active.is_(
+                True
+            ),
         )
         .first()
     )
@@ -968,28 +1086,41 @@ def verify_college(
     if not registry:
         raise HTTPException(
             status_code=404,
-            detail="Student ID not found in the selected college registry",
+            detail=(
+                "Student ID / Enrollment Number was not found "
+                "in the selected college's active registry."
+            ),
         )
 
-    # 4) One official ID can belong to only one SkillBridge student account.
+    # ------------------------------------------------------
+    # 4) One official registry identity -> one account
+    # ------------------------------------------------------
+
     if (
         registry.claimed_student_id is not None
-        and registry.claimed_student_id != student.id
+        and registry.claimed_student_id
+        != student.id
     ):
         raise HTTPException(
             status_code=409,
             detail=(
                 "This Student ID is already linked "
-                "to another SkillBridge account"
+                "to another SkillBridge account."
             ),
         )
 
-    # 5) One SkillBridge student account should claim only one registry row.
+    # ------------------------------------------------------
+    # 5) One SkillBridge account -> one registry identity
+    # ------------------------------------------------------
+
     another_claim = (
         db.query(CollegeStudentRegistry)
         .filter(
-            CollegeStudentRegistry.claimed_student_id == student.id,
-            CollegeStudentRegistry.id != registry.id,
+            CollegeStudentRegistry.claimed_student_id
+            == student.id,
+
+            CollegeStudentRegistry.id
+            != registry.id,
         )
         .first()
     )
@@ -999,125 +1130,357 @@ def verify_college(
             status_code=409,
             detail=(
                 "Your SkillBridge account is already verified "
-                "with another college registry record"
+                "with another college registry record."
             ),
         )
 
-    # 6) Load official department, if assigned by college.
+    # ------------------------------------------------------
+    # 6) Registry department is official
+    # ------------------------------------------------------
+
+    department = None
+
+    if registry.department_id is not None:
+
+        department = (
+            db.query(Department)
+            .filter(
+                Department.id
+                == registry.department_id,
+
+                Department.college_id
+                == college.id,
+            )
+            .first()
+        )
+
+        if not department:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "The official registry record references "
+                    "an invalid department. Contact your college."
+                ),
+            )
+
+        if not getattr(
+            department,
+            "is_active",
+            True,
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "Your registered department is currently "
+                    "inactive. Contact your college/TPO."
+                ),
+            )
+
+    # ------------------------------------------------------
+    # 7) Claim official record + synchronize student profile
+    # ------------------------------------------------------
+
+    verified_at = datetime.utcnow()
+
+    registry.claimed_student_id = student.id
+
+    student.college_id = college.id
+    student.college_name = college.name
+
+    student.department_id = (
+        registry.department_id
+    )
+
+    student.student_id_number = (
+        registry.student_id_number
+    )
+
+    student.year = registry.year
+
+    student.college_verified = True
+    student.college_verified_at = verified_at
+    student.college_verification_source = (
+        "college_registry"
+    )
+
+    student.branch = (
+        department.name
+        if department
+        else None
+    )
+
+    db.commit()
+
+    db.refresh(student)
+    db.refresh(registry)
+
+    # ------------------------------------------------------
+    # 8) Return official trusted identity
+    # ------------------------------------------------------
+
+    return {
+        "success": True,
+        "verified": True,
+        "message": (
+            "College student identity verified successfully."
+        ),
+        "data": {
+            "college": serialize_verified_college(
+                college
+            ),
+
+            "student": {
+                "student_id_number":
+                    registry.student_id_number,
+
+                "official_name":
+                    registry.student_name,
+
+                "year":
+                    registry.year,
+
+                "claimed":
+                    True,
+            },
+
+            "department": {
+                "id":
+                    department.id
+                    if department
+                    else None,
+
+                "name":
+                    department.name
+                    if department
+                    else None,
+
+                "code":
+                    department.code
+                    if department
+                    else None,
+
+                "program_type":
+                    getattr(
+                        department,
+                        "program_type",
+                        None,
+                    )
+                    if department
+                    else None,
+            },
+
+            "verified_at":
+                student.college_verified_at,
+
+            "verification_source":
+                student.college_verification_source,
+        },
+    }
+
+
+@router.get("/college-verification/status")
+@router.get(
+    "/college-verification",
+    include_in_schema=False,
+)
+def get_college_verification(
+    db: Session = Depends(get_db),
+    user: User = Depends(
+        require_roles(UserRole.student)
+    ),
+):
+    """
+    Return the logged-in student's official college
+    verification state.
+    """
+
+    student = get_student(
+        db,
+        user.id,
+    )
+
+    registry = (
+        db.query(CollegeStudentRegistry)
+        .filter(
+            CollegeStudentRegistry.claimed_student_id
+            == student.id
+        )
+        .first()
+    )
+
+    # If student says verified but the official claim is missing,
+    # do not expose a false verified state.
+    if not registry:
+        return {
+            "success": True,
+            "data": {
+                "verified": False,
+
+                "student_id_number":
+                    student.student_id_number,
+
+                "verified_at":
+                    None,
+
+                "verification_source":
+                    None,
+
+                "college":
+                    None,
+
+                "department":
+                    None,
+            },
+        }
+
+    college = (
+        db.query(College)
+        .filter(
+            College.id
+            == registry.college_id
+        )
+        .first()
+    )
+
     department = None
 
     if registry.department_id is not None:
         department = (
             db.query(Department)
             .filter(
-                Department.id == registry.department_id,
-                Department.college_id == college.id,
+                Department.id
+                == registry.department_id,
+
+                Department.college_id
+                == registry.college_id,
             )
             .first()
         )
 
-    # 7) Claim the official college registry record.
-    registry.claimed_student_id = student.id
-
-    # 8) Save official registry data in the student profile.
-    student.college_id = college.id
-    student.college_name = college.name
-    student.department_id = registry.department_id
-    student.student_id_number = registry.student_id_number
-    student.college_verified = True
-
-    if registry.year is not None:
-        student.year = registry.year
-
-    if department is not None:
-        student.branch = department.name
-
-    db.commit()
-    db.refresh(student)
-    db.refresh(registry)
-
-    return {
-        "success": True,
-        "verified": True,
-        "message": "College student identity verified successfully",
-        "data": {
-            "college": {
-                "id": college.id,
-                "name": college.name,
-                "university": getattr(college, "university", None),
-            },
-            "student": {
-                "student_id_number": registry.student_id_number,
-                "official_name": registry.student_name,
-                "year": registry.year,
-            },
-            "department": {
-                "id": department.id if department else None,
-                "name": department.name if department else None,
-                "code": department.code if department else None,
-            },
-        },
-    }
-
-
-@router.get("/college-verification")
-def get_college_verification(
-    db: Session = Depends(get_db),
-    user: User = Depends(require_roles(UserRole.student)),
-):
-    """
-    Return the logged-in student's college verification status.
-    """
-
-    student = get_student(db, user.id)
-
-    registry = (
-        db.query(CollegeStudentRegistry)
-        .filter(
-            CollegeStudentRegistry.claimed_student_id == student.id
-        )
-        .first()
+    # Verification remains valid only while:
+    # - official registry record is active
+    # - institution itself remains verified
+    registry_active = bool(
+        registry.is_active
     )
 
-    if not registry:
-        return {
-            "success": True,
-            "data": {
-                "verified": False,
-            },
-        }
-
-    college = (
-        db.query(College)
-        .filter(College.id == registry.college_id)
-        .first()
+    institution_verified = bool(
+        college
+        and is_verified_college(college)
     )
 
-    department = None
-
-    if registry.department_id is not None:
-        department = (
-            db.query(Department)
-            .filter(Department.id == registry.department_id)
-            .first()
-        )
+    verified = bool(
+        student.college_verified
+        and registry_active
+        and institution_verified
+    )
 
     return {
         "success": True,
         "data": {
-            "verified": True,
-            "student_id_number": registry.student_id_number,
-            "student_name": registry.student_name,
-            "year": registry.year,
-            "college": {
-                "id": college.id if college else None,
-                "name": college.name if college else None,
-            },
-            "department": {
-                "id": department.id if department else None,
-                "name": department.name if department else None,
-                "code": department.code if department else None,
-            },
+            "verified":
+                verified,
+
+            "student_id_number":
+                registry.student_id_number,
+
+            "student_name":
+                registry.student_name,
+
+            "year":
+                registry.year,
+
+            "verified_at":
+                student.college_verified_at
+                if verified
+                else None,
+
+            "verification_source":
+                student.college_verification_source
+                if verified
+                else None,
+
+            "college":
+                (
+                    {
+                        "id":
+                            college.id,
+
+                        "college_public_id":
+                            getattr(
+                                college,
+                                "college_public_id",
+                                None,
+                            ),
+
+                        "college_logo_url":
+                            getattr(
+                                college,
+                                "college_logo_url",
+                                None,
+                            ),
+
+                        "name":
+                            college.name,
+
+                        "college_code":
+                            getattr(
+                                college,
+                                "college_code",
+                                None,
+                            ),
+
+                        "aishe_code":
+                            getattr(
+                                college,
+                                "aishe_code",
+                                None,
+                            ),
+
+                        "city":
+                            getattr(
+                                college,
+                                "city",
+                                None,
+                            ),
+
+                        "state":
+                            getattr(
+                                college,
+                                "state",
+                                None,
+                            ),
+                    }
+                    if college
+                    else None
+                ),
+
+            "department":
+                {
+                    "id":
+                        department.id
+                        if department
+                        else None,
+
+                    "name":
+                        department.name
+                        if department
+                        else None,
+
+                    "code":
+                        department.code
+                        if department
+                        else None,
+
+                    "program_type":
+                        getattr(
+                            department,
+                            "program_type",
+                            None,
+                        )
+                        if department
+                        else None,
+                },
         },
     }
 
