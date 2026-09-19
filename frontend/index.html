@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="SkillBridge AI — Skill intelligence, career readiness, skill-gap analysis and explainable opportunity matching.">
 
-  <title>SkillBridge AI | Skill Intelligence to Career</title>
+  <title>SkillBridge AI | Your skills. Your next move.</title>
 
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="/assets/js/theme.js"></script>
+  <script src="/assets/js/theme.js" onerror="window.sbThemeAssetMissing=true"></script>
 
-  <link rel="stylesheet" href="/assets/css/home.css">
+  <!-- Homepage styling is embedded; no home.css replacement required. -->
   <style>
     .sb-nav-intro{
       margin:14px 14px 10px;padding:14px;border:1px solid rgba(99,102,241,.16);
@@ -33,6 +33,48 @@
     [data-theme="dark"] .sb-nav-journey span{background:rgba(30,41,59,.92);border-color:rgba(148,163,184,.15);color:#cbd5e1}
   </style>
 
+<style id="sb-professional-design">
+/* SkillBridge editorial redesign. All styles are scoped to the homepage. */
+:root{--paper:#f7f8f5;--surface:#fff;--ink:#162c36;--muted:#61717a;--line:#dde5e1;--teal:#087e70;--tint:#e8f2ed;--nav:rgba(247,248,245,.95)}
+[data-theme="dark"]{--paper:#101d24;--surface:#172a33;--ink:#edf5f1;--muted:#abbebf;--line:#30454b;--teal:#74d5bb;--tint:#203c3c;--nav:rgba(16,29,36,.96)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:95px}.sb-home{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}.sb-home a{color:inherit;text-decoration:none}.sb-home button,.sb-home textarea{font:inherit}.sb-home button{cursor:pointer}.sb-home svg{width:20px;height:20px;flex-shrink:0}.sb-home i[data-lucide]{display:inline-block;width:20px;height:20px}.sb-home h1,.sb-home h2,.sb-home h3,.sb-home p{margin:0}.sb-home h2{font-size:clamp(28px,3.2vw,44px);line-height:1.16;letter-spacing:-1.5px;font-weight:650}.sb-home h3{font-size:21px;line-height:1.3;letter-spacing:-.5px}.sb-home p{color:var(--muted)}.sb-container{width:min(1200px,calc(100% - 80px));margin:auto}.sb-home :focus-visible{outline:3px solid #d18b35;outline-offset:5px}.sb-home [hidden]{display:none!important}
+.sb-nav-shell{position:sticky;top:0;z-index:40;background:var(--nav);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}.sb-nav{min-height:84px;display:flex;align-items:center;justify-content:space-between;gap:24px}.sb-brand{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}.sb-brand-logo{display:grid;place-items:center;width:34px;height:37px;background:var(--teal);border-radius:9px 9px 3px 9px;transform:rotate(-8deg)}.sb-brand-logo-core{width:18px;height:17px;border:3px solid var(--paper);border-bottom:0;transform:rotate(8deg)}.sb-brand-text{display:flex;gap:5px;align-items:center}.sb-brand-text strong{font-size:21px;letter-spacing:-.8px}.sb-brand-text small{font-size:10px;border:1px solid var(--line);padding:1px 4px;border-radius:4px}.sb-nav-links,.sb-nav-actions{display:flex;align-items:center;gap:25px}.sb-nav-links a{font-size:13px;font-weight:600}.sb-nav-links a:hover,.sb-footer-links a:hover{color:var(--teal)}.sb-nav-actions{gap:15px}.sb-primary-btn,.sb-secondary-btn,.sb-login-btn,.sb-theme-btn,.sb-menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;font-size:13px;border-radius:7px;min-height:42px;padding:10px 16px;border:1px solid transparent}.sb-home .sb-primary-btn{background:var(--ink);color:var(--paper);border-color:var(--ink)}.sb-primary-btn:hover{filter:brightness(1.2);transform:translateY(-1px)}.sb-secondary-btn{border-color:var(--line);background:var(--surface)}.sb-theme-btn,.sb-menu-btn{color:var(--ink);background:transparent;padding:8px}.sb-theme-btn [data-theme-label]{display:none}.sb-primary-btn-lg,.sb-secondary-btn-lg{min-height:50px;padding:13px 20px}.sb-menu-btn{display:none}.sb-mobile-menu-inner{padding:16px 0;display:grid;gap:14px}.sb-mobile-actions{display:flex;gap:12px}
+.sb-hero{position:relative;padding:86px 0 74px;overflow:hidden}.sb-hero-noise,.sb-hero-orb{display:none}.sb-hero-grid{display:grid;grid-template-columns:1.04fr 1fr;gap:65px;align-items:center}.sb-hero-kicker{display:flex;align-items:center;gap:9px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-bottom:26px;color:var(--teal)}.sb-kicker-dot{height:7px;width:7px;background:var(--teal);border-radius:50%}.sb-home h1{font-size:clamp(42px,4.5vw,64px);line-height:1.06;letter-spacing:-3px;font-weight:650;max-width:590px}.sb-gradient-text{display:block;color:var(--teal);font-family:Georgia,serif;font-style:italic;font-weight:400}.sb-hero-sub{font-size:15px;line-height:1.85;margin-top:25px!important;max-width:510px}.sb-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}.sb-proof-line{display:flex;gap:18px;border-top:1px solid var(--line);padding-top:25px;margin-top:32px}.sb-proof-line>div{display:flex;gap:7px;flex:1}.sb-proof-line svg{width:16px;color:var(--teal)}.sb-proof-line strong{font-size:10px;display:block;line-height:1.5}.sb-proof-line small{font-size:9px;color:var(--muted);display:block;margin-top:4px}
+.sb-intel-stage{position:relative;padding:24px 0 32px}.sb-intel-stage:before{content:'';position:absolute;inset:0 -25px;background:var(--tint);border-radius:50% 50% 8% 8%;z-index:-1}.sb-intel-console{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 25px 55px #15392f12;overflow:hidden;transform:rotate(-1deg)}.sb-intel-topbar{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;border-bottom:1px solid var(--line)}.sb-intel-topbar-left{display:flex;gap:4px}.sb-console-dot{width:6px;height:6px;border-radius:50%;background:var(--line)}.sb-intel-title{font-size:12px;font-weight:700}.sb-intel-status{font-size:9px;color:var(--teal);background:var(--tint);padding:3px 7px;border-radius:4px}.sb-intel-body{padding:22px}.sb-intel-main{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:center}.sb-radar-wrap{position:relative;height:236px;display:grid;place-items:center}.sb-radar-ring{position:absolute;border:1px dashed var(--line);border-radius:50%;width:210px;height:210px}.sb-radar-ring-2{width:158px;height:158px;border-style:solid}.sb-radar-ring-3{width:105px;height:105px;background:var(--tint);border:0}.sb-radar-core{position:relative;text-align:center;display:grid;justify-items:center;gap:3px}.sb-radar-core svg{color:var(--teal);width:26px;height:26px}.sb-radar-core strong{font-size:13px}.sb-radar-core small{font-size:8px}.sb-radar-tag{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:4px 9px;font-size:10px;box-shadow:0 3px 9px #10292308}.sb-radar-tag-a{top:13px;left:40%}.sb-radar-tag-b{top:77px;right:-3px}.sb-radar-tag-c{bottom:30px;right:12px}.sb-radar-tag-d{bottom:25px;left:8px;color:#b3772e}.sb-radar-tag-e{top:76px;left:-8px;color:#b3772e}.sb-intel-sidecards{display:grid;gap:10px}.sb-mini-card{display:flex;gap:9px;align-items:center;border:1px solid var(--line);border-radius:7px;padding:12px 9px}.sb-mini-icon{display:grid;place-items:center;width:29px;height:30px;border-radius:5px;background:var(--tint);color:var(--teal)}.sb-mini-icon svg{width:16px}.sb-mini-card small{display:block;color:var(--muted);font-size:9px}.sb-mini-card strong{display:block;font-size:11px}.sb-match-card{margin-top:15px;border-top:1px solid var(--line);padding-top:18px;display:flex;align-items:center;gap:12px;justify-content:space-between}.sb-match-left{display:flex;align-items:center;gap:9px}.sb-company-mark{display:grid;place-items:center;background:var(--tint);padding:9px;border-radius:5px}.sb-match-card small{font-size:8px;color:var(--muted);display:block}.sb-match-card strong{font-size:10px;display:block}.sb-match-right{color:var(--teal);text-align:right}.sb-assistant-launcher{position:fixed;bottom:24px;right:24px;z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border:0;padding:12px 17px;border-radius:50px;box-shadow:0 8px 28px #0002}.sb-assistant-label{text-align:left}.sb-assistant-label strong{display:block;font-size:11px}.sb-assistant-label small{display:block;font-size:9px;opacity:.7}.sb-assistant-lamp{display:grid;place-items:center;width:30px;height:30px;background:#9ee6c4;border-radius:10px}.sb-assistant-face{display:flex;gap:6px}.sb-assistant-face span{width:4px;height:6px;background:#143930;border-radius:3px}.sb-assistant-launcher.is-hidden{display:none}
+.sb-live-section{padding-bottom:25px}.sb-live-panel{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0}.sb-live-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}.sb-section-kicker{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1.6px;font-weight:700;color:var(--teal);margin-bottom:13px}.sb-live-head .sb-section-kicker{margin-bottom:3px}.sb-live-head h2{font-size:17px;letter-spacing:-.3px}.sb-live-badge{font-size:10px;color:var(--muted)}.sb-live-grid{display:grid;grid-template-columns:repeat(6,1fr)}.sb-live-stat{display:grid;grid-template-columns:1fr auto;padding:0 22px;border-left:1px solid var(--line)}.sb-live-stat:first-child{padding-left:0;border:0}.sb-live-stat svg{grid-column:2;grid-row:1;color:var(--teal);width:17px}.sb-live-stat strong{grid-column:1;grid-row:1;font-size:28px;line-height:1.2;font-weight:500}.sb-live-stat>span{font-size:11px;color:var(--muted);margin-top:8px}
+.sb-section{padding:80px 0}.sb-section-head{max-width:730px;margin-bottom:36px}.sb-section-head p{margin-top:17px;font-size:14px;max-width:590px}.sb-section-head-split{max-width:none;display:grid;grid-template-columns:1.2fr 1fr;align-items:end;gap:100px}.sb-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.sb-feature-card{position:relative;background:var(--surface);border:1px solid var(--line);padding:30px;border-radius:10px;transition:transform .2s,box-shadow .2s}.sb-feature-card:hover{transform:translateY(-4px);box-shadow:0 12px 25px #18352d0a}.sb-feature-card-xl{grid-row:span 2;background:var(--tint);display:flex;flex-direction:column;justify-content:center}.sb-feature-icon{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);background:var(--paper);color:var(--teal);border-radius:9px;margin-bottom:26px}.sb-feature-index{position:absolute;right:25px;top:28px;font-size:11px;color:var(--muted)}.sb-feature-card p{font-size:13px;line-height:1.8;margin-top:12px}.sb-token-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}.sb-token-cloud span{font-size:11px;padding:7px 12px;background:var(--surface);border:1px solid var(--line);border-radius:4px}.sb-feature-card-wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:28px}.sb-match-demo{display:grid;align-content:center;gap:12px}.sb-match-demo>div{border-left:3px solid var(--teal);background:var(--tint);padding:12px}.sb-match-demo>div+div{border-color:#c08c43}.sb-match-demo small{display:block;font-size:10px;color:var(--muted)}.sb-match-demo strong{font-size:11px;font-weight:600}.sb-section-soft{background:var(--tint);border-block:1px solid var(--line)}.sb-journey{display:grid;grid-template-columns:repeat(5,1fr);gap:25px}.sb-journey-step{position:relative;border-top:1px solid var(--line);padding-top:24px}.sb-journey-num{position:absolute;right:0;top:23px;color:var(--muted);font-size:11px}.sb-journey-icon{color:var(--teal);margin-bottom:22px}.sb-journey-step h3{font-size:16px}.sb-journey-step p{font-size:12px;line-height:1.8;margin-top:10px}.sb-role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.sb-role-card{padding:30px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.sb-role-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}.sb-role-icon{color:var(--teal)}.sb-role-icon svg{width:27px;height:27px}.sb-role-chip{font-size:10px;font-weight:600;border:1px solid var(--line);padding:4px 9px;border-radius:20px}.sb-role-card p{font-size:13px;margin-top:16px;min-height:84px}.sb-role-card ul{list-style:none;margin:25px 0 0;padding:23px 0 0;border-top:1px solid var(--line);display:grid;gap:12px}.sb-role-card li{display:flex;align-items:center;gap:9px;font-size:12px}.sb-role-card li svg{color:var(--teal);width:15px}.sb-role-card-featured{background:var(--tint);border-color:var(--teal)}
+.sb-why-section{background:#163c3a;color:#f1f6ed}.sb-why-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:120px;align-items:center}.sb-why-copy .sb-section-kicker{color:#a2d6bd}.sb-why-copy p{color:#c4d7cf;margin-top:20px;font-size:15px}.sb-why-copy p strong{display:block;color:#f1f6ed;margin-top:9px;font-weight:500}.sb-why-list{display:grid;gap:22px;margin-top:33px}.sb-why-list>div{display:flex;gap:13px}.sb-why-list svg{color:#aed3a9}.sb-why-list strong{display:block;font-size:14px}.sb-why-list small{color:#b7d0c7;font-size:12px}.sb-pipeline-card{border:1px solid #ffffff25;background:#ffffff06;border-radius:10px;padding:27px}.sb-pipeline-head{display:flex;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid #ffffff20;font-size:11px;letter-spacing:1px;text-transform:uppercase}.sb-pipeline{padding-top:24px}.sb-pipeline-node{display:flex;align-items:center;gap:16px}.sb-pipeline-node>span{display:grid;place-items:center;width:38px;height:38px;border:1px solid #ffffff25;border-radius:7px;color:#b4ddc1}.sb-pipeline-node strong{display:block;font-size:13px}.sb-pipeline-node small{display:block;font-size:10px;color:#b7d0c7}.sb-pipeline-line{height:15px;border-left:1px solid #ffffff30;margin-left:19px}.sb-cta-section{padding:75px 0}.sb-cta-card{display:flex;align-items:center;justify-content:space-between;gap:40px;padding:42px;background:var(--tint);border:1px solid var(--line);border-radius:12px}.sb-cta-card h2{font-size:34px;max-width:550px}.sb-cta-card p{margin-top:14px;font-size:13px;max-width:550px}.sb-cta-actions{display:flex;flex-direction:column;gap:10px;min-width:195px}.sb-footer{border-top:1px solid var(--line);padding:35px 0 85px}.sb-footer-grid{display:grid;grid-template-columns:1fr auto;gap:28px}.sb-footer p{font-size:11px;margin-top:15px}.sb-footer-links{display:flex;gap:25px;align-items:center;font-size:12px}.sb-footer-copy{grid-column:1/-1;font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+.sb-assistant-panel{display:none;position:fixed;right:24px;bottom:24px;width:390px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 110px);z-index:60;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 70px #0003;overflow:hidden}.sb-assistant-panel.is-open{display:flex}.sb-assistant-panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px;border-bottom:1px solid var(--line)}.sb-assistant-panel-title strong{font-size:13px;display:block}.sb-assistant-panel-title small{font-size:9px;color:var(--muted)}.sb-assistant-panel-head button{border:0;background:var(--tint);color:var(--ink);width:32px;height:32px;border-radius:6px}.sb-nav-intro{background:var(--tint);border-color:var(--line);border-radius:8px}.sb-nav-intro-title{color:var(--ink)}.sb-nav-mode{background:var(--surface);color:var(--teal)}.sb-nav-live{color:var(--teal)}.sb-nav-journey span{background:var(--surface);color:var(--ink);border-color:var(--line)}.sb-assistant-quick{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 12px}.sb-assistant-quick button{border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:10px;background:var(--surface);color:var(--ink)}.sb-assistant-messages{min-height:100px;overflow-y:auto;padding:15px;flex:1}.sb-chat-row{display:flex;margin-bottom:12px}.sb-chat-row.is-user{justify-content:flex-end}.sb-chat-bubble{background:var(--tint);padding:12px;border-radius:9px;max-width:92%;font-size:12px;white-space:pre-wrap}.is-user .sb-chat-bubble{background:var(--ink);color:var(--paper)}.sb-chat-typing:after{content:'Thinking…'}.sb-assistant-form{padding:12px;display:flex;border-top:1px solid var(--line);gap:8px}.sb-assistant-form textarea{resize:none;flex:1;min-width:0;background:var(--paper);border:1px solid var(--line);color:var(--ink);padding:10px;border-radius:6px;font-size:12px}.sb-assistant-form button{border:0;background:var(--teal);color:var(--paper);width:40px;border-radius:6px}.sb-reveal{animation:sbEntrance .6s both;animation-delay:var(--delay,0ms)}@keyframes sbEntrance{from{opacity:.4;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1000px){.sb-feature-card:last-child{grid-column:1/-1;display:grid;grid-template-columns:45px 250px 1fr;gap:24px;align-items:center;padding:24px 30px}.sb-feature-card:last-child .sb-feature-icon{margin:0}.sb-feature-card:last-child p{margin:0;padding-right:30px}.sb-feature-card:last-child .sb-feature-index{display:none}}
+@media(max-width:1100px){.sb-container{width:calc(100% - 48px)}.sb-nav-links{gap:15px}.sb-hero-grid{gap:30px}.sb-nav-actions{gap:6px}.sb-why-grid{gap:50px}.sb-proof-line{gap:10px}.sb-intel-body{padding:16px}.sb-radar-wrap{transform:scale(.9)}.sb-hero-actions a{font-size:11px;padding:12px}.sb-section-head-split{gap:40px}}
+@media(max-width:900px){.sb-nav-links{display:none}.sb-menu-btn{display:inline-flex}.sb-hero{padding:50px 0}.sb-hero-grid{grid-template-columns:1fr;gap:25px}.sb-hero-copy{max-width:660px}.sb-home h1{font-size:60px}.sb-intel-stage{max-width:580px;width:100%;margin:auto}.sb-intel-main{grid-template-columns:1.3fr 1fr}.sb-radar-wrap{transform:none}.sb-proof-line{max-width:550px}.sb-proof-line strong{font-size:11px}.sb-feature-grid{grid-template-columns:repeat(2,1fr)}.sb-feature-card-xl{grid-row:auto;grid-column:span 2}.sb-journey{grid-template-columns:repeat(3,1fr);gap:30px}.sb-role-grid{grid-template-columns:1fr}.sb-role-card p{min-height:0}.sb-why-grid{gap:35px}.sb-section-head-split{grid-template-columns:1fr;gap:0}.sb-cta-card{padding:30px}.sb-live-stat{padding:0 12px}}
+@media(max-width:600px){.sb-container{width:calc(100% - 36px)}.sb-nav{min-height:70px;gap:8px}.sb-brand-text strong{font-size:18px}.sb-brand-logo{width:28px;height:30px}.sb-nav-actions{gap:3px}.sb-nav-actions .sb-primary-btn-nav{display:none}.sb-login-btn{padding:8px}.sb-theme-btn{padding:6px}.sb-home h1{font-size:44px;letter-spacing:-2px}.sb-hero-kicker{font-size:8px;letter-spacing:.7px}.sb-hero-sub{font-size:14px}.sb-hero-actions{display:grid}.sb-hero-actions a{font-size:12px}.sb-proof-line{display:grid;grid-template-columns:1fr;gap:12px;padding-top:20px}.sb-proof-line>div{align-items:center}.sb-proof-line strong{font-size:11px}.sb-proof-line small{display:none}.sb-intel-title{font-size:10px}.sb-intel-body{padding:14px}.sb-intel-main{grid-template-columns:1fr}.sb-radar-wrap{max-width:240px;width:100%;margin:auto;height:225px}.sb-intel-sidecards{grid-template-columns:repeat(3,1fr);gap:5px}.sb-mini-card{display:block;padding:9px 7px}.sb-mini-icon{margin-bottom:8px}.sb-mini-card strong{font-size:9px}.sb-mini-card small{font-size:8px}.sb-match-card strong{font-size:9px}.sb-match-right{max-width:76px}.sb-live-head{align-items:start}.sb-live-head h2{font-size:14px}.sb-live-badge{font-size:9px;text-align:right;max-width:100px}.sb-live-grid{grid-template-columns:repeat(3,1fr);row-gap:24px}.sb-live-stat:nth-child(4){border:0;padding-left:0}.sb-live-stat strong{font-size:24px}.sb-live-stat>span{font-size:10px}.sb-section{padding:55px 0}.sb-feature-grid{grid-template-columns:1fr}.sb-feature-card-xl,.sb-feature-card-wide{grid-column:auto}.sb-feature-card-wide{grid-template-columns:1fr}.sb-feature-card{padding:25px}.sb-journey{grid-template-columns:1fr 1fr;gap:25px}.sb-why-grid{grid-template-columns:1fr}.sb-role-card{padding:25px}.sb-cta-section{padding:45px 0}.sb-cta-card{display:block;padding:27px}.sb-cta-card h2{font-size:29px}.sb-cta-actions{margin-top:25px}.sb-footer-grid{grid-template-columns:1fr}.sb-footer-links{flex-wrap:wrap;gap:20px}.sb-assistant-label small{display:none}.sb-assistant-launcher{right:16px;bottom:16px;padding:10px 14px}.sb-assistant-panel{right:16px;bottom:16px}.sb-section-head{margin-bottom:28px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.sb-home *{animation:none!important;transition:none!important}}
+</style>
+<style id="sb-alternate-design">
+/* Alternate direction: centered typography, product workspace and asymmetric cards. */
+:root,[data-theme="dark"]{--paper:#090b14;--surface:#111522;--ink:#f1f2fa;--muted:#9aabc3;--line:#272d40;--teal:#a99cff;--tint:#191b32;--nav:rgba(9,11,20,.93)}
+[data-theme="light"]{--paper:#f4f5fb;--surface:#fff;--ink:#171d35;--muted:#59667e;--line:#d9dfee;--teal:#6350cc;--tint:#ebe9fb;--nav:rgba(244,245,251,.95)}
+.sb-home{font-family:Inter,'Segoe UI',Arial,sans-serif}.sb-container{width:min(1180px,calc(100% - 64px))}.sb-nav-shell{background:var(--nav);border-color:var(--line)}.sb-nav{min-height:82px}.sb-brand-logo{border-radius:10px;transform:none;background:linear-gradient(135deg,#8d70ef,#557cff)}.sb-brand-logo-core{transform:none;border-color:#fff}.sb-brand-text strong{letter-spacing:-.7px}.sb-brand-text small{color:var(--teal)}.sb-nav-links a{color:var(--muted)}.sb-primary-btn,.sb-secondary-btn,.sb-login-btn{border-radius:9px}.sb-home .sb-primary-btn{background:#8265ea;border-color:#8265ea;color:white;box-shadow:0 5px 20px #8265ea20}.sb-secondary-btn{background:var(--surface);color:var(--ink)}.sb-nav-actions .sb-primary-btn{background:var(--ink);color:var(--paper);border-color:var(--ink);box-shadow:none}
+.neo-hero{padding:65px 0 0;text-align:center;background:radial-gradient(ellipse at 50% 20%,#7458d921,transparent 56%)}.neo-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:650;letter-spacing:1.9px;padding:7px 13px;border-radius:30px;border:1px solid #8272c747;background:var(--tint);color:var(--teal);margin-bottom:25px}.neo-eyebrow>span{width:5px;height:5px;background:var(--teal);border-radius:50%}.sb-home .neo-hero h1{font-size:clamp(45px,5.5vw,77px);font-weight:650;letter-spacing:-3.8px;line-height:1.07;max-width:none}.neo-hero h1>span{background:linear-gradient(95deg,#b3a2ff,#80afff);background-clip:text;-webkit-background-clip:text;color:transparent}.neo-intro{margin:24px auto 0!important;font-size:15px;line-height:1.8}.neo-hero .sb-hero-actions{justify-content:center;margin-top:27px}.neo-caption{display:flex;justify-content:center;gap:28px;color:var(--muted);font-size:8px;letter-spacing:1.1px;margin:25px 0 42px}.neo-workspace{display:grid;grid-template-columns:195px 1fr;text-align:left;border:1px solid #68648270;background:var(--surface);padding:7px;border-radius:16px;box-shadow:0 30px 85px #0003;position:relative;max-width:1040px;margin:auto}.neo-sidebar{border-right:1px solid var(--line);padding:20px 13px;background:var(--paper);border-radius:10px 0 0 10px}.neo-sidebar>div{display:flex;align-items:center;gap:10px;padding:11px;font-size:11px;color:var(--muted)}.neo-sidebar>div svg{width:16px;height:16px}.neo-sidebar .neo-workspace-brand{color:var(--ink);font-weight:650;font-size:12px;padding:2px 7px 25px}.neo-sidebar .neo-side-label{display:block;padding:0 10px;margin-bottom:12px;font-size:8px}.neo-side-label{font-size:9px;letter-spacing:1.15px;color:var(--muted)}.neo-sidebar .neo-side-active{background:var(--tint);color:var(--teal);border-radius:6px}.neo-sidebar .neo-sidebar-note{display:grid;gap:10px;padding:15px;margin-top:30px;background:linear-gradient(135deg,#8265ea25,#5381ef10);border:1px solid var(--line);border-radius:8px}.neo-sidebar-note strong{font-size:13px;color:var(--ink);line-height:1.5}.neo-sidebar-note small{font-size:8px}.neo-dashboard{padding:26px;min-width:0}.neo-dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:12px}.neo-dash-top h3{margin-top:6px;font-size:23px}.neo-preview{color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:5px;font-size:8px;white-space:nowrap}.neo-dashboard-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:15px}.neo-profile,.neo-focus,.neo-opportunity{border:1px solid var(--line);border-radius:9px;padding:20px;background:var(--paper)}.neo-profile-head{display:flex;align-items:center;gap:10px}.neo-avatar{width:34px;height:38px;display:grid;place-items:center;border-radius:9px;background:#a99cff25;color:var(--teal);font-size:13px;font-weight:700}.neo-profile-head strong{display:block;font-size:11px}.neo-profile-head small{display:block;font-size:9px;color:var(--muted);margin-top:3px}.neo-profile-head>svg{color:#73cabb;width:16px;margin-left:auto}.neo-profile-line{height:1px;background:var(--line);margin:22px 0}.neo-skill-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.neo-skill-pills span{color:var(--teal);font-size:10px;border:1px solid #a99cff40;padding:6px 10px;border-radius:5px;background:var(--tint)}.neo-profile-foot{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted);margin-top:23px}.neo-profile-foot svg{width:13px}.neo-focus{background:linear-gradient(130deg,#8265ea20,#5f87d70a)}.neo-focus-icon{margin:16px 0 10px;color:var(--teal)}.neo-focus h3{font-size:18px}.neo-focus p{font-size:10px;line-height:1.8;margin-top:7px}.neo-focus-tag{display:block;font-size:8px;color:var(--teal);margin-top:17px}.neo-opportunity{grid-column:1/-1;display:flex;gap:12px;align-items:center;padding:17px 20px}.neo-opportunity-icon{display:grid;place-items:center;width:38px;height:38px;background:#73cabb18;color:#73cabb;border-radius:7px}.neo-opportunity small{font-size:7px;letter-spacing:1px;color:var(--muted);display:block}.neo-opportunity strong{font-size:12px;display:block;margin-top:3px}.neo-opportunity p{font-size:9px;margin-top:3px}.neo-match-label{margin-left:auto;font-size:9px;color:#73cabb;display:flex;align-items:center;gap:5px;white-space:nowrap}.neo-match-label svg{width:14px}.neo-ecosystem{display:flex;justify-content:center;align-items:center;gap:30px;flex-wrap:wrap;padding:40px 0;border-bottom:1px solid var(--line);text-align:left}.neo-ecosystem>span:first-child{font-size:8px;letter-spacing:1.3px;color:var(--muted);max-width:90px}.neo-ecosystem strong{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:550}.neo-ecosystem svg{width:19px;color:var(--muted)}.neo-plus{font-weight:300;font-size:20px;color:var(--line)}
+.sb-section{padding:88px 0}.sb-section-kicker{color:var(--teal);letter-spacing:2px;font-size:9px}.sb-home h2{font-size:clamp(30px,3.6vw,46px);font-weight:600;letter-spacing:-1.9px}.sb-section-head-split{grid-template-columns:1fr 1fr;gap:100px}.sb-feature-grid{grid-template-columns:repeat(6,1fr);gap:18px}.sb-feature-card{grid-column:span 2;border-radius:14px;padding:27px;background:var(--surface)}.sb-feature-card-xl{grid-column:span 3;grid-row:auto;background:radial-gradient(ellipse at right top,#8265ea22,transparent),var(--surface)}.sb-feature-card:nth-child(2){grid-column:span 3}.sb-feature-card-wide{grid-column:span 2;display:block}.sb-feature-card:last-child{grid-column:span 2;display:block;padding:27px}.sb-feature-card:last-child .sb-feature-icon{margin-bottom:26px}.sb-feature-card:last-child p{margin-top:12px;padding:0}.sb-feature-card:last-child .sb-feature-index{display:block}.sb-feature-icon{background:var(--tint);border:0;color:var(--teal);border-radius:10px}.sb-feature-card h3{font-size:20px}.sb-feature-card p{font-size:12px}.sb-token-cloud{margin-top:20px}.sb-token-cloud span{background:var(--paper);border-radius:6px}.sb-match-demo{margin-top:18px;gap:7px}.sb-match-demo>div{padding:8px 10px;border-radius:0 5px 5px 0}.sb-match-demo strong{font-size:9px}.sb-feature-card:hover{box-shadow:0 12px 40px #0002;border-color:#8272c780}.sb-section-soft{background:var(--surface);border-block:1px solid var(--line)}.sb-section-soft .sb-section-head{text-align:center;margin:0 auto 44px}.sb-journey{gap:0}.sb-journey-step{border-top:0;border-right:1px solid var(--line);padding:0 24px}.sb-journey-step:first-child{padding-left:0}.sb-journey-step:last-child{border-right:0}.sb-journey-num{position:static;font-size:38px;font-weight:300;color:#8b79d2;display:block;line-height:1;margin-bottom:26px;letter-spacing:-2px}.sb-journey-icon{display:none}.sb-journey-step h3{font-size:15px}.sb-journey-step p{font-size:11px}.sb-role-grid{grid-template-columns:1fr;gap:13px}.sb-role-card{display:grid;grid-template-columns:150px 1fr 1.2fr;gap:16px 30px;border-radius:12px;padding:28px 32px}.sb-role-card-head{grid-row:span 2;display:flex;flex-direction:column;align-items:start;justify-content:center;gap:15px;margin:0}.sb-role-card h3{font-size:21px;max-width:330px}.sb-role-card p{font-size:12px;min-height:0;grid-column:2;margin:0}.sb-role-card ul{grid-column:3;grid-row:1/span 2;display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;border-top:0;border-left:1px solid var(--line);padding:5px 0 5px 27px;margin:0;align-content:center}.sb-role-card li{font-size:10px}.sb-role-card-featured{background:linear-gradient(100deg,#8265ea18,transparent),var(--surface);border-color:#8265ea60}.sb-live-section{padding:0 0 80px}.sb-live-panel{padding:25px 30px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.sb-live-head h2{font-size:16px;letter-spacing:-.3px}.sb-live-stat strong{font-weight:400}.sb-why-section{background:var(--tint);color:var(--ink);border-block:1px solid var(--line)}.sb-why-copy .sb-section-kicker{color:var(--teal)}.sb-why-copy p,.sb-why-list small{color:var(--muted)}.sb-why-copy p strong{color:var(--ink)}.sb-why-list svg{color:var(--teal)}.sb-pipeline-card{background:var(--paper);border-color:var(--line);transform:rotate(2deg)}.sb-pipeline-head{border-color:var(--line)}.sb-pipeline-node>span{color:var(--teal);border-color:var(--line);background:var(--tint)}.sb-pipeline-node small{color:var(--muted)}.sb-pipeline-line{border-color:var(--line)}.sb-cta-card{display:block;text-align:center;background:radial-gradient(ellipse at 50% 100%,#8265ea30,transparent 70%),var(--surface);padding:65px 30px;border-radius:16px}.sb-cta-card h2{font-size:45px;max-width:none}.sb-cta-card p{max-width:490px;margin:20px auto 0}.sb-cta-actions{flex-direction:row;justify-content:center;margin-top:28px}.sb-footer{padding-bottom:90px}.sb-assistant-launcher{background:#8265ea;color:#fff;border-radius:14px}.sb-assistant-lamp{background:#b9aaff}.sb-assistant-face span{background:#3a2667}.sb-nav-intro{background:var(--tint)!important;border-color:var(--line)!important}.sb-nav-intro-title{color:var(--ink)!important}.sb-nav-journey span{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}.sb-nav-live{color:var(--teal)}.sb-nav-live>span{background:var(--teal)}.sb-nav-mode{color:var(--teal);background:var(--surface)}
+@media(max-width:1000px){.sb-section-head-split{gap:40px}.sb-role-card{grid-template-columns:120px 1fr;gap:15px 25px}.sb-role-card ul{grid-column:2;grid-row:auto;border:0;padding:15px 0 0}.sb-role-card-head{grid-row:span 3}.neo-dashboard{padding:22px 17px}.neo-workspace{grid-template-columns:170px 1fr}.neo-profile,.neo-focus{padding:15px}.neo-match-label{display:none}}
+@media(max-width:750px){.sb-container{width:calc(100% - 36px)}.neo-hero{padding-top:45px}.sb-home .neo-hero h1{font-size:52px;letter-spacing:-2.7px}.neo-intro{font-size:14px}.neo-caption{gap:14px;font-size:7px;letter-spacing:.3px}.neo-sidebar{display:none}.neo-workspace{grid-template-columns:1fr}.neo-ecosystem{gap:18px;padding:27px 0}.neo-ecosystem>span:first-child{max-width:none;flex-basis:100%;text-align:center}.neo-ecosystem strong{font-size:11px}.neo-ecosystem svg{width:16px}.sb-feature-grid{grid-template-columns:1fr 1fr}.sb-feature-card,.sb-feature-card-xl,.sb-feature-card:nth-child(2),.sb-feature-card-wide,.sb-feature-card:last-child{grid-column:auto}.sb-feature-card:last-child{grid-column:1/-1}.sb-section-head-split{grid-template-columns:1fr;gap:0}.sb-journey{grid-template-columns:1fr 1fr;gap:28px 0}.sb-journey-step{padding:0 20px!important}.sb-journey-step:nth-child(even){border:0}.sb-journey-step:last-child{grid-column:1/-1}.sb-cta-card h2{font-size:37px}.sb-why-grid{grid-template-columns:1fr}.sb-section{padding:60px 0}.sb-live-section{padding-bottom:55px}}
+@media(max-width:480px){.sb-home .neo-hero h1{font-size:40px;letter-spacing:-2px;line-height:1.15}.neo-eyebrow{font-size:8px;letter-spacing:1px}.desktop-break{display:none}.neo-hero .sb-hero-actions{display:grid;grid-template-columns:1fr}.neo-caption{font-size:6px;gap:12px;margin-bottom:28px}.neo-dashboard{padding:15px 10px}.neo-dash-top{align-items:start}.neo-dash-top h3{font-size:18px}.neo-side-label{font-size:7px}.neo-preview{font-size:6px;padding:3px 5px}.neo-dashboard-grid{grid-template-columns:1fr}.neo-focus{display:grid;grid-template-columns:30px 1fr;gap:6px 10px}.neo-focus>.neo-side-label{grid-column:1/-1}.neo-focus-icon{grid-column:1;grid-row:2/span 2;margin:4px 0}.neo-focus h3{grid-column:2;font-size:16px}.neo-focus p{grid-column:2;margin:0}.neo-focus-tag{grid-column:2;margin-top:4px}.neo-opportunity{padding:12px;gap:8px}.neo-opportunity strong{font-size:10px}.neo-opportunity p{font-size:8px}.neo-ecosystem{gap:12px}.neo-ecosystem strong{font-size:9px;gap:4px}.neo-plus{font-size:13px}.sb-feature-grid{grid-template-columns:1fr}.sb-feature-card:last-child{grid-column:auto}.sb-role-card{display:block;padding:25px}.sb-role-card-head{flex-direction:row;align-items:center;justify-content:space-between;margin-bottom:18px}.sb-role-card p{margin-top:13px}.sb-role-card ul{grid-template-columns:1fr;margin-top:15px;padding-top:18px;border-top:1px solid var(--line)}.sb-role-card li{font-size:12px}.sb-live-panel{padding:20px 15px}.sb-live-stat{padding:0 10px}.sb-live-stat>span{font-size:9px}.sb-cta-card{padding:40px 20px}.sb-cta-card h2{font-size:30px}.sb-cta-actions{flex-direction:column}.sb-pipeline-card{transform:none}.sb-assistant-label strong{font-size:10px}}
+</style>
+<style id="device-navigator-design">
+/* Device-led homepage and accessible animated Navigator. */
+:root,[data-theme="dark"]{--paper:#0c1323;--surface:#141f33;--ink:#f4f7ff;--muted:#adbcd3;--line:#2a3a53;--teal:#a9b9ff;--tint:#1c2b47;--nav:rgba(12,19,35,.96)}
+[data-theme="light"]{--paper:#f5f7fc;--surface:#fff;--ink:#132340;--muted:#53627a;--line:#dce3ef;--teal:#435ccc;--tint:#eaf0ff;--nav:rgba(245,247,252,.96)}
+.sb-home .sb-primary-btn{background:#4169e1;border-color:#4169e1;box-shadow:none;color:#fff}.sb-nav-actions .sb-primary-btn{background:#4169e1;color:#fff;border-color:#4169e1}.sb-home button,.sb-primary-btn,.sb-secondary-btn,.sb-login-btn{min-height:44px}.sb-home a,.sb-home button{-webkit-tap-highlight-color:transparent}.sb-nav-links a,.sb-footer-links a{display:inline-flex;align-items:center;min-height:44px}.sb-theme-btn [data-theme-label]{display:inline;font-size:11px}.sb-theme-icon{display:inline-flex}.sb-menu-btn{min-width:44px}.sb-nav-actions{gap:6px}.sb-nav-links{gap:18px}.sb-home .neo-hero{padding-top:72px;text-align:left;background:none}.neo-hero>.sb-container{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center}.sb-home .neo-hero h1{font-size:clamp(45px,4.1vw,63px);letter-spacing:-2.8px;line-height:1.1}.neo-hero h1>span{background:none;color:var(--teal)}.neo-eyebrow{font-size:8px;letter-spacing:1px;line-height:1.8;margin-bottom:21px}.neo-intro{font-size:14px}.desktop-break{display:none}.neo-hero .sb-hero-actions{justify-content:flex-start;gap:10px}.neo-hero .sb-hero-actions a{font-size:11px;padding:13px}.neo-caption{justify-content:flex-start;font-size:7px;gap:12px;letter-spacing:.3px;margin:25px 0 0}.neo-ecosystem{grid-column:1/-1;width:100%;margin-top:15px}.device-stage{min-width:0;padding:15px 5px;position:relative}.device-frame{border:9px solid #34445e;border-top-width:21px;border-bottom-width:15px;border-radius:17px 17px 7px 7px;position:relative;background:var(--surface);box-shadow:0 28px 60px #0002}.device-camera{position:absolute;width:5px;height:5px;background:#8b9eb7;border-radius:50%;top:-13px;left:50%;transform:translateX(-50%)}.device-base{height:13px;background:linear-gradient(#8a99b0,#445570);border-radius:1px 1px 60% 60%;margin:0 -16px;position:relative}.device-base:after{content:'';display:block;width:70px;height:5px;background:#34445e;margin:auto;border-radius:0 0 6px 6px}.device-note{text-align:center;font-size:10px!important;margin-top:18px!important}.neo-workspace{border:0;border-radius:0;box-shadow:none;padding:0;grid-template-columns:105px 1fr}.neo-sidebar{padding:16px 6px;border-radius:0}.neo-sidebar>div{font-size:8px;padding:9px 5px;gap:5px}.neo-sidebar>div svg{width:12px;height:12px}.neo-sidebar .neo-workspace-brand{font-size:8px;padding:3px 4px 20px}.neo-sidebar .neo-side-label{font-size:6px;padding:0 5px}.neo-sidebar .neo-sidebar-note{padding:10px 6px;margin-top:18px}.neo-sidebar-note strong{font-size:10px}.neo-sidebar-note small{font-size:6px}.neo-dashboard{padding:17px 12px}.neo-dash-top{margin-bottom:15px}.neo-dash-top h3{font-size:17px}.neo-dash-top .neo-side-label{font-size:6px}.neo-preview{font-size:6px;white-space:normal;max-width:72px;text-align:center}.neo-dashboard-grid{gap:9px;grid-template-columns:1fr}.neo-profile,.neo-focus{padding:12px}.neo-profile-head strong{font-size:10px}.neo-profile-line{margin:12px 0}.neo-skill-pills{margin-top:8px}.neo-skill-pills span{padding:4px 9px}.neo-profile-foot{margin-top:12px;font-size:8px}.neo-focus{display:grid;grid-template-columns:28px 1fr;gap:5px 9px}.neo-focus>.neo-side-label{grid-column:1/-1;font-size:7px}.neo-focus-icon{grid-column:1;grid-row:2/span 2;margin:4px 0}.neo-focus h3{grid-column:2;font-size:14px}.neo-focus p{grid-column:2;margin:0;font-size:9px}.neo-focus-tag{grid-column:2;margin-top:2px;font-size:7px}.neo-opportunity{padding:12px;gap:9px}.neo-opportunity strong{font-size:10px}.neo-opportunity p{font-size:8px}.neo-match-label{display:none}.journey-details{list-style:none;padding:14px 0 0;margin:16px 0 0;border-top:1px solid var(--line);display:grid;gap:7px}.journey-details li{font-size:11px;color:var(--muted)}.journey-details li:before{content:'+';color:var(--teal);margin-right:7px}.sb-footer{padding-bottom:180px}.sb-assistant-form button{min-width:44px}.sb-assistant-quick button{min-height:44px;font-size:11px}.sb-assistant-panel-head button{min-width:44px;min-height:44px;flex-shrink:0}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}.navigator-dock{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;pointer-events:none}.sb-assistant-launcher{position:relative;bottom:auto;right:auto;background:transparent;color:var(--ink);padding:0;border:0;box-shadow:none;gap:8px;pointer-events:auto;overflow:visible;border-radius:12px}.sb-assistant-label{padding:10px 13px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 20px #0001}.sb-assistant-label strong{font-size:11px}.sb-assistant-label small{font-size:9px;color:var(--muted)}.robot-scene{position:relative;width:76px;height:98px;display:block;flex-shrink:0}.robot-shadow{position:absolute;bottom:2px;left:16px;width:45px;height:8px;border-radius:50%;background:#0003;filter:blur(2px);animation:robotShadow 9s ease-in-out infinite}.robot-body{position:absolute;inset:7px 0 10px;animation:robotHello .8s ease-out both,robotHop 9s 1s ease-in-out infinite}.robot-antenna{position:absolute;top:0;left:37px;width:3px;height:10px;background:#92a5d6}.robot-antenna:before{content:'';position:absolute;width:7px;height:7px;background:#7f90ff;border-radius:50%;left:-2px;top:-3px}.robot-head{position:absolute;left:11px;top:10px;width:56px;height:40px;border-radius:16px;background:linear-gradient(135deg,#fff,#aebee4);box-shadow:inset 0 -3px 0 #809ac6}.robot-screen{position:absolute;inset:7px 6px 8px;background:#172846;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:12px}.robot-eye{display:block;width:6px;height:9px;background:#9ac7ff;border-radius:4px;animation:robotBlink 6s infinite}.robot-smile{position:absolute;bottom:3px;left:19px;width:7px;height:4px;border-bottom:1px solid #a9bfff;border-radius:50%}.robot-torso{position:absolute;top:51px;left:23px;width:33px;height:22px;background:linear-gradient(120deg,#edf3ff,#91a7d0);border-radius:6px 6px 12px 12px}.robot-torso>span{position:absolute;width:9px;height:5px;top:7px;left:12px;background:#6a7eea;border-radius:3px}.robot-arm{position:absolute;top:52px;width:9px;height:19px;background:#9cafdb;border-radius:7px;transform-origin:top center}.robot-arm-left{left:12px;transform:rotate(20deg)}.robot-arm-right{right:9px;transform:rotate(-20deg);animation:robotWave 12s ease-in-out infinite}.robot-foot{position:absolute;top:74px;width:13px;height:6px;border-radius:6px;background:#8299c6}.robot-foot-left{left:23px}.robot-foot-right{right:19px}.navigator-greeting{pointer-events:auto;display:flex;align-items:start;gap:5px;max-width:230px;padding:12px 8px 12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px 12px 0 12px;box-shadow:0 10px 35px #0002;margin-bottom:8px}.navigator-greeting p{font-size:12px;color:var(--ink)}.navigator-greeting button{background:none;color:var(--muted);border:0;min-width:44px;font-size:21px;margin-top:-7px}.chat-active .robot-body,.chat-active .robot-shadow,.chat-active .robot-eye,.chat-active .robot-arm{animation-play-state:paused}.sb-assistant-panel{right:max(22px,env(safe-area-inset-right));bottom:calc(18px + var(--chat-bottom,0px));width:400px;height:min(640px,calc(var(--chat-height,100dvh) - 36px));max-height:calc(var(--chat-height,100dvh) - 36px);border-radius:18px;z-index:70;box-shadow:0 24px 85px #0005}.sb-assistant-panel.is-open{animation:none}.sb-assistant-panel-title{display:flex;align-items:center;gap:10px}.navigator-avatar{width:35px;height:35px;display:grid;place-items:center;background:#4169e1;color:white;border-radius:11px;font-size:23px}.sb-assistant-panel-title small{font-size:10px;display:block;line-height:1.5}.sb-assistant-panel-title strong{font-size:13px}.sb-assistant-panel-head{padding:13px 14px;flex-shrink:0}.sb-nav-intro{flex-shrink:0;padding:11px;margin:10px 12px}.sb-nav-intro-title{margin:8px 0;font-size:12px}.sb-nav-journey span{font-size:9px}.sb-assistant-quick{padding:0 12px 8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;flex-shrink:0}.sb-assistant-messages{min-height:0;overscroll-behavior:contain;padding:12px;flex:1}.sb-chat-bubble{font-size:13px;line-height:1.7;overflow-wrap:anywhere}.navigator-disclosure{font-size:9px!important;text-align:center;padding:6px 10px;border-top:1px solid var(--line);flex-shrink:0}.sb-assistant-form{flex-shrink:0}.sb-assistant-form textarea{font-size:16px;min-height:44px;max-height:100px}.sb-assistant-form button:disabled{opacity:.5;cursor:wait}.sb-chat-typing:after{content:'Preparing a reply…'}.sb-reveal{animation:none}.sb-nav-live>span{animation:none}.sb-assistant-form button{background:#4169e1;color:#fff}
+@keyframes robotHello{0%{transform:translateY(0)}45%{transform:translateY(-13px) rotate(-5deg)}75%{transform:translateY(1px)}100%{transform:translateY(0)}}@keyframes robotHop{0%,82%,100%{transform:translateY(0)}87%{transform:translateY(-9px)}92%{transform:translateY(0)}95%{transform:translateY(-3px)}}@keyframes robotShadow{0%,82%,100%{transform:scaleX(1);opacity:1}87%{transform:scaleX(.7);opacity:.5}92%{transform:scaleX(1);opacity:1}}@keyframes robotBlink{0%,42%,46%,100%{transform:scaleY(1)}44%{transform:scaleY(.1)}}@keyframes robotWave{0%,88%,100%{transform:rotate(-20deg)}91%,96%{transform:rotate(-100deg)}94%{transform:rotate(-65deg)}}
+@media(min-width:1001px){.sb-nav-links{gap:14px}.sb-nav-links a{font-size:12px}.sb-nav-actions .sb-login-btn{padding:8px}.sb-nav-actions .sb-primary-btn{padding:10px}.sb-nav{gap:16px}}
+@media(max-width:1000px){.neo-hero>.sb-container{grid-template-columns:1fr;gap:30px}.device-hero-copy{text-align:center;max-width:650px;margin:auto}.neo-hero .sb-hero-actions,.neo-caption{justify-content:center}.device-stage{width:100%;max-width:690px;margin:auto}.neo-workspace{grid-template-columns:135px 1fr}.neo-dashboard{padding:22px}.neo-dash-top h3{font-size:22px}.neo-profile-head strong{font-size:12px}.neo-focus p{font-size:11px}.neo-preview{font-size:8px;max-width:100px}.neo-sidebar{display:block}.neo-ecosystem{margin:0}.sb-nav-links{display:none}.sb-menu-btn{display:inline-flex}.neo-sidebar>div{font-size:10px}}
+@media(max-width:600px){.sb-home .neo-hero{padding-top:40px}.sb-home .neo-hero h1{font-size:46px;line-height:1.08;letter-spacing:-2px}.neo-hero>.sb-container{gap:25px}.neo-hero .sb-hero-actions{display:grid;grid-template-columns:1fr}.neo-hero .sb-hero-actions a{font-size:13px}.neo-intro{font-size:14px}.neo-caption{font-size:7px}.device-stage{max-width:338px;padding:0}.device-frame{border:7px solid #34445e;border-top-width:24px;border-bottom-width:18px;border-radius:30px}.device-camera{width:63px;height:11px;border-radius:10px;top:-17px;background:#152339}.device-base{display:none}.neo-workspace{grid-template-columns:1fr;border-radius:0 0 18px 18px;overflow:hidden}.neo-sidebar{display:none}.neo-dashboard{padding:16px 12px}.neo-dash-top{display:block}.neo-dash-top h3{font-size:20px}.neo-dash-top .neo-side-label{font-size:8px}.neo-preview{display:inline-block;margin-top:9px;font-size:9px;max-width:none}.neo-profile-head strong{font-size:11px}.neo-profile-head small{font-size:10px}.neo-profile .neo-side-label{font-size:9px}.neo-profile-foot{font-size:9px}.neo-focus>.neo-side-label{font-size:8px}.neo-focus h3{font-size:15px}.neo-focus p{font-size:11px}.neo-focus-tag{font-size:9px}.neo-opportunity{padding:11px 8px;align-items:start}.neo-opportunity strong{font-size:11px}.neo-opportunity p{font-size:9px}.neo-opportunity small{font-size:7px}.neo-opportunity-icon{width:25px;height:30px;flex-shrink:0}.neo-ecosystem{gap:12px}.neo-ecosystem strong{font-size:10px}.sb-theme-btn [data-theme-label]{display:none}.sb-nav-actions .sb-login-btn svg{display:none}.sb-nav{gap:6px}.navigator-dock{right:max(12px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom))}.robot-scene{width:62px;height:85px;transform:scale(.82);transform-origin:bottom right;margin-left:-8px}.sb-assistant-label{display:none}.navigator-greeting{max-width:225px;margin-bottom:0}.sb-assistant-launcher{margin-left:auto}.sb-assistant-panel{width:100%;max-width:100%;right:0;bottom:var(--chat-bottom,0px);height:min(650px,calc(var(--chat-height,100dvh) - 10px));max-height:calc(var(--chat-height,100dvh) - 10px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom)}.sb-nav-intro{display:none}.sb-assistant-quick{padding-top:10px}.navigator-open{overflow:hidden}.sb-section{padding:50px 0}.sb-footer{padding-bottom:135px}}
+@media(max-height:480px){.sb-nav-intro,.navigator-disclosure{display:none}.sb-assistant-panel-head{padding:5px 10px}.sb-assistant-quick{display:flex;flex-wrap:nowrap;overflow-x:auto;padding:5px}.sb-assistant-quick button{white-space:nowrap;flex-shrink:0}.sb-assistant-form{padding:6px}}
+@media(prefers-reduced-motion:reduce){.robot-body,.robot-shadow,.robot-eye,.robot-arm{animation:none!important}.sb-home *{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<style>.mini-bot-face{display:flex;justify-content:center;align-items:center;gap:7px;width:26px;height:21px;border:3px solid #d5e1ff;border-radius:8px;background:#172846}.mini-bot-face b{width:3px;height:6px;background:#9ac7ff;border-radius:3px}.sb-home .sb-mobile-menu-inner>a{min-height:44px;display:flex;align-items:center}.sb-home .sb-nav-actions .sb-theme-btn{min-width:44px}</style>
 </head>
 
 <body class="sb-home">
@@ -56,7 +98,7 @@
 
       <nav class="sb-nav-links" aria-label="Primary navigation">
         <a href="#platform">Platform</a>
-        <a href="#journey">Journey</a>
+        <a href="#journey">How It Works</a>
         <a href="#roles">Solutions</a>
         <a href="#why">Why SkillBridge</a>
       </nav>
@@ -99,7 +141,7 @@
     <div id="sbMobileMenu" class="sb-mobile-menu" hidden>
       <div class="sb-container sb-mobile-menu-inner">
         <a href="#platform">Platform</a>
-        <a href="#journey">Journey</a>
+        <a href="#journey">How It Works</a>
         <a href="#roles">Solutions</a>
         <a href="#why">Why SkillBridge</a>
 
@@ -116,30 +158,12 @@
     <!-- ===================================================== -->
     <!-- HERO -->
     <!-- ===================================================== -->
-    <section class="sb-hero">
-      <div class="sb-hero-noise" aria-hidden="true"></div>
-      <div class="sb-hero-orb sb-hero-orb-a" aria-hidden="true"></div>
-      <div class="sb-hero-orb sb-hero-orb-b" aria-hidden="true"></div>
-
-      <div class="sb-container sb-hero-grid">
-        <div class="sb-hero-copy">
-          <div class="sb-hero-kicker">
-            <span class="sb-kicker-dot"></span>
-            Skill Intelligence for Students, Colleges & Industry
-          </div>
-
-          <h1>
-            Build a career from
-            <span class="sb-gradient-text">real skills,</span>
-            not guesswork.
-          </h1>
-
-          <p class="sb-hero-sub">
-            SkillBridge AI maps student skills, identifies the gap against real industry requirements,
-            creates a focused career roadmap and explains why each opportunity matches.
-          </p>
-
-          <div class="sb-hero-actions">
+    <section class="sb-hero neo-hero">
+<div class="sb-container">
+<div class="device-hero-copy"><div class="neo-eyebrow"><span></span> THE NEXT CHAPTER OF YOUR CAREER</div>
+<h1>Your skills.<br>Your ambition.<br><span>Your next move.</span></h1>
+<p class="neo-intro">Turn what you know into where you go. Map your skills, close the gaps,<br class="desktop-break"> and discover opportunities built around your ambitions.</p>
+<div class="sb-hero-actions">
             <a href="/register.html" class="sb-primary-btn sb-primary-btn-lg">
               Start building your profile
               <i data-lucide="arrow-right"></i>
@@ -150,211 +174,22 @@
               Open dashboard
             </a>
           </div>
-
-          <div class="sb-proof-line">
-            <div>
-              <i data-lucide="shield-check"></i>
-              <span>
-                <strong>Verified college identity</strong>
-                <small>Registry-based verification</small>
-              </span>
-            </div>
-
-            <div>
-              <i data-lucide="scan-search"></i>
-              <span>
-                <strong>Explainable skill match</strong>
-                <small>Matched + missing skills</small>
-              </span>
-            </div>
-
-            <div>
-              <i data-lucide="route"></i>
-              <span>
-                <strong>Actionable roadmap</strong>
-                <small>Know what to learn next</small>
-              </span>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- HERO INTELLIGENCE CONSOLE -->
-        <!-- ================================================= -->
-        <div class="sb-intel-stage">
-          <div class="sb-intel-shadow" aria-hidden="true"></div>
-
-          <div class="sb-intel-console">
-            <div class="sb-intel-topbar">
-              <div class="sb-intel-topbar-left">
-                <span class="sb-console-dot"></span>
-                <span class="sb-console-dot"></span>
-                <span class="sb-console-dot"></span>
-              </div>
-
-              <div class="sb-intel-title">
-                Career Intelligence
-              </div>
-
-              <div class="sb-intel-status">
-                <span></span>
-                Live
-              </div>
-            </div>
-
-            <div class="sb-intel-body">
-              <div class="sb-intel-main">
-                <div class="sb-radar-wrap">
-                  <div class="sb-radar-ring sb-radar-ring-1"></div>
-                  <div class="sb-radar-ring sb-radar-ring-2"></div>
-                  <div class="sb-radar-ring sb-radar-ring-3"></div>
-                  <div class="sb-radar-sweep"></div>
-
-                  <div class="sb-radar-core">
-                    <i data-lucide="brain-circuit"></i>
-                    <strong>Skill Map</strong>
-                    <small>Backend Developer</small>
-                  </div>
-
-                  <span class="sb-radar-tag sb-radar-tag-a">Python</span>
-                  <span class="sb-radar-tag sb-radar-tag-b">FastAPI</span>
-                  <span class="sb-radar-tag sb-radar-tag-c">SQL</span>
-                  <span class="sb-radar-tag sb-radar-tag-d">Docker</span>
-                  <span class="sb-radar-tag sb-radar-tag-e">Testing</span>
-                </div>
-
-                <div class="sb-intel-sidecards">
-                  <article class="sb-mini-card">
-                    <span class="sb-mini-icon sb-mini-icon-teal">
-                      <i data-lucide="gauge"></i>
-                    </span>
-                    <div>
-                      <small>Career readiness</small>
-                      <strong>Role-based</strong>
-                    </div>
-                  </article>
-
-                  <article class="sb-mini-card">
-                    <span class="sb-mini-icon sb-mini-icon-blue">
-                      <i data-lucide="git-compare-arrows"></i>
-                    </span>
-                    <div>
-                      <small>Opportunity match</small>
-                      <strong>Explainable</strong>
-                    </div>
-                  </article>
-
-                  <article class="sb-mini-card">
-                    <span class="sb-mini-icon sb-mini-icon-amber">
-                      <i data-lucide="triangle-alert"></i>
-                    </span>
-                    <div>
-                      <small>Priority gap</small>
-                      <strong>Docker + Testing</strong>
-                    </div>
-                  </article>
-                </div>
-              </div>
-
-              <div class="sb-match-card">
-                <div class="sb-match-left">
-                  <span class="sb-company-mark">
-                    <i data-lucide="building-2"></i>
-                  </span>
-
-                  <div>
-                    <small>Recommended opportunity</small>
-                    <strong>Backend Engineering Internship</strong>
-                  </div>
-                </div>
-
-                <div class="sb-match-right">
-                  <small>Match reason</small>
-                  <strong>6 skills aligned</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Floating assistant lamp/orb -->
-          <button id="sbAssistantLauncher" class="sb-assistant-launcher" type="button" aria-label="Open SkillBridge assistant">
-            <span class="sb-assistant-lamp">
-              <span class="sb-assistant-light"></span>
-              <span class="sb-assistant-face">
-                <span></span>
-                <span></span>
-              </span>
-            </span>
-
-            <span class="sb-assistant-label">
-              <strong>Open Navigator</strong>
-              <small>Find your next step</small>
-            </span>
-          </button>
-        </div>
-      </div>
-    </section>
+<div class="neo-caption"><span>01 / MAP YOUR SKILLS</span><span>02 / BUILD YOUR EDGE</span><span>03 / FIND YOUR FIT</span></div>
+</div><div class="device-stage"><div class="device-frame"><span class="device-camera" aria-hidden="true"></span><div class="neo-workspace">
+<aside class="neo-sidebar"><div class="neo-workspace-brand"><i data-lucide="command"></i> Workspace</div><span class="neo-side-label">YOUR CAREER OS</span><div class="neo-side-active"><i data-lucide="layout-dashboard"></i> Overview</div><div><i data-lucide="scan-line"></i> Skill profile</div><div><i data-lucide="route"></i> Learning path</div><div><i data-lucide="briefcase"></i> Opportunities</div><div class="neo-sidebar-note"><i data-lucide="sparkles"></i><strong>Your next move,<br>made clearer.</strong><small>Skills → Growth → Career</small></div></aside>
+<div class="neo-dashboard"><div class="neo-dash-top"><div><span class="neo-side-label">YOUR CAREER, IN FOCUS</span><h3>Let's connect the dots.</h3></div><span class="neo-preview">Illustrative preview</span></div>
+<div class="neo-dashboard-grid"><article class="neo-profile"><div class="neo-profile-head"><span class="neo-avatar">SB</span><div><strong>Aspiring Backend Developer</strong><small>Student skill profile</small></div><i data-lucide="badge-check"></i></div><div class="neo-profile-line"></div><small class="neo-side-label">YOUR CURRENT TOOLKIT</small><div class="neo-skill-pills"><span>Python</span><span>FastAPI</span><span>SQL</span><span>Git</span></div><div class="neo-profile-foot"><i data-lucide="file-check-2"></i> Resume skills + student confirmation</div></article>
+<article class="neo-focus"><span class="neo-side-label">NEXT LEARNING PRIORITY</span><div class="neo-focus-icon"><i data-lucide="container"></i></div><h3>Build. Test. Deploy.</h3><p>Strengthen Docker and testing to expand your backend toolkit.</p><span class="neo-focus-tag">Your skill gap → Your next step</span></article>
+<article class="neo-opportunity"><div class="neo-opportunity-icon"><i data-lucide="code-xml"></i></div><div><small>EXAMPLE OPPORTUNITY</small><strong>Backend Engineering Internship</strong><p>Matched: Python · FastAPI · SQL · Git</p></div><span class="neo-match-label"><i data-lucide="git-compare-arrows"></i> See the fit</span></article></div>
+</div></div>
+</div><div class="device-base" aria-hidden="true"></div><p class="device-note">A clearer picture of your career potential.</p></div><div class="neo-ecosystem"><span>ONE CONNECTED ECOSYSTEM</span><strong><i data-lucide="graduation-cap"></i> I’m a students</strong><span class="neo-plus">+</span><strong><i data-lucide="school"></i> Colleges & TPOs</strong><span class="neo-plus">+</span><strong><i data-lucide="building-2"></i> Industry</strong></div>
+</div></section><div class="navigator-dock" id="navigatorDock"><div class="navigator-greeting" id="navigatorGreeting" hidden><p>Hi! Need help finding your next step?</p><button id="dismissGreeting" type="button" aria-label="Dismiss greeting">×</button></div><button id="sbAssistantLauncher" class="sb-assistant-launcher" type="button" aria-label="Open SkillBridge Navigator" aria-controls="sbAssistantPanel" aria-expanded="false"><span class="robot-scene" aria-hidden="true"><span class="robot-shadow"></span><span class="robot-body"><span class="robot-antenna"></span><span class="robot-head"><span class="robot-screen"><span class="robot-eye"></span><span class="robot-eye"></span><span class="robot-smile"></span></span></span><span class="robot-torso"><span></span></span><span class="robot-arm robot-arm-left"></span><span class="robot-arm robot-arm-right"></span><span class="robot-foot robot-foot-left"></span><span class="robot-foot robot-foot-right"></span></span></span><span class="sb-assistant-label"><strong>Ask Navigator</strong><small>Your next step, simplified</small></span></button></div>
 
 
     <!-- ===================================================== -->
     <!-- LIVE PLATFORM -->
     <!-- ===================================================== -->
-    <section class="sb-live-section">
-      <div class="sb-container">
-        <div class="sb-live-panel">
-          <div class="sb-live-head">
-            <div>
-              <span class="sb-section-kicker">Live Platform</span>
-              <h2>Real activity from your SkillBridge backend.</h2>
-            </div>
-
-            <span class="sb-live-badge">
-              <span></span>
-              Backend connected
-            </span>
-          </div>
-
-          <div class="sb-live-grid">
-            <div class="sb-live-stat">
-              <i data-lucide="graduation-cap"></i>
-              <strong id="statStudents">—</strong>
-              <span>Students</span>
-            </div>
-
-            <div class="sb-live-stat">
-              <i data-lucide="school"></i>
-              <strong id="statColleges">—</strong>
-              <span>Colleges</span>
-            </div>
-
-            <div class="sb-live-stat">
-              <i data-lucide="building-2"></i>
-              <strong id="statCompanies">—</strong>
-              <span>Industry</span>
-            </div>
-
-            <div class="sb-live-stat">
-              <i data-lucide="briefcase-business"></i>
-              <strong id="statOpportunities">—</strong>
-              <span>Opportunities</span>
-            </div>
-
-            <div class="sb-live-stat">
-              <i data-lucide="blocks"></i>
-              <strong id="statSkills">—</strong>
-              <span>Skills tracked</span>
-            </div>
-
-            <div class="sb-live-stat">
-              <i data-lucide="send"></i>
-              <strong id="statApplications">—</strong>
-              <span>Applications</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 
 
     <!-- ===================================================== -->
@@ -365,7 +200,7 @@
         <div class="sb-section-head sb-section-head-split">
           <div>
             <span class="sb-section-kicker">Core Platform</span>
-            <h2>One system that connects skills, gaps and opportunities.</h2>
+            <h2>Everything you need.<br>One clear direction.</h2>
           </div>
 
           <p>
@@ -480,7 +315,7 @@
       <div class="sb-container">
         <div class="sb-section-head">
           <span class="sb-section-kicker">Student Journey</span>
-          <h2>From profile to placement, every step has a purpose.</h2>
+          <h2>Big ambitions.<br>Five practical steps.</h2>
           <p>
             The platform keeps the journey simple while connecting each step to real skill evidence.
           </p>
@@ -494,7 +329,7 @@
             </div>
             <h3>Create Profile</h3>
             <p>Academic details, career goals and verified college identity.</p>
-          </article>
+          <ul class="journey-details"><li>Academic details</li><li>Career goals</li><li>College identity</li></ul></article>
 
           <article class="sb-journey-step">
             <span class="sb-journey-num">02</span>
@@ -503,7 +338,7 @@
             </div>
             <h3>Map Skills</h3>
             <p>Manual skills, resume detection, projects and certificates.</p>
-          </article>
+          <ul class="journey-details"><li>PDF resume</li><li>Skill inventory</li><li>Student confirmation</li></ul></article>
 
           <article class="sb-journey-step">
             <span class="sb-journey-num">03</span>
@@ -512,7 +347,7 @@
             </div>
             <h3>Find the Gap</h3>
             <p>Compare your profile with role and industry requirements.</p>
-          </article>
+          <ul class="journey-details"><li>Target role</li><li>Matched skills</li><li>Missing skills</li></ul></article>
 
           <article class="sb-journey-step">
             <span class="sb-journey-num">04</span>
@@ -521,7 +356,7 @@
             </div>
             <h3>Follow Roadmap</h3>
             <p>Prioritize skills, practice, projects and interview preparation.</p>
-          </article>
+          <ul class="journey-details"><li>Learning priorities</li><li>Practice projects</li><li>Interview preparation</li></ul></article>
 
           <article class="sb-journey-step">
             <span class="sb-journey-num">05</span>
@@ -530,7 +365,7 @@
             </div>
             <h3>Match & Apply</h3>
             <p>Discover opportunities and understand why they match.</p>
-          </article>
+          <ul class="journey-details"><li>Relevant openings</li><li>Match reasons</li><li>Applications</li></ul></article>
         </div>
       </div>
     </section>
@@ -543,7 +378,7 @@
       <div class="sb-container">
         <div class="sb-section-head">
           <span class="sb-section-kicker">Connected Roles</span>
-          <h2>One platform. Three perspectives.</h2>
+          <h2>Built for your side of the bridge.</h2>
           <p>
             Students, colleges and recruiters use different dashboards while sharing the same skill intelligence layer.
           </p>
@@ -623,12 +458,67 @@
     <!-- ===================================================== -->
     <!-- WHY -->
     <!-- ===================================================== -->
-    <section id="why" class="sb-section sb-why-section">
+    <section class="sb-live-section">
+      <div class="sb-container">
+        <div class="sb-live-panel">
+          <div class="sb-live-head">
+            <div>
+              <span class="sb-section-kicker">The SkillBridge network</span>
+              <h2>A shared space for talent and opportunity.</h2>
+            </div>
+
+            <span class="sb-live-badge">
+              <span></span>
+              Loading platform activity…
+            </span>
+          </div>
+
+          <div class="sb-live-grid">
+            <div class="sb-live-stat">
+              <i data-lucide="graduation-cap"></i>
+              <strong id="statStudents">—</strong>
+              <span>Students</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="school"></i>
+              <strong id="statColleges">—</strong>
+              <span>Colleges</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="building-2"></i>
+              <strong id="statCompanies">—</strong>
+              <span>Industry</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="briefcase-business"></i>
+              <strong id="statOpportunities">—</strong>
+              <span>Opportunities</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="blocks"></i>
+              <strong id="statSkills">—</strong>
+              <span>Skills tracked</span>
+            </div>
+
+            <div class="sb-live-stat">
+              <i data-lucide="send"></i>
+              <strong id="statApplications">—</strong>
+              <span>Applications</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<section id="why" class="sb-section sb-why-section">
       <div class="sb-container sb-why-grid">
         <div class="sb-why-copy">
-          <span class="sb-section-kicker sb-section-kicker-dark">Why SkillBridge</span>
+          <span class="sb-section-kicker sb-section-kicker-dark">The SkillBridge difference</span>
 
-          <h2>Not another job board.</h2>
+          <h2>Clarity at every career decision.</h2>
 
           <p>
             SkillBridge is built around one practical question:
@@ -640,7 +530,7 @@
               <i data-lucide="circle-check-big"></i>
               <span>
                 <strong>Skill-first</strong>
-                <small>Profile evidence is connected to role requirements.</small>
+                <small>Confirmed skills are compared with role requirements.</small>
               </span>
             </div>
 
@@ -656,7 +546,7 @@
               <i data-lucide="circle-check-big"></i>
               <span>
                 <strong>Action-oriented</strong>
-                <small>Insights lead to a roadmap, not just a score.</small>
+                <small>College identity verification does not certify skill proficiency. Learning priorities help students build evidence.</small>
               </span>
             </div>
           </div>
@@ -730,7 +620,7 @@
         <div class="sb-cta-card">
           <div>
             <span class="sb-section-kicker">Start now</span>
-            <h2>Build a profile that leads somewhere.</h2>
+            <h2>Your future deserves<br>a stronger starting point.</h2>
             <p>
               Connect your skills, career goals and opportunities through one intelligent workflow.
             </p>
@@ -775,7 +665,7 @@
 
       <div class="sb-footer-links">
         <a href="#platform">Platform</a>
-        <a href="#journey">Journey</a>
+        <a href="#journey">How It Works</a>
         <a href="#roles">Solutions</a>
         <a href="/login.html">Login</a>
       </div>
@@ -790,17 +680,14 @@
   <!-- ===================================================== -->
   <!-- ASSISTANT PANEL -->
   <!-- ===================================================== -->
-  <section id="sbAssistantPanel" class="sb-assistant-panel" aria-hidden="true">
+  <section id="sbAssistantPanel" class="sb-assistant-panel" aria-hidden="true" hidden inert role="dialog" aria-modal="true" aria-labelledby="navigatorTitle">
     <div class="sb-assistant-panel-head">
       <div class="sb-assistant-panel-title">
-        <span class="sb-panel-bot">
-          <span class="sb-panel-eye"></span>
-          <span class="sb-panel-eye"></span>
-        </span>
+        <span class="navigator-avatar" aria-hidden="true"><span class="mini-bot-face"><b></b><b></b></span></span>
 
         <div>
-          <strong>SkillBridge Navigator</strong>
-          <small>Skills → Gap → Roadmap → Opportunity</small>
+          <strong id="navigatorTitle">SkillBridge Navigator</strong>
+          <small>Your guide to skills and opportunities</small>
         </div>
       </div>
 
@@ -811,8 +698,8 @@
 
     <div class="sb-nav-intro">
       <div class="sb-nav-intro-top">
-        <span class="sb-nav-live"><span></span> Smart Guide</span>
-        <span class="sb-nav-mode">Public Mode</span>
+        <span class="sb-nav-live"><span></span> Platform guide</span>
+        <span class="sb-nav-mode">Quick answers</span>
       </div>
 
       <p class="sb-nav-intro-title">What do you want to understand?</p>
@@ -830,23 +717,23 @@
 
     <div class="sb-assistant-quick">
       <button data-sb-prompt="I am a student. How can SkillBridge help me?" type="button">
-        <i data-lucide="graduation-cap"></i> Student
+        <i data-lucide="graduation-cap"></i> I’m a student
       </button>
       <button data-sb-prompt="I am from a college or TPO. How can SkillBridge help?" type="button">
         <i data-lucide="school"></i> College / TPO
       </button>
       <button data-sb-prompt="I am a recruiter. How can SkillBridge help my company?" type="button">
-        <i data-lucide="building-2"></i> Recruiter
+        <i data-lucide="building-2"></i> I’m a recruiter
       </button>
-      <button data-sb-prompt="How does SkillBridge verify resume skills?" type="button">
-        <i data-lucide="shield-check"></i> Skill Trust
+      <button data-sb-prompt="How does skill matching work for an opportunity?" type="button">
+        <i data-lucide="git-compare-arrows"></i> Skill matching
       </button>
     </div>
 
-    <div id="sbAssistantMessages" class="sb-assistant-messages"></div>
+    <div id="sbAssistantMessages" class="sb-assistant-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversation"></div><p class="navigator-disclosure">Quick guidance about SkillBridge features.</p>
 
     <form id="sbAssistantForm" class="sb-assistant-form">
-      <textarea id="sbAssistantInput" rows="1" placeholder="Ask about SkillBridge..." required></textarea>
+      <label for="sbAssistantInput" class="visually-hidden">Message SkillBridge Navigator</label><textarea maxlength="2000" id="sbAssistantInput" rows="1" placeholder="Ask about SkillBridge..." required></textarea>
 
       <button id="sbAssistantSend" type="submit" aria-label="Send message">
         <i data-lucide="send"></i>
@@ -908,10 +795,11 @@
     }
 
     function formatCount(value) {
+      if (value == null || value === "") return "—";
       const number = Number(value);
       return Number.isFinite(number)
         ? number.toLocaleString("en-IN")
-        : "0";
+        : "—";
     }
 
     function setStat(id, value) {
@@ -923,15 +811,17 @@
       try {
         const response = await SB.get("/opportunities/platform/stats");
         const data = getStatsPayload(response);
+        document.querySelector(".sb-live-badge").textContent = "Live platform activity";
 
-        setStat("statStudents", data.students ?? data.total_students ?? 0);
-        setStat("statColleges", data.colleges ?? data.total_colleges ?? 0);
-        setStat("statCompanies", data.companies ?? data.total_companies ?? data.recruiters ?? 0);
-        setStat("statOpportunities", data.opportunities ?? data.total_opportunities ?? 0);
-        setStat("statSkills", data.skills ?? data.total_skills ?? 0);
-        setStat("statApplications", data.applications ?? data.total_applications ?? 0);
+        setStat("statStudents", data.students ?? data.total_students);
+        setStat("statColleges", data.colleges ?? data.total_colleges);
+        setStat("statCompanies", data.companies ?? data.total_companies ?? data.recruiters);
+        setStat("statOpportunities", data.opportunities ?? data.total_opportunities);
+        setStat("statSkills", data.skills ?? data.total_skills);
+        setStat("statApplications", data.applications ?? data.total_applications);
       } catch (error) {
-        console.error("Platform stats error:", error);
+        console.warn("Platform stats unavailable");
+        document.querySelector(".sb-live-badge").textContent = "Activity temporarily unavailable";
 
         [
           "statStudents",
@@ -942,8 +832,8 @@
           "statApplications"
         ].forEach(id => {
           const el = document.getElementById(id);
-          if (el && el.textContent.trim() === "—") {
-            el.textContent = "0";
+          if (el) {
+            el.textContent = "—";
           }
         });
       }
@@ -1096,21 +986,36 @@
     function openAssistant() {
       initAssistant();
 
+      assistantPanel.hidden = false;
+      assistantPanel.inert = false;
       assistantPanel.classList.add("is-open");
+      assistantLauncher.setAttribute("aria-expanded", "true");
+      document.getElementById("navigatorDock").classList.add("chat-active");
+      dismissNavigatorGreeting();
+      document.body.classList.add("navigator-open");
+      document.querySelectorAll("body > header, body > main, body > footer").forEach(el => el.inert = true);
       assistantPanel.setAttribute("aria-hidden", "false");
       assistantLauncher.classList.add("is-hidden");
 
-      setTimeout(() => assistantInput.focus(), 220);
+      assistantClose.focus();
     }
 
     function closeAssistant() {
       assistantPanel.classList.remove("is-open");
+      assistantPanel.hidden = true;
+      assistantPanel.inert = true;
+      assistantLauncher.setAttribute("aria-expanded", "false");
+      document.getElementById("navigatorDock").classList.remove("chat-active");
+      document.body.classList.remove("navigator-open");
+      document.querySelectorAll("body > header, body > main, body > footer").forEach(el => el.inert = false);
       assistantPanel.setAttribute("aria-hidden", "true");
       assistantLauncher.classList.remove("is-hidden");
+      assistantLauncher.focus();
     }
 
     assistantLauncher?.addEventListener("click", openAssistant);
     assistantClose?.addEventListener("click", closeAssistant);
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && assistantPanel.classList.contains("is-open")) closeAssistant(); });
 
     async function sendAssistantMessage(message) {
       const clean = String(message || "").trim();
@@ -1144,12 +1049,13 @@
       } finally {
         assistantSending = false;
         assistantSend.disabled = false;
-        assistantInput.focus();
+        if (!assistantPanel.hidden) assistantInput.focus();
       }
     }
 
     assistantForm?.addEventListener("submit", async event => {
       event.preventDefault();
+      if (assistantSending) return;
 
       const text = assistantInput.value;
       assistantInput.value = "";
@@ -1166,8 +1072,7 @@
 
     document.querySelectorAll("[data-sb-prompt]").forEach(button => {
       button.addEventListener("click", () => {
-        assistantInput.value = button.dataset.sbPrompt || "";
-        assistantInput.focus();
+        sendAssistantMessage(button.dataset.sbPrompt || "");
       });
     });
 
@@ -1208,9 +1113,44 @@
     // -----------------------------------------------------
     // Start
     // -----------------------------------------------------
+
+    const greeting = document.getElementById('navigatorGreeting');
+    function dismissNavigatorGreeting() {
+      greeting.hidden = true;
+      try { sessionStorage.setItem('skillbridge_navigator_greeted', '1'); } catch (_) {}
+    }
+    document.getElementById('dismissGreeting').addEventListener('click', dismissNavigatorGreeting);
+    try { if (!sessionStorage.getItem('skillbridge_navigator_greeted')) greeting.hidden = false; } catch (_) { greeting.hidden = false; }
+    setTimeout(dismissNavigatorGreeting, 9000);
+    assistantPanel.addEventListener('keydown', event => {
+      if (event.key !== 'Tab') return;
+      const focusable = [...assistantPanel.querySelectorAll('button:not(:disabled), textarea, a[href]')].filter(el => el.getClientRects().length);
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+    function fitChatViewport() {
+      const viewport = window.visualViewport;
+      document.documentElement.style.setProperty('--chat-height', `${viewport ? viewport.height : innerHeight}px`);
+      document.documentElement.style.setProperty('--chat-bottom', `${viewport ? Math.max(0, innerHeight - viewport.height - viewport.offsetTop) : 0}px`);
+    }
+    fitChatViewport();
+    window.visualViewport?.addEventListener('resize', fitChatViewport);
+    window.visualViewport?.addEventListener('scroll', fitChatViewport);
+    window.addEventListener('resize', fitChatViewport);
+    // The existing theme asset remains the owner; fallback runs only if that asset failed to load.
+    if (window.sbThemeAssetMissing) {
+      try { const saved = localStorage.getItem('skillbridge_home_theme'); if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved; } catch (_) {}
+      document.querySelectorAll('[data-theme-toggle]').forEach(button => button.addEventListener('click', () => {
+        const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try { localStorage.setItem('skillbridge_home_theme', theme); } catch (_) {}
+      }));
+    }
+
     initReveal();
     loadPlatformStats();
-    setInterval(loadPlatformStats, 60000);
+    setInterval(() => { if (!document.hidden) loadPlatformStats(); }, 60000);
 
     if (window.lucide) {
       lucide.createIcons();

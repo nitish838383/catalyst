@@ -4,232 +4,1517 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="College Student Registry — SkillBridge AI">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <link rel="stylesheet" href="/assets/css/app.css">
+
   <title>Student Registry | SkillBridge AI</title>
+
   <style>
-    body{background:#f8fafc}
-    .panel{border:1px solid #e2e8f0;background:#fff;border-radius:1.5rem;box-shadow:0 14px 42px rgba(15,23,42,.05)}
-    .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:999px;animation:spin .7s linear infinite;display:inline-block}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    body{
+      background:
+        radial-gradient(circle at 8% 0%,rgba(99,102,241,.07),transparent 28%),
+        radial-gradient(circle at 94% 10%,rgba(14,165,233,.05),transparent 30%),
+        #f8fafc;
+    }
+
+    .panel{
+      border:1px solid #e2e8f0;
+      background:#fff;
+      border-radius:1.5rem;
+      box-shadow:0 14px 42px rgba(15,23,42,.05);
+    }
+
+    .metric{
+      border:1px solid #e2e8f0;
+      background:#fff;
+      border-radius:1.25rem;
+      box-shadow:0 10px 28px rgba(15,23,42,.04);
+    }
+
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      border-radius:999px;
+      padding:.32rem .65rem;
+      font-size:.72rem;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .spinner{
+      width:16px;
+      height:16px;
+      border:2.5px solid rgba(255,255,255,.3);
+      border-top-color:#fff;
+      border-radius:999px;
+      animation:spin .7s linear infinite;
+      display:inline-block;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    .modal-backdrop{
+      background:rgba(2,6,23,.58);
+      backdrop-filter:blur(5px);
+    }
+
+    .detail-card{
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+      border-radius:1rem;
+      padding:1rem;
+    }
   </style>
 </head>
+
 <body class="text-slate-900">
-<script>window.SKILLBRIDGE_ROLE="college";</script>
+
+<script>
+  window.SKILLBRIDGE_ROLE = "college";
+</script>
 
 <div id="app-shell">
+
   <main class="min-h-screen lg:pl-72">
+
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
+      <!-- ================================================= -->
+      <!-- HERO -->
+      <!-- ================================================= -->
+
       <header class="mb-7 rounded-[28px] bg-gradient-to-br from-indigo-950 via-indigo-700 to-blue-600 p-7 text-white shadow-xl">
-        <p class="text-sm font-semibold text-indigo-100">SkillBridge AI • College/TPO</p>
-        <h1 class="mt-1 text-3xl font-black">Student Registry</h1>
-        <p class="mt-2 max-w-2xl text-sm text-indigo-100">
-          Add official Student ID / Enrollment Numbers so students can verify their college identity.
-        </p>
+
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+
+          <div>
+            <p class="text-sm font-semibold text-indigo-100">
+              SkillBridge AI • College / TPO
+            </p>
+
+            <h1 class="mt-1 text-3xl font-black">
+              Official Student Registry
+            </h1>
+
+            <p class="mt-2 max-w-3xl text-sm leading-6 text-indigo-100">
+              Add official student records. Students can claim only the matching
+              active registry record to verify their college identity.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <a
+              href="departments.html"
+              class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/15"
+            >
+              <i data-lucide="layers-3" class="h-4 w-4"></i>
+              Departments
+            </a>
+
+            <a
+              href="dashboard.html"
+              class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/15"
+            >
+              <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+              Dashboard
+            </a>
+          </div>
+
+        </div>
+
       </header>
 
-      <div id="message" class="mb-6 hidden rounded-2xl border p-4 text-sm"></div>
 
-      <div class="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
+      <!-- ================================================= -->
+      <!-- PAGE MESSAGE -->
+      <!-- ================================================= -->
 
-        <section class="panel p-6">
-          <h2 class="text-xl font-black">Add Student</h2>
-          <p class="mt-1 text-sm text-slate-500">Use the exact ID issued by your college.</p>
+      <div
+        id="message"
+        class="mb-6 hidden rounded-2xl border p-4 text-sm"
+      ></div>
 
-          <form id="registryForm" class="mt-6 space-y-4">
-            <div>
-              <label class="label">Student Name</label>
-              <input class="input" name="student_name" placeholder="e.g. Nitish Kumar">
+
+      <!-- ================================================= -->
+      <!-- METRICS -->
+      <!-- ================================================= -->
+
+      <section class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+        <article class="metric p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <i data-lucide="users" class="h-5 w-5"></i>
+            </div>
+            <span class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Registry
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500">
+            Total Students
+          </p>
+
+          <p id="metricTotal" class="mt-1 text-3xl font-black">
+            —
+          </p>
+        </article>
+
+
+        <article class="metric p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+              <i data-lucide="badge-check" class="h-5 w-5"></i>
+            </div>
+            <span class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Verified
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500">
+            Linked Accounts
+          </p>
+
+          <p id="metricLinked" class="mt-1 text-3xl font-black">
+            —
+          </p>
+        </article>
+
+
+        <article class="metric p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <i data-lucide="clock-3" class="h-5 w-5"></i>
+            </div>
+            <span class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Waiting
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500">
+            Not Yet Claimed
+          </p>
+
+          <p id="metricUnclaimed" class="mt-1 text-3xl font-black">
+            —
+          </p>
+        </article>
+
+
+        <article class="metric p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+              <i data-lucide="user-x" class="h-5 w-5"></i>
+            </div>
+            <span class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+              Status
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500">
+            Inactive Records
+          </p>
+
+          <p id="metricInactive" class="mt-1 text-3xl font-black">
+            —
+          </p>
+        </article>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- MAIN GRID -->
+      <!-- ================================================= -->
+
+      <div class="grid gap-6 xl:grid-cols-[390px_minmax(0,1fr)]">
+
+        <!-- =============================================== -->
+        <!-- ADD STUDENT -->
+        <!-- =============================================== -->
+
+        <section class="panel self-start p-6 xl:sticky xl:top-6">
+
+          <div class="flex items-start gap-3">
+
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <i data-lucide="user-plus" class="h-5 w-5"></i>
             </div>
 
             <div>
-              <label class="label">Student ID / Enrollment No. *</label>
-              <input class="input uppercase" name="student_id_number" placeholder="e.g. 26CSEAI083" required>
+              <h2 class="text-xl font-black">
+                Add Official Student
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Use the exact details maintained by your college.
+              </p>
             </div>
 
+          </div>
+
+
+          <form
+            id="registryForm"
+            class="mt-6 space-y-4"
+          >
+
             <div>
-              <label class="label">Department</label>
-              <select class="input" id="departmentSelect" name="department_id">
-                <option value="">Select department</option>
+              <label class="label">
+                Student Name *
+              </label>
+
+              <input
+                class="input"
+                name="student_name"
+                placeholder="e.g. Nitish Kumar"
+                required
+              >
+            </div>
+
+
+            <div>
+              <label class="label">
+                Student ID / Enrollment No. *
+              </label>
+
+              <input
+                class="input uppercase"
+                name="student_id_number"
+                placeholder="e.g. 26CSEAI083"
+                autocomplete="off"
+                required
+              >
+
+              <p class="mt-1.5 text-xs text-slate-400">
+                This ID becomes the student's claim key.
+              </p>
+            </div>
+
+
+            <div>
+              <label class="label">
+                Department *
+              </label>
+
+              <select
+                class="input"
+                id="departmentSelect"
+                name="department_id"
+                required
+              >
+                <option value="">
+                  Select department
+                </option>
               </select>
             </div>
 
+
             <div>
-              <label class="label">Year</label>
-              <select class="input" name="year">
-                <option value="">Select year</option>
+              <label class="label">
+                Academic Year *
+              </label>
+
+              <select
+                class="input"
+                name="year"
+                required
+              >
+                <option value="">
+                  Select year
+                </option>
                 <option value="1">1st Year</option>
                 <option value="2">2nd Year</option>
                 <option value="3">3rd Year</option>
                 <option value="4">4th Year</option>
+                <option value="5">5th Year</option>
+                <option value="6">6th Year</option>
               </select>
             </div>
 
-            <button id="addBtn" type="submit" class="btn btn-primary w-full justify-center">
+
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+
+              <div class="flex gap-3">
+                <i data-lucide="shield-check" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+
+                <p class="text-xs leading-5 text-indigo-800">
+                  A student becomes <b>College Verified</b> only after the
+                  SkillBridge account claims this exact active registry record.
+                </p>
+              </div>
+
+            </div>
+
+
+            <button
+              id="addBtn"
+              type="submit"
+              class="btn btn-primary w-full justify-center"
+            >
               <i data-lucide="user-plus" class="h-4 w-4"></i>
               Add Student
             </button>
+
           </form>
+
         </section>
+
+
+        <!-- =============================================== -->
+        <!-- REGISTRY -->
+        <!-- =============================================== -->
 
         <section class="panel overflow-hidden">
-          <div class="flex flex-col gap-3 border-b border-slate-100 p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 class="text-xl font-black">Registered Students</h2>
-              <p class="text-sm text-slate-500">Students added by your college.</p>
+
+          <div class="border-b border-slate-100 p-6">
+
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+              <div>
+                <h2 class="text-xl font-black">
+                  Registered Students
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Monitor official records, account linking and verification.
+                </p>
+              </div>
+
+
+              <button
+                id="refreshBtn"
+                type="button"
+                class="btn btn-soft"
+              >
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                Refresh
+              </button>
+
             </div>
 
-            <button id="refreshBtn" type="button" class="btn btn-soft">
-              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-              Refresh
-            </button>
+
+            <div class="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
+
+              <div class="relative">
+
+                <i
+                  data-lucide="search"
+                  class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                ></i>
+
+                <input
+                  id="searchInput"
+                  class="input pl-9"
+                  placeholder="Search name, enrollment ID, department..."
+                >
+
+              </div>
+
+
+              <select
+                id="statusFilter"
+                class="input"
+              >
+                <option value="all">
+                  All Students
+                </option>
+
+                <option value="linked">
+                  Linked / Verified
+                </option>
+
+                <option value="unclaimed">
+                  Not Claimed
+                </option>
+
+                <option value="inactive">
+                  Inactive
+                </option>
+              </select>
+
+            </div>
+
           </div>
 
+
           <div class="overflow-x-auto">
-            <table class="w-full min-w-[760px] text-left text-sm">
+
+            <table class="w-full min-w-[980px] text-left text-sm">
+
               <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+
                 <tr>
-                  <th class="px-6 py-4">Student</th>
-                  <th class="px-6 py-4">Student ID</th>
-                  <th class="px-6 py-4">Department</th>
-                  <th class="px-6 py-4">Year</th>
-                  <th class="px-6 py-4">Status</th>
-                  <th class="px-6 py-4 text-right">Action</th>
+                  <th class="px-6 py-4">
+                    Student
+                  </th>
+
+                  <th class="px-6 py-4">
+                    Enrollment ID
+                  </th>
+
+                  <th class="px-6 py-4">
+                    Department
+                  </th>
+
+                  <th class="px-6 py-4">
+                    Year
+                  </th>
+
+                  <th class="px-6 py-4">
+                    Registry
+                  </th>
+
+                  <th class="px-6 py-4">
+                    SkillBridge Account
+                  </th>
+
+                  <th class="px-6 py-4 text-right">
+                    Action
+                  </th>
                 </tr>
+
               </thead>
-              <tbody id="registryBody" class="divide-y divide-slate-100"></tbody>
+
+
+              <tbody
+                id="registryBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+
             </table>
+
           </div>
+
         </section>
+
       </div>
+
     </div>
+
   </main>
+
 </div>
+
+
+<!-- ======================================================= -->
+<!-- LINKED STUDENT MODAL -->
+<!-- ======================================================= -->
+
+<div
+  id="studentModal"
+  class="modal-backdrop fixed inset-0 z-[100] hidden items-center justify-center p-4"
+>
+
+  <div class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+    <div class="flex items-center justify-between border-b border-slate-200 p-5">
+
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.14em] text-indigo-600">
+          Linked Student Identity
+        </p>
+
+        <h2
+          id="modalStudentName"
+          class="mt-1 text-xl font-black"
+        >
+          Student
+        </h2>
+      </div>
+
+
+      <button
+        type="button"
+        id="closeModalBtn"
+        class="rounded-xl p-2 text-slate-500 hover:bg-slate-100"
+      >
+        <i data-lucide="x" class="h-5 w-5"></i>
+      </button>
+
+    </div>
+
+
+    <div class="p-5">
+
+      <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+
+        <div class="flex gap-3">
+
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+            <i data-lucide="badge-check" class="h-5 w-5"></i>
+          </div>
+
+          <div>
+            <p class="font-black text-emerald-900">
+              College Identity Linked
+            </p>
+
+            <p class="mt-1 text-sm leading-5 text-emerald-700">
+              This official registry record has been claimed by a SkillBridge student account.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="modalDetails"
+        class="mt-5 grid gap-4 sm:grid-cols-2"
+      ></div>
+
+
+      <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+
+        <div class="flex gap-3">
+
+          <i data-lucide="info" class="mt-0.5 h-5 w-5 shrink-0 text-slate-500"></i>
+
+          <p class="text-sm leading-6 text-slate-600">
+            This page currently receives official registry and linking data only.
+            Skills, projects, resume and career-readiness details will be connected
+            through the college student-profile API in the next backend step.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 <script src="/assets/js/config.js"></script>
 <script src="/assets/js/api.js"></script>
 <script src="/assets/js/auth.js"></script>
 <script src="/assets/js/shell.js"></script>
 
-<script>
-  const form=document.getElementById("registryForm");
-  const body=document.getElementById("registryBody");
-  const addBtn=document.getElementById("addBtn");
-  const departmentSelect=document.getElementById("departmentSelect");
 
-  function arr(r){
-    if(Array.isArray(r)) return r;
-    if(Array.isArray(r?.data)) return r.data;
+<script>
+  const form =
+    document.getElementById("registryForm");
+
+  const body =
+    document.getElementById("registryBody");
+
+  const addBtn =
+    document.getElementById("addBtn");
+
+  const departmentSelect =
+    document.getElementById("departmentSelect");
+
+  const searchInput =
+    document.getElementById("searchInput");
+
+  const statusFilter =
+    document.getElementById("statusFilter");
+
+  const studentModal =
+    document.getElementById("studentModal");
+
+  let registryRows = [];
+  let departments = [];
+
+
+  // =======================================================
+  // HELPERS
+  // =======================================================
+
+  function arr(response) {
+
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    if (Array.isArray(response?.data)) {
+      return response.data;
+    }
+
     return [];
   }
 
-  function msg(type,text){
-    const el=document.getElementById("message");
+
+  function msg(type, text) {
+
+    const el =
+      document.getElementById("message");
+
     el.classList.remove("hidden");
-    el.className=type==="success"
-      ?"mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700"
-      :"mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
-    el.textContent=text;
-  }
 
-  async function loadDepartments(){
-    try{
-      const response=await SB.get("/colleges/departments");
-      const rows=arr(response);
-      departmentSelect.innerHTML='<option value="">Select department</option>'+
-        rows.map(x=>`<option value="${x.id}">${SB.esc(x.name)}${x.code?` (${SB.esc(x.code)})`:""}</option>`).join("");
-    }catch(e){
-      console.error(e);
+    if (type === "success") {
+
+      el.className =
+        "mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700";
+
+    } else if (type === "info") {
+
+      el.className =
+        "mb-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-sm text-indigo-700";
+
+    } else {
+
+      el.className =
+        "mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700";
     }
+
+    el.textContent =
+      text;
   }
 
-  async function loadRegistry(){
-    body.innerHTML='<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400">Loading...</td></tr>';
 
-    try{
-      const response=await SB.get("/colleges/student-registry");
-      const rows=arr(response);
+  function yearLabel(year) {
 
-      body.innerHTML=rows.length?rows.map(x=>`
-        <tr class="hover:bg-slate-50/70">
-          <td class="px-6 py-4">
-            <div class="font-bold text-slate-900">${SB.esc(x.student_name||"—")}</div>
-            <div class="mt-1 text-xs text-slate-400">Registry #${x.id}</div>
-          </td>
-          <td class="px-6 py-4 font-mono font-semibold">${SB.esc(x.student_id_number)}</td>
-          <td class="px-6 py-4">${SB.esc(x.department_name||x.department_code||"—")}</td>
-          <td class="px-6 py-4">${x.year?`${x.year}${x.year===1?"st":x.year===2?"nd":x.year===3?"rd":"th"} Year`:"—"}</td>
-          <td class="px-6 py-4">
-            <div class="flex flex-wrap gap-2">
-              <span class="${x.is_active?'bg-emerald-50 text-emerald-700':'bg-slate-100 text-slate-500'} rounded-full px-2.5 py-1 text-xs font-bold">
-                ${x.is_active?"Active":"Inactive"}
-              </span>
-              ${x.is_claimed?'<span class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">Verified/Claimed</span>':""}
-            </div>
-          </td>
-          <td class="px-6 py-4 text-right">
-            <button type="button" onclick="removeRegistry(${x.id})" class="btn btn-soft text-rose-600">
-              <i data-lucide="${x.is_claimed?'user-x':'trash-2'}" class="h-4 w-4"></i>
-              ${x.is_claimed?"Deactivate":"Remove"}
-            </button>
+    if (!year) {
+      return "—";
+    }
+
+    const n =
+      Number(year);
+
+    if (n === 1) return "1st Year";
+    if (n === 2) return "2nd Year";
+    if (n === 3) return "3rd Year";
+
+    return `${n}th Year`;
+  }
+
+
+  function activeBadge(active) {
+
+    return active
+      ? `
+          <span class="status-pill bg-emerald-50 text-emerald-700">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            Active
+          </span>
+        `
+      : `
+          <span class="status-pill bg-slate-100 text-slate-500">
+            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+            Inactive
+          </span>
+        `;
+  }
+
+
+  function linkedBadge(row) {
+
+    if (
+      row.is_claimed &&
+      row.is_active
+    ) {
+
+      return `
+        <div class="space-y-1.5">
+
+          <span class="status-pill bg-indigo-50 text-indigo-700">
+            <i data-lucide="link-2" class="h-3.5 w-3.5"></i>
+            Account Linked
+          </span>
+
+          <div>
+            <span class="status-pill bg-emerald-50 text-emerald-700">
+              <i data-lucide="badge-check" class="h-3.5 w-3.5"></i>
+              College Verified
+            </span>
+          </div>
+
+        </div>
+      `;
+    }
+
+    if (
+      row.is_claimed &&
+      !row.is_active
+    ) {
+
+      return `
+        <div class="space-y-1.5">
+
+          <span class="status-pill bg-indigo-50 text-indigo-700">
+            <i data-lucide="link-2" class="h-3.5 w-3.5"></i>
+            Account Linked
+          </span>
+
+          <div>
+            <span class="status-pill bg-rose-50 text-rose-700">
+              <i data-lucide="shield-x" class="h-3.5 w-3.5"></i>
+              Verification Revoked
+            </span>
+          </div>
+
+        </div>
+      `;
+    }
+
+    return `
+      <span class="status-pill bg-amber-50 text-amber-700">
+        <i data-lucide="clock-3" class="h-3.5 w-3.5"></i>
+        Not Claimed
+      </span>
+    `;
+  }
+
+
+  // =======================================================
+  // DEPARTMENTS
+  // =======================================================
+
+  async function loadDepartments() {
+
+    try {
+
+      const response =
+        await SB.get(
+          "/colleges/departments"
+        );
+
+      departments =
+        arr(response)
+          .filter(
+            department =>
+              department.is_active !== false
+          );
+
+      departmentSelect.innerHTML =
+        '<option value="">Select department</option>' +
+        departments
+          .map(
+            department => `
+              <option value="${department.id}">
+                ${SB.esc(department.name)}
+                ${
+                  department.code
+                    ? ` (${SB.esc(department.code)})`
+                    : ""
+                }
+              </option>
+            `
+          )
+          .join("");
+
+    } catch (error) {
+
+      departments = [];
+
+      departmentSelect.innerHTML =
+        '<option value="">Could not load departments</option>';
+
+      console.error(
+        "Department load failed:",
+        error
+      );
+
+    }
+
+  }
+
+
+  // =======================================================
+  // REGISTRY
+  // =======================================================
+
+  async function loadRegistry() {
+
+    body.innerHTML =
+      '<tr><td colspan="7" class="px-6 py-10 text-center text-slate-400">Loading registry...</td></tr>';
+
+
+    try {
+
+      const response =
+        await SB.get(
+          "/colleges/student-registry"
+        );
+
+      registryRows =
+        arr(response);
+
+      updateMetrics();
+      renderRegistry();
+
+    } catch (error) {
+
+      registryRows = [];
+
+      updateMetrics();
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="7"
+            class="px-6 py-10 text-center text-rose-600"
+          >
+            ${SB.esc(error.message)}
           </td>
         </tr>
-      `).join(""):
-      '<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">No students added yet.</td></tr>';
+      `;
 
-      if(window.lucide) lucide.createIcons();
-    }catch(e){
-      body.innerHTML=`<tr><td colspan="6" class="px-6 py-10 text-center text-rose-600">${SB.esc(e.message)}</td></tr>`;
+    }
+
+  }
+
+
+  function updateMetrics() {
+
+    const total =
+      registryRows.length;
+
+    const linked =
+      registryRows.filter(
+        row =>
+          row.is_claimed &&
+          row.is_active
+      ).length;
+
+    const unclaimed =
+      registryRows.filter(
+        row =>
+          !row.is_claimed &&
+          row.is_active
+      ).length;
+
+    const inactive =
+      registryRows.filter(
+        row =>
+          !row.is_active
+      ).length;
+
+    document.getElementById(
+      "metricTotal"
+    ).textContent =
+      total;
+
+    document.getElementById(
+      "metricLinked"
+    ).textContent =
+      linked;
+
+    document.getElementById(
+      "metricUnclaimed"
+    ).textContent =
+      unclaimed;
+
+    document.getElementById(
+      "metricInactive"
+    ).textContent =
+      inactive;
+  }
+
+
+  function filteredRows() {
+
+    const search =
+      searchInput.value
+        .trim()
+        .toLowerCase();
+
+    const status =
+      statusFilter.value;
+
+    return registryRows.filter(
+      row => {
+
+        const searchable =
+          [
+            row.student_name,
+            row.student_id_number,
+            row.department_name,
+            row.department_code,
+            row.year
+          ]
+          .filter(
+            value =>
+              value !== null &&
+              value !== undefined
+          )
+          .join(" ")
+          .toLowerCase();
+
+        const matchesSearch =
+          !search ||
+          searchable.includes(search);
+
+        let matchesStatus =
+          true;
+
+        if (status === "linked") {
+
+          matchesStatus =
+            Boolean(
+              row.is_claimed &&
+              row.is_active
+            );
+
+        } else if (
+          status === "unclaimed"
+        ) {
+
+          matchesStatus =
+            Boolean(
+              !row.is_claimed &&
+              row.is_active
+            );
+
+        } else if (
+          status === "inactive"
+        ) {
+
+          matchesStatus =
+            !row.is_active;
+        }
+
+        return (
+          matchesSearch &&
+          matchesStatus
+        );
+
+      }
+    );
+  }
+
+
+  function renderRegistry() {
+
+    const rows =
+      filteredRows();
+
+    if (!rows.length) {
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="7"
+            class="px-6 py-12 text-center text-slate-400"
+          >
+            No matching student records.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    body.innerHTML =
+      rows
+        .map(
+          row => `
+            <tr class="hover:bg-slate-50/70">
+
+              <td class="px-6 py-4">
+
+                <div class="font-bold text-slate-900">
+                  ${SB.esc(row.student_name || "—")}
+                </div>
+
+                <div class="mt-1 text-xs text-slate-400">
+                  Registry #${row.id}
+                  ${
+                    row.claimed_student_id
+                      ? ` • Student #${row.claimed_student_id}`
+                      : ""
+                  }
+                </div>
+
+              </td>
+
+
+              <td class="px-6 py-4">
+
+                <span class="font-mono font-semibold text-slate-800">
+                  ${SB.esc(row.student_id_number)}
+                </span>
+
+              </td>
+
+
+              <td class="px-6 py-4">
+
+                <div class="font-semibold text-slate-800">
+                  ${SB.esc(
+                    row.department_name ||
+                    "—"
+                  )}
+                </div>
+
+                ${
+                  row.department_code
+                    ? `
+                        <div class="mt-1 text-xs text-slate-400">
+                          ${SB.esc(row.department_code)}
+                        </div>
+                      `
+                    : ""
+                }
+
+              </td>
+
+
+              <td class="px-6 py-4">
+                ${yearLabel(row.year)}
+              </td>
+
+
+              <td class="px-6 py-4">
+                ${activeBadge(row.is_active)}
+              </td>
+
+
+              <td class="px-6 py-4">
+                ${linkedBadge(row)}
+              </td>
+
+
+              <td class="px-6 py-4">
+
+                <div class="flex justify-end gap-2">
+
+                  ${
+                    row.is_claimed
+                      ? `
+                          <button
+                            type="button"
+                            onclick="viewLinkedStudent(${row.id})"
+                            class="btn btn-soft"
+                          >
+                            <i data-lucide="user-round-search" class="h-4 w-4"></i>
+                            View Profile
+                          </button>
+                        `
+                      : ""
+                  }
+
+
+                  <button
+                    type="button"
+                    onclick="removeRegistry(${row.id})"
+                    class="btn btn-soft text-rose-600"
+                  >
+                    <i
+                      data-lucide="${
+                        row.is_claimed
+                          ? "user-x"
+                          : "trash-2"
+                      }"
+                      class="h-4 w-4"
+                    ></i>
+
+                    ${
+                      row.is_claimed
+                        ? "Deactivate"
+                        : "Remove"
+                    }
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+          `
+        )
+        .join("");
+
+
+    if (window.lucide) {
+      lucide.createIcons();
     }
   }
 
-  form.addEventListener("submit",async e=>{
-    e.preventDefault();
-    const f=new FormData(form);
-    const old=addBtn.innerHTML;
-    addBtn.disabled=true;
-    addBtn.innerHTML='<span class="spinner"></span> Adding...';
 
-    try{
-      await SB.post("/colleges/student-registry",{
-        student_name:String(f.get("student_name")||"").trim()||null,
-        student_id_number:String(f.get("student_id_number")||"").trim().toUpperCase(),
-        department_id:f.get("department_id")?Number(f.get("department_id")):null,
-        year:f.get("year")?Number(f.get("year")):null
-      });
+  // =======================================================
+  // ADD STUDENT
+  // =======================================================
 
-      form.reset();
-      msg("success","Student added to registry successfully.");
-      await loadRegistry();
-    }catch(e){
-      msg("error",e.message||"Could not add student.");
-    }finally{
-      addBtn.disabled=false;
-      addBtn.innerHTML=old;
-      if(window.lucide) lucide.createIcons();
+  form.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      const data =
+        new FormData(
+          form
+        );
+
+      const studentName =
+        String(
+          data.get("student_name") ||
+          ""
+        ).trim();
+
+      const studentId =
+        String(
+          data.get("student_id_number") ||
+          ""
+        )
+        .trim()
+        .toUpperCase();
+
+      const departmentId =
+        Number(
+          data.get("department_id")
+        );
+
+      const year =
+        Number(
+          data.get("year")
+        );
+
+
+      if (
+        !studentName ||
+        !studentId ||
+        !departmentId ||
+        !year
+      ) {
+
+        msg(
+          "error",
+          "Student name, Enrollment ID, department and academic year are required."
+        );
+
+        return;
+      }
+
+
+      const old =
+        addBtn.innerHTML;
+
+      addBtn.disabled =
+        true;
+
+      addBtn.innerHTML =
+        '<span class="spinner"></span> Adding...';
+
+
+      try {
+
+        await SB.post(
+          "/colleges/student-registry",
+          {
+            student_name:
+              studentName,
+
+            student_id_number:
+              studentId,
+
+            department_id:
+              departmentId,
+
+            year:
+              year
+          }
+        );
+
+        form.reset();
+
+        msg(
+          "success",
+          "Student added to the official college registry."
+        );
+
+        await loadRegistry();
+
+      } catch (error) {
+
+        msg(
+          "error",
+          error.message ||
+          "Could not add student."
+        );
+
+      } finally {
+
+        addBtn.disabled =
+          false;
+
+        addBtn.innerHTML =
+          old;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
     }
-  });
+  );
 
-  window.removeRegistry=async function(id){
-    if(!confirm("Remove/deactivate this student registry record?")) return;
-    try{
-      const response=await SB.delete(`/colleges/student-registry/${id}`);
-      msg("success",response?.message||"Registry updated.");
-      await loadRegistry();
-    }catch(e){
-      msg("error",e.message||"Could not update registry.");
+
+  // =======================================================
+  // VIEW LINKED STUDENT
+  // =======================================================
+
+  window.viewLinkedStudent =
+    function(registryId) {
+
+      const row =
+        registryRows.find(
+          item =>
+            Number(item.id) ===
+            Number(registryId)
+        );
+
+      if (!row) {
+        return;
+      }
+
+      document.getElementById(
+        "modalStudentName"
+      ).textContent =
+        row.student_name ||
+        "Linked Student";
+
+      document.getElementById(
+        "modalDetails"
+      ).innerHTML = `
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            Enrollment ID
+          </p>
+          <p class="mt-2 font-mono font-black text-slate-900">
+            ${SB.esc(row.student_id_number || "—")}
+          </p>
+        </div>
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            Department
+          </p>
+          <p class="mt-2 font-black text-slate-900">
+            ${SB.esc(row.department_name || "—")}
+          </p>
+          <p class="mt-1 text-xs text-slate-400">
+            ${SB.esc(row.department_code || "")}
+          </p>
+        </div>
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            Academic Year
+          </p>
+          <p class="mt-2 font-black text-slate-900">
+            ${yearLabel(row.year)}
+          </p>
+        </div>
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            SkillBridge Student ID
+          </p>
+          <p class="mt-2 font-black text-slate-900">
+            ${
+              row.claimed_student_id
+                ? `#${row.claimed_student_id}`
+                : "Not linked"
+            }
+          </p>
+        </div>
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            Registry Status
+          </p>
+          <div class="mt-2">
+            ${activeBadge(row.is_active)}
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <p class="text-xs font-black uppercase tracking-wide text-slate-400">
+            College Identity
+          </p>
+          <div class="mt-2">
+            ${
+              row.is_claimed &&
+              row.is_active
+                ? `
+                    <span class="status-pill bg-emerald-50 text-emerald-700">
+                      <i data-lucide="badge-check" class="h-3.5 w-3.5"></i>
+                      Verified
+                    </span>
+                  `
+                : `
+                    <span class="status-pill bg-slate-100 text-slate-600">
+                      Not Verified
+                    </span>
+                  `
+            }
+          </div>
+        </div>
+
+      `;
+
+      studentModal.classList.remove(
+        "hidden"
+      );
+
+      studentModal.classList.add(
+        "flex"
+      );
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    };
+
+
+  function closeStudentModal() {
+
+    studentModal.classList.add(
+      "hidden"
+    );
+
+    studentModal.classList.remove(
+      "flex"
+    );
+  }
+
+
+  document
+    .getElementById(
+      "closeModalBtn"
+    )
+    .addEventListener(
+      "click",
+      closeStudentModal
+    );
+
+
+  // =======================================================
+  // REMOVE / DEACTIVATE
+  // =======================================================
+
+  window.removeRegistry =
+    async function(id) {
+
+      const row =
+        registryRows.find(
+          item =>
+            Number(item.id) ===
+            Number(id)
+        );
+
+
+      const confirmation =
+        row?.is_claimed
+          ? (
+              "This student is linked to a SkillBridge account. " +
+              "Deactivating the registry will revoke the student's college verification. Continue?"
+            )
+          : (
+              "Remove this unclaimed student registry record?"
+            );
+
+
+      if (
+        !confirm(
+          confirmation
+        )
+      ) {
+        return;
+      }
+
+
+      try {
+
+        const response =
+          await SB.delete(
+            `/colleges/student-registry/${id}`
+          );
+
+        msg(
+          "success",
+          response?.message ||
+          "Registry updated."
+        );
+
+        await loadRegistry();
+
+      } catch (error) {
+
+        msg(
+          "error",
+          error.message ||
+          "Could not update registry."
+        );
+
+      }
+
+    };
+
+
+  // =======================================================
+  // SEARCH / FILTER / REFRESH
+  // =======================================================
+
+  searchInput.addEventListener(
+    "input",
+    renderRegistry
+  );
+
+  statusFilter.addEventListener(
+    "change",
+    renderRegistry
+  );
+
+  document
+    .getElementById(
+      "refreshBtn"
+    )
+    .addEventListener(
+      "click",
+      loadRegistry
+    );
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape"
+      ) {
+        closeStudentModal();
+      }
+
     }
-  };
+  );
 
-  document.getElementById("refreshBtn").addEventListener("click",loadRegistry);
 
-  (async()=>{
-    await loadDepartments();
-    await loadRegistry();
-    if(window.lucide) lucide.createIcons();
+  // =======================================================
+  // INIT
+  // =======================================================
+
+  (async () => {
+
+    await Promise.all([
+      loadDepartments(),
+      loadRegistry()
+    ]);
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
   })();
+
 </script>
+
 </body>
 </html>

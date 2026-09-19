@@ -116,6 +116,38 @@
         border-color:#c7d2fe;
     }
 
+    .college-identity-card{
+        position:relative;
+        overflow:hidden;
+        border-radius:24px;
+        border:1px solid #dbeafe;
+        background:
+            radial-gradient(circle at 95% 5%,rgba(99,102,241,.08),transparent 30%),
+            linear-gradient(135deg,#ffffff,#f8fbff);
+        box-shadow:0 14px 42px rgba(15,23,42,.05);
+    }
+
+    .college-logo-shell{
+        display:flex;
+        height:88px;
+        width:88px;
+        flex-shrink:0;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        border-radius:20px;
+        border:1px solid #e2e8f0;
+        background:#fff;
+        box-shadow:0 8px 22px rgba(15,23,42,.06);
+    }
+
+    .college-logo-shell img{
+        height:100%;
+        width:100%;
+        object-fit:contain;
+        padding:10px;
+    }
+
     @media (max-width:640px){
         .student-hero{border-radius:20px;padding:1.25rem}
         .student-stat,.student-section,.student-action{border-radius:16px}
@@ -468,6 +500,170 @@
                 class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800"
             ></div>
 
+
+
+            <!-- ================================================= -->
+            <!-- VERIFIED COLLEGE IDENTITY -->
+            <!-- ================================================= -->
+
+            <section
+                id="collegeIdentitySection"
+                class="college-identity-card mb-6 hidden p-5 sm:p-6"
+            >
+
+                <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+
+                        <div class="college-logo-shell">
+
+                            <img
+                                id="dashboardCollegeLogo"
+                                src=""
+                                alt="College logo"
+                                class="hidden"
+                            >
+
+                            <i
+                                id="dashboardCollegeLogoPlaceholder"
+                                data-lucide="school"
+                                class="h-9 w-9 text-indigo-300"
+                            ></i>
+
+                        </div>
+
+
+                        <div class="min-w-0">
+
+                            <div class="flex flex-wrap items-center gap-2">
+
+                                <p class="text-xs font-black uppercase tracking-[.15em] text-indigo-600">
+                                    Official College Identity
+                                </p>
+
+                                <span
+                                    id="dashboardCollegeVerifiedBadge"
+                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700"
+                                >
+                                    <i data-lucide="badge-check" class="h-3.5 w-3.5"></i>
+                                    Verified
+                                </span>
+
+                            </div>
+
+                            <h2
+                                id="dashboardCollegeName"
+                                class="mt-2 text-xl font-black text-slate-900 sm:text-2xl"
+                            >
+                                College
+                            </h2>
+
+                            <p
+                                id="dashboardCollegeMeta"
+                                class="mt-1 text-sm text-slate-500"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid gap-3 sm:grid-cols-2 lg:min-w-[430px]">
+
+                        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                            <p class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+                                Enrollment ID
+                            </p>
+                            <p
+                                id="dashboardEnrollmentId"
+                                class="mt-1 font-mono font-black text-slate-900"
+                            >
+                                —
+                            </p>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                            <p class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+                                Department
+                            </p>
+                            <p
+                                id="dashboardDepartment"
+                                class="mt-1 font-black text-slate-900"
+                            >
+                                —
+                            </p>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                            <p class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+                                Academic Year
+                            </p>
+                            <p
+                                id="dashboardAcademicYear"
+                                class="mt-1 font-black text-slate-900"
+                            >
+                                —
+                            </p>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                            <p class="text-[11px] font-black uppercase tracking-wide text-slate-400">
+                                Public College ID
+                            </p>
+                            <p
+                                id="dashboardPublicCollegeId"
+                                class="mt-1 font-black text-indigo-700"
+                            >
+                                —
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section
+                id="collegeVerificationPrompt"
+                class="student-section mb-6 hidden p-5 sm:p-6"
+            >
+
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                            <i data-lucide="shield-alert" class="h-5 w-5"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-black text-slate-900">
+                                Verify your college identity
+                            </h2>
+
+                            <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+                                Select your verified institution and claim the official
+                                Enrollment ID added by your College / TPO.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="profile.html"
+                        class="btn btn-primary shrink-0"
+                    >
+                        <i data-lucide="badge-check" class="h-4 w-4"></i>
+                        Verify College
+                    </a>
+
+                </div>
+
+            </section>
 
 
             <!-- ================================================= -->
@@ -1266,6 +1462,8 @@
 let currentProfile = null;
 let currentUser = null;
 let currentSkills = [];
+let collegeVerification = null;
+let verifiedCollege = null;
 
 
 /* =====================================================
@@ -1315,10 +1513,14 @@ async function loadProfile() {
 
     try {
 
-        currentProfile =
+        const response =
             await SB.get(
                 "/students/profile"
             );
+
+        currentProfile =
+            response?.data ||
+            response;
 
 
         profileStatus.textContent =
@@ -1440,6 +1642,329 @@ async function loadProfile() {
 
 }
 
+
+
+/* =====================================================
+   VERIFIED COLLEGE IDENTITY
+===================================================== */
+
+function dashboardYearLabel(year) {
+
+    if (!year) {
+        return "—";
+    }
+
+    const n = Number(year);
+
+    if (n === 1) return "1st Year";
+    if (n === 2) return "2nd Year";
+    if (n === 3) return "3rd Year";
+
+    return `${n}th Year`;
+}
+
+
+function setDashboardCollegeLogo(url) {
+
+    const image =
+        document.getElementById(
+            "dashboardCollegeLogo"
+        );
+
+    const placeholder =
+        document.getElementById(
+            "dashboardCollegeLogoPlaceholder"
+        );
+
+
+    if (!url) {
+
+        image.src = "";
+
+        image.classList.add(
+            "hidden"
+        );
+
+        placeholder.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    image.onload =
+        function () {
+
+            image.classList.remove(
+                "hidden"
+            );
+
+            placeholder.classList.add(
+                "hidden"
+            );
+
+        };
+
+
+    image.onerror =
+        function () {
+
+            image.classList.add(
+                "hidden"
+            );
+
+            placeholder.classList.remove(
+                "hidden"
+            );
+
+        };
+
+
+    image.src = url;
+}
+
+
+function renderCollegeIdentity() {
+
+    const verified =
+        collegeVerification?.verified === true;
+
+
+    const identitySection =
+        document.getElementById(
+            "collegeIdentitySection"
+        );
+
+    const verificationPrompt =
+        document.getElementById(
+            "collegeVerificationPrompt"
+        );
+
+
+    if (!verified) {
+
+        identitySection.classList.add(
+            "hidden"
+        );
+
+        verificationPrompt.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    verificationPrompt.classList.add(
+        "hidden"
+    );
+
+    identitySection.classList.remove(
+        "hidden"
+    );
+
+
+    const college =
+        verifiedCollege ||
+        collegeVerification?.college ||
+        {};
+
+
+    const department =
+        collegeVerification?.department ||
+        {};
+
+
+    document
+        .getElementById(
+            "dashboardCollegeName"
+        )
+        .textContent =
+            college.name ||
+            currentProfile?.college_name ||
+            "Verified College";
+
+
+    const metaParts =
+        [
+            college.college_code
+                ? `College Code ${college.college_code}`
+                : null,
+
+            [college.city, college.state]
+                .filter(Boolean)
+                .join(", ") || null
+        ]
+        .filter(Boolean);
+
+
+    document
+        .getElementById(
+            "dashboardCollegeMeta"
+        )
+        .textContent =
+            metaParts.join(" • ") ||
+            "Verified Institution";
+
+
+    document
+        .getElementById(
+            "dashboardEnrollmentId"
+        )
+        .textContent =
+            collegeVerification?.student_id_number ||
+            currentProfile?.student_id_number ||
+            "—";
+
+
+    document
+        .getElementById(
+            "dashboardDepartment"
+        )
+        .textContent =
+            department.name ||
+            currentProfile?.branch ||
+            "—";
+
+
+    document
+        .getElementById(
+            "dashboardAcademicYear"
+        )
+        .textContent =
+            dashboardYearLabel(
+                collegeVerification?.year ||
+                currentProfile?.year
+            );
+
+
+    document
+        .getElementById(
+            "dashboardPublicCollegeId"
+        )
+        .textContent =
+            college.college_public_id ||
+            "—";
+
+
+    setDashboardCollegeLogo(
+        college.college_logo_url ||
+        null
+    );
+
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+
+async function loadCollegeVerification() {
+
+    if (!currentProfile?.id) {
+
+        collegeVerification = {
+            verified: false
+        };
+
+        renderCollegeIdentity();
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await SB.get(
+                "/students/college-verification/status"
+            );
+
+        collegeVerification =
+            response?.data ||
+            response ||
+            {
+                verified: false
+            };
+
+
+        if (
+            collegeVerification?.verified &&
+            collegeVerification?.college?.id
+        ) {
+
+            try {
+
+                const directoryResponse =
+                    await SB.get(
+                        "/colleges/student-directory"
+                    );
+
+                const colleges =
+                    Array.isArray(directoryResponse)
+                        ? directoryResponse
+                        : Array.isArray(directoryResponse?.data)
+                        ? directoryResponse.data
+                        : [];
+
+
+                verifiedCollege =
+                    colleges.find(
+                        college =>
+                            Number(college.id) ===
+                            Number(
+                                collegeVerification.college.id
+                            )
+                    ) ||
+                    collegeVerification.college;
+
+            }
+
+            catch (directoryError) {
+
+                console.warn(
+                    "Verified college directory lookup failed:",
+                    directoryError
+                );
+
+                verifiedCollege =
+                    collegeVerification.college;
+
+            }
+
+        }
+
+        else {
+
+            verifiedCollege = null;
+
+        }
+
+
+        renderCollegeIdentity();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "College verification load failed:",
+            error
+        );
+
+
+        collegeVerification = {
+            verified: false
+        };
+
+        verifiedCollege = null;
+
+        renderCollegeIdentity();
+
+    }
+
+}
 
 
 /* =====================================================
@@ -1619,11 +2144,16 @@ function () {
             <div>
 
                 <p class="text-xs font-semibold uppercase text-slate-400">
-                    College ID
+                    College
                 </p>
 
                 <p class="mt-1 font-bold">
-                    ${SB.esc(currentProfile.college_id || "—")}
+                    ${SB.esc(
+                        verifiedCollege?.name ||
+                        collegeVerification?.college?.name ||
+                        currentProfile.college_name ||
+                        "—"
+                    )}
                 </p>
 
             </div>
@@ -1632,11 +2162,15 @@ function () {
             <div>
 
                 <p class="text-xs font-semibold uppercase text-slate-400">
-                    Department ID
+                    Enrollment ID
                 </p>
 
                 <p class="mt-1 font-bold">
-                    ${SB.esc(currentProfile.department_id || "—")}
+                    ${SB.esc(
+                        collegeVerification?.student_id_number ||
+                        currentProfile.student_id_number ||
+                        "—"
+                    )}
                 </p>
 
             </div>
@@ -1676,19 +2210,6 @@ function () {
 
                 <p class="mt-1 font-bold">
                     ${SB.esc(currentProfile.semester || "—")}
-                </p>
-
-            </div>
-
-
-            <div>
-
-                <p class="text-xs font-semibold uppercase text-slate-400">
-                    CGPA
-                </p>
-
-                <p class="mt-1 font-bold">
-                    ${SB.esc(currentProfile.cgpa || "—")}
                 </p>
 
             </div>
@@ -2054,6 +2575,41 @@ function () {
                 <div class="field">
 
                     <div class="label">
+                        Verified College
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(
+                            verifiedCollege?.name ||
+                            collegeVerification?.college?.name ||
+                            currentProfile.college_name ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
+                        Enrollment ID
+                    </div>
+
+                    <div class="value">
+                        ${SB.esc(
+                            collegeVerification?.student_id_number ||
+                            currentProfile.student_id_number ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <div class="label">
                         Branch
                     </div>
 
@@ -2085,19 +2641,6 @@ function () {
 
                     <div class="value">
                         ${SB.esc(currentProfile.semester || "—")}
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <div class="label">
-                        CGPA
-                    </div>
-
-                    <div class="value">
-                        ${SB.esc(currentProfile.cgpa || "—")}
                     </div>
 
                 </div>
@@ -2879,6 +3422,8 @@ async function initDashboard() {
 
     if (currentProfile) {
 
+        await loadCollegeVerification();
+
         await loadSkills();
 
         await Promise.all([
@@ -2889,6 +3434,12 @@ async function initDashboard() {
     }
 
     else {
+
+        collegeVerification = {
+            verified: false
+        };
+
+        renderCollegeIdentity();
 
         skillsCount.textContent =
             "0";

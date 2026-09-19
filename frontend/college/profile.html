@@ -1,812 +1,766 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"
-    >
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <link
-        rel="stylesheet"
-        href="/assets/css/app.css"
-    >
-
-    <title>College Profile | SkillBridge AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SkillBridge AI — Verified College Registration" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css" />
+  <title>College Verification | SkillBridge AI</title>
+  <style>
+    .step-panel{display:none}.step-panel.active{display:block}
+    .step-circle.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+    .step-circle.done{background:#10b981;color:#fff;border-color:#10b981}
+    .status-pill{display:inline-flex;align-items:center;gap:.4rem;border-radius:9999px;padding:.35rem .7rem;font-size:.75rem;font-weight:700}
+    .status-pending{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+    .status-verified{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+    .status-rejected{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+  </style>
 </head>
 
-
 <body class="bg-slate-50 text-slate-900">
+<script>window.SKILLBRIDGE_ROLE="college";</script>
 
-    <script>
-        window.SKILLBRIDGE_ROLE = "college";
-    </script>
+<div id="app-shell">
+  <main class="min-h-screen lg:pl-72">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
+      <header class="mb-7">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p class="text-sm font-semibold text-indigo-600">SkillBridge AI • Institution Trust Layer</p>
+            <h1 class="mt-1 text-3xl font-bold tracking-tight">College Registration & Verification</h1>
+            <p class="mt-2 max-w-3xl text-slate-500">
+              Create a trusted institutional profile using official identifiers, official contact details,
+              supporting documents and admin verification.
+            </p>
+          </div>
+          <span id="topStatus" class="status-pill status-pending">
+            <i data-lucide="clock-3" class="h-4 w-4"></i> Verification Pending
+          </span>
+        </div>
+      </header>
 
-    <div id="app-shell">
+      <section class="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+        <div class="flex items-start gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
+            <i data-lucide="shield-check" class="h-5 w-5 text-indigo-600"></i>
+          </div>
+          <div>
+            <h2 class="font-bold">Multi-layer institution verification</h2>
+            <p class="mt-1 text-sm text-slate-600">
+              Filling this form does not make a college verified. Verified status is granted only after
+              institutional identifiers, contact channels, documents and admin review are validated.
+            </p>
+          </div>
+        </div>
+      </section>
 
-        <main class="min-h-screen lg:pl-72">
+      <section id="profileSummary" class="mb-6 hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div class="flex items-start gap-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100">
+              <i data-lucide="school" class="h-6 w-6 text-indigo-600"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wide text-indigo-500">Institution Profile</p>
+              <h2 id="savedCollegeName" class="mt-1 text-lg font-black">—</h2>
+              <span id="summaryStatus" class="mt-2 status-pill status-pending">
+                <i data-lucide="clock-3" class="h-4 w-4"></i> Pending Verification
+              </span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+              <p class="text-[11px] font-bold uppercase text-indigo-500">Public College ID</p>
+              <p id="collegePublicIdSummary" class="mt-1 text-xl font-black text-indigo-700">—</p>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p class="text-[11px] font-bold uppercase text-slate-400">College Code</p>
+              <p id="summaryCollegeCode" class="mt-1 font-black">—</p>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p class="text-[11px] font-bold uppercase text-slate-400">AISHE Code</p>
+              <p id="summaryAishe" class="mt-1 font-black">—</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <div
-                class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
-            >
+      <section class="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div class="grid grid-cols-4 divide-x divide-slate-100">
+          <button type="button" data-step="1" class="step-nav flex items-center gap-3 p-4 text-left">
+            <span class="step-circle active flex h-8 w-8 items-center justify-center rounded-full border text-xs font-black">1</span>
+            <span class="hidden sm:block"><b class="block text-xs">Institution</b><span class="text-[11px] text-slate-400">Identity & codes</span></span>
+          </button>
+          <button type="button" data-step="2" class="step-nav flex items-center gap-3 p-4 text-left">
+            <span class="step-circle flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-xs font-black text-slate-500">2</span>
+            <span class="hidden sm:block"><b class="block text-xs">Official Contact</b><span class="text-[11px] text-slate-400">College & representative</span></span>
+          </button>
+          <button type="button" data-step="3" class="step-nav flex items-center gap-3 p-4 text-left">
+            <span class="step-circle flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-xs font-black text-slate-500">3</span>
+            <span class="hidden sm:block"><b class="block text-xs">Documents</b><span class="text-[11px] text-slate-400">Verification evidence</span></span>
+          </button>
+          <button type="button" data-step="4" class="step-nav flex items-center gap-3 p-4 text-left">
+            <span class="step-circle flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-xs font-black text-slate-500">4</span>
+            <span class="hidden sm:block"><b class="block text-xs">Review</b><span class="text-[11px] text-slate-400">Submit for verification</span></span>
+          </button>
+        </div>
+      </section>
 
+      <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <form id="form">
 
-                <!-- ========================================= -->
-                <!-- Header -->
-                <!-- ========================================= -->
+            <div class="step-panel active" data-panel="1">
+              <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">Step 1 of 4</p>
+              <h2 class="mt-1 text-xl font-black">Institution Identity</h2>
+              <p class="mt-1 text-sm text-slate-500">Use official details exactly as they appear in university or regulatory records.</p>
 
-                <header class="mb-7">
+              <div class="mt-6 grid gap-5 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-sm font-semibold">College Name *</label>
+                  <input id="name" name="name" class="input w-full" required placeholder="e.g. MGM College of Engineering & Technology">
+                </div>
 
-                    <p
-                        class="text-sm font-semibold text-indigo-600"
-                    >
-                        SkillBridge AI
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-sm font-semibold">
+                    Public College ID *
+                  </label>
+
+                  <input
+                    id="college_public_id"
+                    name="college_public_id"
+                    class="input w-full uppercase"
+                    required
+                    maxlength="100"
+                    autocomplete="off"
+                    placeholder="e.g. MGM095"
+                  >
+
+                  <div class="mt-2 flex items-start gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5">
+                    <i data-lucide="fingerprint" class="mt-0.5 h-4 w-4 shrink-0 text-indigo-600"></i>
+                    <p class="text-xs leading-5 text-indigo-700">
+                      This ID is created by your college and will be visible to students
+                      when they select their institution. It must be unique on SkillBridge.
+                      Example: <b>MGM095</b>.
                     </p>
+                  </div>
+                </div>
 
-                    <h1
-                        class="mt-1 text-3xl font-bold tracking-tight"
-                    >
-                        College Profile
-                    </h1>
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-sm font-semibold">
+                    College Logo URL
+                  </label>
 
-                    <p
-                        class="mt-2 max-w-2xl text-slate-500"
-                    >
-                        Manage your college information used for
-                        departments, analytics and industry collaborations.
-                    </p>
-
-                </header>
-
-
-
-                <!-- ========================================= -->
-                <!-- College ID / Profile Status -->
-                <!-- ========================================= -->
-
-                <section
-                    id="profileSummary"
-                    class="mb-6 hidden max-w-3xl rounded-2xl border border-indigo-100 bg-indigo-50 p-5"
-                >
-
-                    <div
-                        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-                    >
-
-                        <div class="flex items-center gap-4">
-
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100"
-                            >
-                                <i
-                                    data-lucide="school"
-                                    class="h-6 w-6 text-indigo-600"
-                                ></i>
-                            </div>
-
-
-                            <div>
-
-                                <p
-                                    class="text-xs font-bold uppercase tracking-wide text-indigo-500"
-                                >
-                                    College Profile
-                                </p>
-
-                                <h2
-                                    id="savedCollegeName"
-                                    class="mt-1 font-black text-slate-900"
-                                >
-                                    —
-                                </h2>
-
-                                <p
-                                    class="mt-1 flex items-center gap-1.5 text-xs font-semibold text-emerald-600"
-                                >
-
-                                    <i
-                                        data-lucide="circle-check"
-                                        class="h-4 w-4"
-                                    ></i>
-
-                                    Profile Active
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div
-                            class="rounded-xl border border-indigo-200 bg-white px-5 py-3"
-                        >
-
-                            <p
-                                class="text-xs font-bold uppercase tracking-wide text-slate-400"
-                            >
-                                College ID
-                            </p>
-
-                            <p
-                                id="collegeId"
-                                class="mt-1 text-2xl font-black text-indigo-600"
-                            >
-                                —
-                            </p>
-
-                            <p
-                                class="mt-1 text-xs text-slate-400"
-                            >
-                                Auto-generated
-                            </p>
-
-                        </div>
-
+                  <div class="grid gap-4 sm:grid-cols-[110px_minmax(0,1fr)] sm:items-center">
+                    <div class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                      <img
+                        id="collegeLogoPreview"
+                        src=""
+                        alt="College logo preview"
+                        class="hidden h-full w-full object-contain p-2"
+                      >
+                      <i
+                        id="collegeLogoPlaceholder"
+                        data-lucide="school"
+                        class="h-9 w-9 text-slate-300"
+                      ></i>
                     </div>
 
-                </section>
+                    <div>
+                      <input
+                        id="college_logo_url"
+                        name="college_logo_url"
+                        class="input w-full"
+                        type="url"
+                        placeholder="https://example.com/college-logo.png"
+                      >
 
-
-
-                <!-- ========================================= -->
-                <!-- College Form -->
-                <!-- ========================================= -->
-
-                <section class="card max-w-3xl p-6">
-
-                    <div
-                        class="flex items-center justify-between gap-4"
-                    >
-
-                        <div>
-
-                            <h2
-                                id="formTitle"
-                                class="text-xl font-black"
-                            >
-                                Create College Profile
-                            </h2>
-
-                            <p
-                                id="formDescription"
-                                class="mt-1 text-sm text-slate-500"
-                            >
-                                Enter your college information to complete
-                                the onboarding process.
-                            </p>
-
-                        </div>
-
-
-                        <div
-                            class="hidden h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 sm:flex"
-                        >
-                            <i
-                                data-lucide="building-2"
-                                class="h-5 w-5 text-indigo-600"
-                            ></i>
-                        </div>
-
+                      <p class="mt-2 text-xs leading-5 text-slate-500">
+                        Add a persistent public image URL. This logo will be shown automatically
+                        on verified students' dashboards. The student will not upload or edit it.
+                      </p>
                     </div>
-
-
-
-                    <form
-                        id="form"
-                        class="mt-6 grid gap-5 sm:grid-cols-2"
-                    >
-
-
-                        <!-- College Name -->
-                        <div class="sm:col-span-2">
-
-                            <label
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                College Name
-                                <span class="text-rose-500">*</span>
-                            </label>
-
-                            <input
-                                class="input w-full"
-                                id="name"
-                                name="name"
-                                type="text"
-                                placeholder="e.g. MGM College of Engineering & Technology"
-                                required
-                            >
-
-                        </div>
-
-
-
-                        <!-- University -->
-                        <div class="sm:col-span-2">
-
-                            <label
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                Affiliated University
-                            </label>
-
-                            <input
-                                class="input w-full"
-                                id="university"
-                                name="university"
-                                type="text"
-                                placeholder="e.g. Dr. A.P.J. Abdul Kalam Technical University"
-                            >
-
-                        </div>
-
-
-
-                        <!-- City -->
-                        <div>
-
-                            <label
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                City
-                            </label>
-
-                            <input
-                                class="input w-full"
-                                id="city"
-                                name="city"
-                                type="text"
-                                placeholder="e.g. Noida"
-                            >
-
-                        </div>
-
-
-
-                        <!-- State -->
-                        <div>
-
-                            <label
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                State
-                            </label>
-
-                            <input
-                                class="input w-full"
-                                id="state"
-                                name="state"
-                                type="text"
-                                placeholder="e.g. Uttar Pradesh"
-                            >
-
-                        </div>
-
-
-
-                        <!-- Website -->
-                        <div class="sm:col-span-2">
-
-                            <label
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                            >
-                                College Website
-                            </label>
-
-                            <input
-                                class="input w-full"
-                                id="website"
-                                name="website"
-                                type="url"
-                                placeholder="https://college-website.com"
-                            >
-
-                        </div>
-
-
-
-                        <!-- Save Button -->
-                        <div
-                            class="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5 sm:col-span-2"
-                        >
-
-                            <button
-                                id="saveButton"
-                                type="submit"
-                                class="btn btn-primary flex items-center gap-2"
-                            >
-
-                                <i
-                                    data-lucide="save"
-                                    class="h-4 w-4"
-                                ></i>
-
-                                <span id="saveButtonText">
-                                    Create Profile
-                                </span>
-
-                            </button>
-
-
-                            <a
-                                id="dashboardButton"
-                                href="dashboard.html"
-                                class="btn btn-soft hidden items-center gap-2"
-                            >
-
-                                <i
-                                    data-lucide="layout-dashboard"
-                                    class="h-4 w-4"
-                                ></i>
-
-                                Dashboard
-
-                            </a>
-
-                        </div>
-
-
-
-                        <!-- Message -->
-                        <p
-                            id="msg"
-                            class="hidden sm:col-span-2 rounded-xl px-4 py-3 text-sm"
-                        ></p>
-
-
-                    </form>
-
-                </section>
-
-
-                <!-- ========================================= -->
-                <!-- College ID Information -->
-                <!-- ========================================= -->
-
-                <section
-                    class="mt-6 max-w-3xl rounded-2xl border border-slate-200 bg-white p-5"
-                >
-
-                    <div class="flex items-start gap-3">
-
-                        <div
-                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100"
-                        >
-
-                            <i
-                                data-lucide="badge-info"
-                                class="h-4 w-4 text-violet-600"
-                            ></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <h3 class="text-sm font-bold text-slate-800">
-                                About College ID
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm leading-relaxed text-slate-500"
-                            >
-                                Your College ID is automatically generated
-                                after the profile is created. It is used
-                                internally for departments, student records,
-                                analytics and industry collaboration requests.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
+                  </div>
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Affiliation Status *</label>
+                  <select id="affiliation_status" name="affiliation_status" class="input w-full" required>
+                    <option value="">Select status</option>
+                    <option value="affiliated">Affiliated to a University</option>
+                    <option value="self_university">Self University / University</option>
+                  </select>
+                  <p class="mt-1 text-xs text-slate-400">
+                    Select “Self University / University” if the institution itself is a university.
+                  </p>
+                </div>
+
+                <div id="universityField">
+                  <label class="mb-2 block text-sm font-semibold">Affiliated University *</label>
+                  <input id="university" name="university" class="input w-full" placeholder="e.g. Dr. A.P.J. Abdul Kalam Technical University">
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">University / College Code *</label>
+                  <input id="college_code" name="college_code" class="input w-full" required placeholder="e.g. 095">
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">AISHE Code *</label>
+                  <input id="aishe_code" name="aishe_code" class="input w-full uppercase" required placeholder="e.g. C-12345">
+                  <p class="mt-1 text-xs text-slate-400">Keep this unique at database level.</p>
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Institution Type</label>
+                  <select id="institution_type" name="institution_type" class="input w-full">
+                    <option value="">Select type</option>
+                    <option>Government</option>
+                    <option>Private</option>
+                    <option>Government Aided</option>
+                    <option>Autonomous</option>
+                    <option>Deemed University</option>
+                    <option>University Department</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Establishment Year</label>
+                  <input id="established_year" name="established_year" class="input w-full" type="number" min="1800" max="2100" placeholder="e.g. 1999">
+                </div>
+              </div>
             </div>
 
-        </main>
+            <div class="step-panel" data-panel="2">
+              <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">Step 2 of 4</p>
+              <h2 class="mt-1 text-xl font-black">Official Contact & Representative</h2>
+              <p class="mt-1 text-sm text-slate-500">Prefer email addresses linked to the institution's website domain.</p>
 
+              <div class="mt-6 grid gap-5 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-sm font-semibold">Official Website *</label>
+                  <input id="website" name="website" class="input w-full" type="url" required placeholder="https://college.edu">
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Official College Email *</label>
+                  <input id="official_email" name="official_email" class="input w-full" type="email" required placeholder="office@college.edu">
+                  <p id="domainHint" class="mt-1 text-xs text-slate-400">Domain match will be checked.</p>
+                </div>
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Official Contact Number *</label>
+                  <input id="official_phone" name="official_phone" class="input w-full" type="tel" required placeholder="+91 9876543210">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-sm font-semibold">Full Address *</label>
+                  <textarea id="address" name="address" class="input min-h-24 w-full" required placeholder="Complete institutional postal address"></textarea>
+                </div>
+                <div><label class="mb-2 block text-sm font-semibold">City *</label><input id="city" name="city" class="input w-full" required></div>
+                <div><label class="mb-2 block text-sm font-semibold">State *</label><input id="state" name="state" class="input w-full" required></div>
+                <div><label class="mb-2 block text-sm font-semibold">PIN Code</label><input id="pincode" name="pincode" class="input w-full" maxlength="6"></div>
+                <div><label class="mb-2 block text-sm font-semibold">Principal / Director / TPO Name *</label><input id="principal_name" name="principal_name" class="input w-full" required></div>
+                <div><label class="mb-2 block text-sm font-semibold">Authorized Person Name *</label><input id="authorized_person_name" name="authorized_person_name" class="input w-full" required></div>
+                <div><label class="mb-2 block text-sm font-semibold">Designation *</label><input id="authorized_designation" name="authorized_designation" class="input w-full" required placeholder="e.g. TPO / Registrar"></div>
+                <div><label class="mb-2 block text-sm font-semibold">Authorized Official Email *</label><input id="authorized_email" name="authorized_email" class="input w-full" type="email" required></div>
+                <div><label class="mb-2 block text-sm font-semibold">Authorized Contact Number *</label><input id="authorized_phone" name="authorized_phone" class="input w-full" type="tel" required></div>
+              </div>
+            </div>
+
+            <div class="step-panel" data-panel="3">
+              <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">Step 3 of 4</p>
+              <h2 class="mt-1 text-xl font-black">Verification Documents</h2>
+              <p class="mt-1 text-sm text-slate-500">Documents are supporting evidence and do not automatically grant verified status.</p>
+
+              <div class="mt-6 space-y-5">
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Affiliation / Recognition Certificate *</label>
+                  <label class="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
+                    <i data-lucide="file-up" class="h-8 w-8 text-indigo-500"></i>
+                    <span class="mt-3 text-sm font-bold">Choose certificate</span>
+                    <span class="mt-1 text-xs text-slate-400">PDF / JPG / PNG • max 5 MB</span>
+                    <input id="affiliation_certificate" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                  </label>
+                  <p id="affiliationFileName" class="mt-2 text-xs font-semibold text-slate-500">No file selected</p>
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-semibold">Authorization Letter <span class="text-slate-400">(for TPO / representative registration)</span></label>
+                  <label class="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
+                    <i data-lucide="badge-check" class="h-8 w-8 text-violet-500"></i>
+                    <span class="mt-3 text-sm font-bold">Choose authorization letter</span>
+                    <span class="mt-1 text-xs text-slate-400">PDF / JPG / PNG • max 5 MB</span>
+                    <input id="authorization_letter" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                  </label>
+                  <p id="authorizationFileName" class="mt-2 text-xs font-semibold text-slate-500">No file selected</p>
+                </div>
+
+                <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="triangle-alert" class="mt-0.5 h-4 w-4 shrink-0"></i>
+                    <p>Production me file type, size and malware validation backend par karo. Browser MIME type ko blindly trust mat karo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-panel" data-panel="4">
+              <p class="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">Step 4 of 4</p>
+              <h2 class="mt-1 text-xl font-black">Review & Submit</h2>
+              <p class="mt-1 text-sm text-slate-500">Review the institution profile before sending it for verification.</p>
+
+              <div id="reviewBox" class="mt-6 grid gap-4 sm:grid-cols-2"></div>
+
+              <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <label class="flex items-start gap-3">
+                  <input id="declaration" type="checkbox" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600">
+                  <span class="text-sm leading-relaxed text-slate-600">
+                    I confirm that the information provided is official, accurate and authorized by the institution.
+                    I understand that submission does not automatically grant verified status.
+                  </span>
+                </label>
+              </div>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                <button id="emailVerifyBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold hover:bg-slate-50">
+                  <span class="flex items-center justify-center gap-2"><i data-lucide="mail-check" class="h-4 w-4"></i> Verify Email</span>
+                </button>
+                <button id="mobileVerifyBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold hover:bg-slate-50">
+                  <span class="flex items-center justify-center gap-2"><i data-lucide="smartphone" class="h-4 w-4"></i> Verify Mobile</span>
+                </button>
+                <button id="websiteCheckBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold hover:bg-slate-50">
+                  <span class="flex items-center justify-center gap-2"><i data-lucide="globe-2" class="h-4 w-4"></i> Check Domain</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+              <button id="prevBtn" type="button" class="btn btn-soft hidden items-center gap-2">
+                <i data-lucide="arrow-left" class="h-4 w-4"></i> Previous
+              </button>
+
+              <div class="ml-auto flex flex-wrap gap-3">
+                <a id="dashboardButton" href="dashboard.html" class="btn btn-soft hidden items-center gap-2">
+                  <i data-lucide="layout-dashboard" class="h-4 w-4"></i> Dashboard
+                </a>
+
+                <button id="nextBtn" type="button" class="btn btn-primary flex items-center gap-2">
+                  Continue <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                </button>
+
+                <button id="saveButton" type="submit" class="btn btn-primary hidden items-center gap-2">
+                  <i data-lucide="send" class="h-4 w-4"></i>
+                  <span id="saveButtonText">Submit for Verification</span>
+                </button>
+              </div>
+            </div>
+
+            <p id="msg" class="mt-4 hidden rounded-xl px-4 py-3 text-sm"></p>
+          </form>
+        </section>
+
+        <aside class="space-y-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Trust Checklist</p>
+                <h2 class="mt-1 font-black">Verification Progress</h2>
+              </div>
+              <div id="progressPercent" class="text-2xl font-black text-indigo-600">0%</div>
+            </div>
+            <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div id="progressBar" class="h-full w-0 rounded-full bg-indigo-600 transition-all"></div>
+            </div>
+
+            <div class="mt-5 space-y-3 text-sm">
+              <div class="flex justify-between"><span class="text-slate-600">Public ID + Official Codes</span><span id="checkIdentifiers" class="text-slate-400">Pending</span></div>
+              <div class="flex justify-between"><span class="text-slate-600">Official Email</span><span id="checkEmail" class="text-slate-400">Pending</span></div>
+              <div class="flex justify-between"><span class="text-slate-600">Mobile</span><span id="checkMobile" class="text-slate-400">Pending</span></div>
+              <div class="flex justify-between"><span class="text-slate-600">Website Domain</span><span id="checkWebsite" class="text-slate-400">Pending</span></div>
+              <div class="flex justify-between"><span class="text-slate-600">Documents</span><span id="checkDocuments" class="text-slate-400">Pending</span></div>
+              <div class="flex justify-between"><span class="text-slate-600">Admin Review</span><span class="text-amber-600">Pending</span></div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <div class="flex items-start gap-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100">
+                <i data-lucide="triangle-alert" class="h-4 w-4 text-amber-700"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-black text-amber-900">Public College ID is a trusted identifier</h3>
+                <p class="mt-1 text-sm leading-relaxed text-amber-800">
+                  After verification, changing the Public College ID or other trusted institution details
+                  may return the profile to <b>Pending</b> for re-verification.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-5">
+            <div class="flex items-start gap-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100">
+                <i data-lucide="lock-keyhole" class="h-4 w-4 text-emerald-600"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-black">Backend-controlled status</h3>
+                <p class="mt-1 text-sm leading-relaxed text-slate-500">
+                  <code>verification_status</code>, <code>verified_by</code> and <code>verified_at</code>
+                  should never be accepted from this frontend form.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-5">
+            <h3 class="text-sm font-black">After verification</h3>
+            <div class="mt-4 space-y-3 text-sm text-slate-600">
+              <p class="flex gap-2"><i data-lucide="circle-check" class="h-4 w-4 text-emerald-500"></i> Verified college badge</p>
+              <p class="flex gap-2"><i data-lucide="circle-check" class="h-4 w-4 text-emerald-500"></i> Student registry verification</p>
+              <p class="flex gap-2"><i data-lucide="circle-check" class="h-4 w-4 text-emerald-500"></i> Industry collaboration</p>
+              <p class="flex gap-2"><i data-lucide="circle-check" class="h-4 w-4 text-emerald-500"></i> Placement & skill analytics</p>
+            </div>
+          </section>
+        </aside>
+      </div>
     </div>
-
-
-
-    <!-- ========================================= -->
-    <!-- JavaScript -->
-    <!-- ========================================= -->
-
-    <script src="/assets/js/config.js"></script>
-    <script src="/assets/js/api.js"></script>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/shell.js"></script>
-
-
-    <script>
-
-        const form =
-            document.getElementById("form");
-
-        const msg =
-            document.getElementById("msg");
-
-        const profileSummary =
-            document.getElementById("profileSummary");
-
-        const collegeId =
-            document.getElementById("collegeId");
-
-        const savedCollegeName =
-            document.getElementById("savedCollegeName");
-
-        const formTitle =
-            document.getElementById("formTitle");
-
-        const formDescription =
-            document.getElementById("formDescription");
-
-        const saveButton =
-            document.getElementById("saveButton");
-
-        const saveButtonText =
-            document.getElementById("saveButtonText");
-
-        const dashboardButton =
-            document.getElementById("dashboardButton");
-
-
-        let existingProfile = null;
-
-
-
-        // =========================================
-        // Show Message
-        // =========================================
-
-        function showMessage(
-            message,
-            type = "success"
-        ) {
-
-            msg.classList.remove(
-                "hidden",
-                "bg-emerald-50",
-                "text-emerald-700",
-                "border",
-                "border-emerald-200",
-                "bg-rose-50",
-                "text-rose-700",
-                "border-rose-200"
-            );
-
-
-            if (type === "success") {
-
-                msg.classList.add(
-                    "bg-emerald-50",
-                    "text-emerald-700",
-                    "border",
-                    "border-emerald-200"
-                );
-
-            }
-
-            else {
-
-                msg.classList.add(
-                    "bg-rose-50",
-                    "text-rose-700",
-                    "border",
-                    "border-rose-200"
-                );
-
-            }
-
-
-            msg.textContent = message;
-
-        }
-
-
-
-        // =========================================
-        // Fill Existing Profile
-        // =========================================
-
-        function fillProfile(college) {
-
-            existingProfile = college;
-
-
-            document.getElementById(
-                "name"
-            ).value =
-                college.name || "";
-
-
-            document.getElementById(
-                "university"
-            ).value =
-                college.university || "";
-
-
-            document.getElementById(
-                "city"
-            ).value =
-                college.city || "";
-
-
-            document.getElementById(
-                "state"
-            ).value =
-                college.state || "";
-
-
-            document.getElementById(
-                "website"
-            ).value =
-                college.website || "";
-
-
-            collegeId.textContent =
-                college.id ?? "—";
-
-
-            savedCollegeName.textContent =
-                college.name || "College";
-
-
-            profileSummary.classList.remove(
-                "hidden"
-            );
-
-
-            formTitle.textContent =
-                "Update College Profile";
-
-
-            formDescription.textContent =
-                "Review or update your saved college information.";
-
-
-            saveButtonText.textContent =
-                "Save Changes";
-
-
-            dashboardButton.classList.remove(
-                "hidden"
-            );
-
-            dashboardButton.classList.add(
-                "flex"
-            );
-
-
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-
-        }
-
-
-
-        // =========================================
-        // Load Existing College Profile
-        // =========================================
-
-        async function loadProfile() {
-
-            try {
-
-                const response =
-                    await SB.get(
-                        "/colleges/profile"
-                    );
-
-
-                const college =
-                    response.data ||
-                    response;
-
-
-                if (
-                    college &&
-                    college.id
-                ) {
-
-                    fillProfile(
-                        college
-                    );
-
-                }
-
-            }
-
-            catch (error) {
-
-                /*
-                 * Profile does not exist yet.
-                 * Keep page in Create Profile mode.
-                 */
-
-                existingProfile = null;
-
-            }
-
-        }
-
-
-
-        // =========================================
-        // Submit Profile
-        // =========================================
-
-        form.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                const formData =
-                    new FormData(form);
-
-
-                const body = {};
-
-
-                for (
-                    const [key, value]
-                    of formData.entries()
-                ) {
-
-                    const cleaned =
-                        String(value).trim();
-
-
-                    if (cleaned !== "") {
-                        body[key] = cleaned;
-                    }
-
-                }
-
-
-                saveButton.disabled = true;
-
-
-                saveButtonText.textContent =
-                    existingProfile
-                        ? "Saving..."
-                        : "Creating...";
-
-
-                try {
-
-                    let response;
-
-
-                    // =====================================
-                    // Create New Profile
-                    // =====================================
-
-                    if (!existingProfile) {
-
-                        response =
-                            await SB.post(
-                                "/colleges/profile",
-                                body
-                            );
-
-                    }
-
-
-                    // =====================================
-                    // Update Existing Profile
-                    // =====================================
-
-                    else {
-
-                        response =
-                            await SB.patch(
-                                "/colleges/profile",
-                                body
-                            );
-
-                    }
-
-
-                    const college =
-                        response.data ||
-                        response;
-
-
-                    /*
-                     * If create/update response contains
-                     * complete college data, use it.
-                     *
-                     * Otherwise reload GET /colleges/profile.
-                     */
-
-                    if (
-                        college &&
-                        college.id
-                    ) {
-
-                        fillProfile(
-                            college
-                        );
-
-                    }
-
-                    else {
-
-                        await loadProfile();
-
-                    }
-
-
-                    showMessage(
-                        existingProfile
-                            ? "College profile saved successfully."
-                            : "College profile created successfully."
-                    );
-
-
-                    saveButtonText.textContent =
-                        "Save Changes";
-
-                }
-
-                catch (error) {
-
-                    showMessage(
-                        error.message,
-                        "error"
-                    );
-
-
-                    saveButtonText.textContent =
-                        existingProfile
-                            ? "Save Changes"
-                            : "Create Profile";
-
-                }
-
-                finally {
-
-                    saveButton.disabled = false;
-
-                }
-
-            }
-        );
-
-
-
-        // =========================================
-        // Initial Load
-        // =========================================
-
-        loadProfile();
-
-
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-    </script>
-
-
+  </main>
+</div>
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
+
+<script>
+const form=document.getElementById("form");
+const msg=document.getElementById("msg");
+const saveButton=document.getElementById("saveButton");
+const saveButtonText=document.getElementById("saveButtonText");
+const dashboardButton=document.getElementById("dashboardButton");
+let existingProfile=null,currentStep=1;
+
+let verificationState={
+  email_verified:false,
+  phone_verified:false,
+  website_verified:false,
+  verification_status:"pending"
+};
+
+const reviewFields={
+  name:"College Name",college_public_id:"Public College ID",college_logo_url:"College Logo URL",affiliation_status:"Affiliation Status",university:"Affiliated University",college_code:"College Code",aishe_code:"AISHE Code",
+  website:"Official Website",official_email:"Official Email",official_phone:"Official Phone",
+  address:"Address",city:"City",state:"State",pincode:"PIN Code",
+  principal_name:"Principal / Director / TPO",
+  authorized_person_name:"Authorized Person",
+  authorized_designation:"Designation",
+  authorized_email:"Authorized Email",
+  authorized_phone:"Authorized Phone"
+};
+
+function showMessage(text,type="success"){
+  msg.className="mt-4 rounded-xl px-4 py-3 text-sm border";
+  msg.classList.add(type==="success"?"bg-emerald-50":"bg-rose-50");
+  msg.classList.add(type==="success"?"text-emerald-700":"text-rose-700");
+  msg.classList.add(type==="success"?"border-emerald-200":"border-rose-200");
+  msg.textContent=text;
+}
+
+function setStep(step){
+  currentStep=Math.max(1,Math.min(4,step));
+  document.querySelectorAll(".step-panel").forEach(p=>p.classList.toggle("active",Number(p.dataset.panel)===currentStep));
+  document.querySelectorAll(".step-nav").forEach((nav,i)=>{
+    const c=nav.querySelector(".step-circle"),n=i+1;
+    c.classList.remove("active","done");
+    if(n<currentStep)c.classList.add("done");
+    if(n===currentStep)c.classList.add("active");
+  });
+  document.getElementById("prevBtn").classList.toggle("hidden",currentStep===1);
+  document.getElementById("prevBtn").classList.toggle("flex",currentStep!==1);
+  document.getElementById("nextBtn").classList.toggle("hidden",currentStep===4);
+  saveButton.classList.toggle("hidden",currentStep!==4);
+  saveButton.classList.toggle("flex",currentStep===4);
+  if(currentStep===4)buildReview();
+  if(window.lucide)lucide.createIcons();
+}
+
+function validateCurrentStep(){
+  const panel=document.querySelector(`.step-panel[data-panel="${currentStep}"]`);
+  for(const field of panel.querySelectorAll("[required]")){
+    if(!String(field.value||"").trim()){
+      field.focus();
+      showMessage("Please complete all required fields in this step.","error");
+      return false;
+    }
+  }
+  return true;
+}
+
+function toggleUniversityField(){
+  const status=document.getElementById("affiliation_status").value;
+  const wrapper=document.getElementById("universityField");
+  const university=document.getElementById("university");
+
+  if(status==="self_university"){
+    wrapper.classList.add("hidden");
+    university.required=false;
+    university.disabled=true;
+    university.value="";
+  }else{
+    wrapper.classList.remove("hidden");
+    university.disabled=false;
+    university.required=status==="affiliated";
+  }
+}
+
+function buildReview(){
+  const box=document.getElementById("reviewBox");
+  box.innerHTML="";
+  for(const [id,label] of Object.entries(reviewFields)){
+    const el=document.getElementById(id);
+    if(id==="university" && document.getElementById("affiliation_status").value==="self_university") continue;
+    const card=document.createElement("div");
+    card.className="rounded-xl border border-slate-200 bg-slate-50 p-4";
+    card.innerHTML=`<p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">${label}</p>
+                    <p class="mt-1 break-words text-sm font-bold text-slate-800">${el?.value||"—"}</p>`;
+    box.appendChild(card);
+  }
+}
+
+function websiteHost(){
+  try{return new URL(document.getElementById("website").value.trim()).hostname.replace(/^www\./,"").toLowerCase()}
+  catch{return ""}
+}
+function emailDomain(){
+  const v=document.getElementById("official_email").value.trim().toLowerCase();
+  return v.includes("@")?v.split("@").pop():"";
+}
+function domainMatches(){
+  const a=websiteHost(),b=emailDomain();
+  if(!a||!b)return null;
+  return a===b||a.endsWith("."+b)||b.endsWith("."+a);
+}
+function updateDomainHint(){
+  const hint=document.getElementById("domainHint"),m=domainMatches();
+  if(m===true){
+    hint.textContent="Official email domain matches the website domain.";
+    hint.className="mt-1 text-xs font-semibold text-emerald-600";
+  }else if(m===false){
+    hint.textContent="Email domain differs from website domain — manual verification may be required.";
+    hint.className="mt-1 text-xs font-semibold text-amber-600";
+  }else{
+    hint.textContent="Domain match will be checked.";
+    hint.className="mt-1 text-xs text-slate-400";
+  }
+}
+
+function setCheck(id,ok){
+  const el=document.getElementById(id);
+  el.textContent=ok?"Ready":"Pending";
+  el.className=ok?"font-bold text-emerald-600":"text-slate-400";
+}
+
+function updateProgress(){
+  const idsReady=
+    document.getElementById("college_public_id").value.trim() &&
+    document.getElementById("college_code").value.trim() &&
+    document.getElementById("aishe_code").value.trim();
+  const docsReady=document.getElementById("affiliation_certificate").files.length>0;
+  const checks=[Boolean(idsReady),verificationState.email_verified,verificationState.phone_verified,verificationState.website_verified,docsReady];
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  document.getElementById("progressPercent").textContent=pct+"%";
+  document.getElementById("progressBar").style.width=pct+"%";
+  setCheck("checkIdentifiers",Boolean(idsReady));
+  setCheck("checkEmail",verificationState.email_verified);
+  setCheck("checkMobile",verificationState.phone_verified);
+  setCheck("checkWebsite",verificationState.website_verified);
+  setCheck("checkDocuments",docsReady);
+}
+
+function updateStatus(college={}){
+  const status=String(college.verification_status||verificationState.verification_status||"pending").toLowerCase();
+  const top=document.getElementById("topStatus"),sum=document.getElementById("summaryStatus");
+  for(const el of [top,sum]){
+    el.className="status-pill";
+    if(status==="verified"){
+      el.classList.add("status-verified");
+      el.innerHTML='<i data-lucide="badge-check" class="h-4 w-4"></i> Verified Institution';
+    }else if(status==="rejected"){
+      el.classList.add("status-rejected");
+      el.innerHTML='<i data-lucide="circle-x" class="h-4 w-4"></i> Verification Rejected';
+    }else{
+      el.classList.add("status-pending");
+      el.innerHTML='<i data-lucide="clock-3" class="h-4 w-4"></i> Verification Pending';
+    }
+  }
+  if(window.lucide)lucide.createIcons();
+}
+
+function payload(){
+  const ids=["name","college_public_id","college_logo_url","affiliation_status","university","college_code","aishe_code","institution_type","established_year",
+             "website","official_email","official_phone","address","city","state","pincode",
+             "principal_name","authorized_person_name","authorized_designation","authorized_email","authorized_phone"];
+  const body={};
+  for(const id of ids){
+    const v=String(document.getElementById(id)?.value||"").trim();
+    if(v!=="")body[id]=id==="established_year"?Number(v):v;
+  }
+  return body;
+}
+
+function updateCollegeLogoPreview(){
+  const input=document.getElementById("college_logo_url");
+  const img=document.getElementById("collegeLogoPreview");
+  const placeholder=document.getElementById("collegeLogoPlaceholder");
+  const url=String(input?.value||"").trim();
+
+  if(!url){
+    img.src="";
+    img.classList.add("hidden");
+    placeholder.classList.remove("hidden");
+    return;
+  }
+
+  img.onload=()=>{
+    img.classList.remove("hidden");
+    placeholder.classList.add("hidden");
+  };
+
+  img.onerror=()=>{
+    img.classList.add("hidden");
+    placeholder.classList.remove("hidden");
+  };
+
+  img.src=url;
+}
+
+function fillProfile(college){
+  existingProfile=college;
+  for(const id of Object.keys(payload())){
+    if(document.getElementById(id)&&college[id]!=null)document.getElementById(id).value=college[id];
+  }
+  verificationState.email_verified=Boolean(college.email_verified);
+  verificationState.phone_verified=Boolean(college.phone_verified);
+  verificationState.website_verified=Boolean(college.website_verified);
+  verificationState.verification_status=college.verification_status||"pending";
+
+  if(!college.affiliation_status){
+    document.getElementById("affiliation_status").value = college.university ? "affiliated" : "self_university";
+  }
+  toggleUniversityField();
+  updateCollegeLogoPreview();
+
+  document.getElementById("savedCollegeName").textContent=college.name||"College";
+  document.getElementById("collegePublicIdSummary").textContent=college.college_public_id||"—";
+  document.getElementById("summaryCollegeCode").textContent=college.college_code||"—";
+  document.getElementById("summaryAishe").textContent=college.aishe_code||"—";
+  document.getElementById("profileSummary").classList.remove("hidden");
+  dashboardButton.classList.remove("hidden");dashboardButton.classList.add("flex");
+  saveButtonText.textContent="Update & Resubmit";
+  updateStatus(college);updateDomainHint();updateProgress();
+}
+
+async function loadProfile(){
+  try{
+    const r=await SB.get("/colleges/profile");
+    const college=r.data||r;
+    if(college&&college.id)fillProfile(college);
+  }catch(e){existingProfile=null}
+}
+
+document.getElementById("nextBtn").addEventListener("click",()=>{if(validateCurrentStep())setStep(currentStep+1)});
+document.getElementById("prevBtn").addEventListener("click",()=>setStep(currentStep-1));
+document.querySelectorAll(".step-nav").forEach(btn=>btn.addEventListener("click",()=>{
+  const t=Number(btn.dataset.step);
+  if(t<=currentStep||validateCurrentStep())setStep(t);
+}));
+
+document.getElementById("college_logo_url").addEventListener("input",()=>{
+  updateCollegeLogoPreview();
+});
+
+document.getElementById("college_public_id").addEventListener("input",e=>{
+  e.target.value=e.target.value.toUpperCase().replace(/\s+/g,"");
+  updateProgress();
+});
+
+document.getElementById("college_code").addEventListener("input",e=>{
+  e.target.value=e.target.value.toUpperCase();
+});
+
+document.getElementById("aishe_code").addEventListener("input",e=>{
+  e.target.value=e.target.value.toUpperCase();
+});
+
+document.getElementById("affiliation_status").addEventListener("change",()=>{
+  toggleUniversityField();
+  updateProgress();
+});
+
+document.getElementById("website").addEventListener("input",updateDomainHint);
+document.getElementById("official_email").addEventListener("input",updateDomainHint);
+document.getElementById("affiliation_certificate").addEventListener("change",e=>{
+  document.getElementById("affiliationFileName").textContent=e.target.files[0]?.name||"No file selected";
+  updateProgress();
+});
+document.getElementById("authorization_letter").addEventListener("change",e=>{
+  document.getElementById("authorizationFileName").textContent=e.target.files[0]?.name||"No file selected";
+});
+form.addEventListener("input",updateProgress);
+
+document.getElementById("emailVerifyBtn").addEventListener("click",async()=>{
+  try{
+    await SB.post("/colleges/verification/email/send-otp",{});
+    showMessage("Email OTP request sent. Complete OTP verification from backend flow.");
+  }catch(e){showMessage(e.message||"Email verification endpoint is not available yet.","error")}
+});
+document.getElementById("mobileVerifyBtn").addEventListener("click",async()=>{
+  try{
+    await SB.post("/colleges/verification/mobile/send-otp",{});
+    showMessage("Mobile OTP request sent. Complete OTP verification from backend flow.");
+  }catch(e){showMessage(e.message||"Mobile verification endpoint is not available yet.","error")}
+});
+document.getElementById("websiteCheckBtn").addEventListener("click",async()=>{
+  if(domainMatches()!==true){
+    showMessage("Official email domain does not match the website domain. Manual review may be required.","error");
+    return;
+  }
+  try{
+    await SB.post("/colleges/verification/website",{});
+    showMessage("Website verification request sent.");
+  }catch(e){showMessage(e.message||"Website verification endpoint is not available yet.","error")}
+});
+
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!document.getElementById("declaration").checked){
+    showMessage("Please confirm the institution declaration before submitting.","error");
+    return;
+  }
+
+  saveButton.disabled=true;
+  saveButtonText.textContent=existingProfile?"Updating...":"Submitting...";
+
+  try{
+    const body=payload();
+    const r=existingProfile
+      ? await SB.patch("/colleges/profile",body)
+      : await SB.post("/colleges/profile",body);
+
+    const college=r.data||r;
+    if(college&&college.id)fillProfile(college);
+    else await loadProfile();
+
+    showMessage("College profile saved. Verification remains Pending until backend checks and admin approval are completed.");
+  }catch(err){
+    showMessage(err.message||"Unable to save college profile.","error");
+  }finally{
+    saveButton.disabled=false;
+    saveButtonText.textContent=existingProfile?"Update & Resubmit":"Submit for Verification";
+  }
+});
+
+toggleUniversityField();
+setStep(1);
+loadProfile();
+if(window.lucide)lucide.createIcons();
+</script>
 </body>
-
 </html>

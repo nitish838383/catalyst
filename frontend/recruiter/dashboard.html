@@ -1,1129 +1,726 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width,initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="SkillBridge AI Recruiter Dashboard"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SkillBridge AI Recruiter Command Center">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/assets/css/app.css">
+    <title>Recruiter Dashboard | SkillBridge AI</title>
 
-    <link
-        rel="stylesheet"
-        href="/assets/css/app.css"
-    >
-
-    <title>
-        Recruiter Dashboard | SkillBridge AI
-    </title>
-
-<style>
-    :root{
-        --sb-indigo:#4f46e5;
-        --sb-blue:#2563eb;
-        --sb-violet:#7c3aed;
-        --sb-emerald:#059669;
-        --sb-amber:#d97706;
-        --sb-rose:#e11d48;
-        --sb-slate:#0f172a;
-    }
-
-    body{
-        background:
-            radial-gradient(circle at 8% 0%,rgba(99,102,241,.10),transparent 28%),
-            radial-gradient(circle at 92% 10%,rgba(14,165,233,.08),transparent 30%),
-            #f8fafc;
-    }
-
-    .recruiter-hero{
-        position:relative;
-        overflow:hidden;
-        border-radius:28px;
-        padding:2rem;
-        color:white;
-        background:
-            radial-gradient(circle at 82% 14%,rgba(255,255,255,.17),transparent 25%),
-            radial-gradient(circle at 10% 120%,rgba(34,211,238,.20),transparent 34%),
-            linear-gradient(135deg,#172554 0%,#312e81 42%,#2563eb 100%);
-        box-shadow:0 24px 60px rgba(37,99,235,.20);
-    }
-
-    .recruiter-hero::after{
-        content:"";
-        position:absolute;
-        width:300px;
-        height:300px;
-        right:-80px;
-        top:-150px;
-        border-radius:999px;
-        border:1px solid rgba(255,255,255,.16);
-        box-shadow:
-            0 0 0 42px rgba(255,255,255,.035),
-            0 0 0 84px rgba(255,255,255,.025);
-    }
-
-    .recruiter-grid{
-        position:absolute;
-        inset:0;
-        opacity:.10;
-        background-image:
-            linear-gradient(rgba(255,255,255,.2) 1px,transparent 1px),
-            linear-gradient(90deg,rgba(255,255,255,.2) 1px,transparent 1px);
-        background-size:30px 30px;
-    }
-
-    .hero-badge{
-        display:inline-flex;
-        align-items:center;
-        gap:.45rem;
-        border-radius:999px;
-        padding:.42rem .72rem;
-        font-size:.72rem;
-        font-weight:800;
-        background:rgba(255,255,255,.10);
-        border:1px solid rgba(255,255,255,.14);
-    }
-
-    .hero-action{
-        position:relative;
-        z-index:5;
-        display:flex;
-        flex-direction:column;
-        gap:.65rem;
-        min-height:104px;
-        padding:1rem;
-        border-radius:16px;
-        background:rgba(255,255,255,.10);
-        border:1px solid rgba(255,255,255,.14);
-        transition:.2s;
-    }
-
-    .hero-action:hover{
-        transform:translateY(-3px);
-        background:rgba(255,255,255,.16);
-    }
-
-    .recruiter-stat{
-        position:relative;
-        overflow:hidden;
-        border-radius:20px;
-        background:linear-gradient(180deg,#fff,#fbfdff);
-        border:1px solid #e2e8f0;
-        box-shadow:0 14px 34px rgba(15,23,42,.05);
-        transition:.22s;
-    }
-
-    .recruiter-stat:hover{
-        transform:translateY(-5px);
-        border-color:#c7d2fe;
-        box-shadow:0 18px 38px rgba(15,23,42,.08);
-    }
-
-    .company-profile-card{
-        border-radius:24px;
-        background:rgba(255,255,255,.94);
-        border:1px solid #e2e8f0;
-        box-shadow:0 18px 44px rgba(15,23,42,.06);
-    }
-
-    .profile-info{
-        border-radius:16px;
-        background:linear-gradient(180deg,#fff,#fbfdff);
-        border:1px solid #eef2f7;
-    }
-
-    .section-premium{
-        border-radius:24px;
-        background:rgba(255,255,255,.94);
-        border:1px solid #e2e8f0;
-        box-shadow:0 14px 42px rgba(15,23,42,.05);
-        overflow:hidden;
-    }
-
-    .status-pill{
-        display:inline-flex;
-        align-items:center;
-        gap:.35rem;
-        border-radius:999px;
-        padding:.35rem .65rem;
-        font-size:.72rem;
-        font-weight:800;
-    }
-
-    .quick-card{
-        border-radius:20px;
-        border:1px solid #e2e8f0;
-        background:rgba(255,255,255,.92);
-        box-shadow:0 12px 30px rgba(15,23,42,.045);
-        transition:.22s;
-    }
-
-    .quick-card:hover{
-        transform:translateY(-5px);
-        box-shadow:0 18px 38px rgba(15,23,42,.08);
-        border-color:#c7d2fe;
-    }
-
-    @media (max-width:640px){
-        .recruiter-hero{border-radius:20px;padding:1.25rem}
-        .section-premium,.company-profile-card,.quick-card,.recruiter-stat{border-radius:16px}
-    }
-
-
-    /* =====================================================
-       RECRUITER AI CHAT WIDGET
-    ===================================================== */
-
-    .recruiter-chat-launcher{
-        position:fixed;
-        right:1.25rem;
-        bottom:1.25rem;
-        z-index:80;
-
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        gap:.6rem;
-
-        min-width:56px;
-        height:56px;
-        padding:0 1rem;
-
-        border-radius:999px;
-        border:1px solid rgba(255,255,255,.24);
-
-        color:white;
-        font-weight:800;
-
-        background:
-            linear-gradient(135deg,#4338ca,#2563eb);
-
-        box-shadow:
-            0 18px 42px rgba(37,99,235,.30);
-
-        transition:.2s;
-    }
-
-    .recruiter-chat-launcher:hover{
-        transform:translateY(-2px);
-        box-shadow:
-            0 22px 52px rgba(37,99,235,.38);
-    }
-
-    .recruiter-chat-panel{
-        position:fixed;
-        right:1.25rem;
-        bottom:5.8rem;
-        z-index:80;
-
-        width:min(430px,calc(100vw - 2rem));
-        height:min(640px,calc(100vh - 8rem));
-
-        display:flex;
-        flex-direction:column;
-
-        overflow:hidden;
-
-        border:1px solid #e2e8f0;
-        border-radius:1.5rem;
-
-        background:rgba(255,255,255,.98);
-
-        box-shadow:
-            0 28px 70px rgba(15,23,42,.22);
-
-        backdrop-filter:blur(16px);
-    }
-
-    .recruiter-chat-head{
-        padding:1rem;
-        color:white;
-        background:
-            linear-gradient(135deg,#172554,#312e81,#2563eb);
-    }
-
-    .recruiter-chat-messages{
-        flex:1;
-        overflow-y:auto;
-        padding:1rem;
-        background:
-            linear-gradient(180deg,#f8fafc,#ffffff);
-        scroll-behavior:smooth;
-    }
-
-    .recruiter-chat-user{
-        max-width:84%;
-        margin-left:auto;
-
-        border-radius:
-            1rem 1rem .35rem 1rem;
-
-        padding:.72rem .88rem;
-
-        color:white;
-
-        background:
-            linear-gradient(135deg,#4338ca,#6366f1);
-
-        box-shadow:
-            0 8px 20px rgba(79,70,229,.14);
-    }
-
-    .recruiter-chat-ai{
-        max-width:88%;
-
-        border:1px solid #e2e8f0;
-
-        border-radius:
-            1rem 1rem 1rem .35rem;
-
-        padding:.72rem .88rem;
-
-        color:#334155;
-        background:white;
-
-        box-shadow:
-            0 5px 16px rgba(15,23,42,.04);
-    }
-
-    .recruiter-chat-quick{
-        border:1px solid #e2e8f0;
-        border-radius:999px;
-
-        padding:.45rem .72rem;
-
-        font-size:.75rem;
-        font-weight:700;
-
-        color:#475569;
-        background:white;
-
-        transition:.18s;
-    }
-
-    .recruiter-chat-quick:hover{
-        border-color:#c7d2fe;
-        color:#4338ca;
-        background:#eef2ff;
-    }
-
-    @media (max-width:640px){
-
-        .recruiter-chat-launcher{
-            right:.85rem;
-            bottom:.85rem;
-            width:54px;
-            min-width:54px;
-            padding:0;
+    <style>
+        :root{
+            --ink:#0f172a;
+            --muted:#64748b;
+            --line:#e2e8f0;
+            --soft:#f8fafc;
+            --indigo:#4f46e5;
+            --blue:#2563eb;
+            --violet:#7c3aed;
+            --emerald:#059669;
         }
 
-        .recruiter-chat-launcher span{
-            display:none;
+        *{box-sizing:border-box}
+        html{scroll-behavior:smooth}
+
+        body{
+            background:
+                radial-gradient(circle at 8% 0%,rgba(79,70,229,.08),transparent 26%),
+                radial-gradient(circle at 94% 5%,rgba(14,165,233,.07),transparent 28%),
+                #f8fafc;
+        }
+
+        .dashboard-shell{
+            position:relative;
+        }
+
+        .glass-card{
+            background:rgba(255,255,255,.92);
+            border:1px solid rgba(226,232,240,.95);
+            box-shadow:0 18px 45px rgba(15,23,42,.06);
+            backdrop-filter:blur(14px);
+        }
+
+        .hero{
+            position:relative;
+            overflow:hidden;
+            border-radius:30px;
+            padding:2rem;
+            color:#fff;
+            background:
+                radial-gradient(circle at 88% 18%,rgba(255,255,255,.14),transparent 28%),
+                linear-gradient(135deg,#111827 0%,#1e1b4b 38%,#312e81 65%,#2563eb 100%);
+            box-shadow:0 24px 60px rgba(37,99,235,.18);
+        }
+
+        .hero::after{
+            content:"";
+            position:absolute;
+            width:360px;
+            height:360px;
+            right:-120px;
+            top:-210px;
+            border-radius:9999px;
+            border:1px solid rgba(255,255,255,.13);
+            box-shadow:
+                0 0 0 52px rgba(255,255,255,.028),
+                0 0 0 104px rgba(255,255,255,.018);
+            pointer-events:none;
+        }
+
+        .hero-grid{
+            position:absolute;
+            inset:0;
+            opacity:.07;
+            background-image:
+                linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px);
+            background-size:32px 32px;
+        }
+
+        .hero-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:.45rem;
+            min-height:32px;
+            padding:.38rem .72rem;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:9999px;
+            background:rgba(255,255,255,.09);
+            font-size:.72rem;
+            font-weight:800;
+        }
+
+        .hero-action{
+            position:relative;
+            z-index:3;
+            display:flex;
+            align-items:center;
+            gap:.8rem;
+            min-height:70px;
+            padding:.9rem 1rem;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:18px;
+            background:rgba(255,255,255,.09);
+            transition:.2s ease;
+            text-align:left;
+        }
+
+        .hero-action:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,.14);
+            border-color:rgba(255,255,255,.22);
+        }
+
+        .hero-action-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            flex:none;
+            align-items:center;
+            justify-content:center;
+            border-radius:13px;
+            background:rgba(255,255,255,.11);
+        }
+
+        .metric-card{
+            position:relative;
+            overflow:hidden;
+            border-radius:22px;
+            background:#fff;
+            border:1px solid var(--line);
+            box-shadow:0 12px 30px rgba(15,23,42,.045);
+            transition:.2s ease;
+        }
+
+        .metric-card:hover{
+            transform:translateY(-4px);
+            border-color:#c7d2fe;
+            box-shadow:0 18px 38px rgba(15,23,42,.075);
+        }
+
+        .metric-card::after{
+            content:"";
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            height:3px;
+            background:linear-gradient(90deg,#4f46e5,#2563eb);
+            opacity:.8;
+        }
+
+        .metric-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+        }
+
+        .section-card{
+            border-radius:24px;
+            background:#fff;
+            border:1px solid var(--line);
+            box-shadow:0 12px 34px rgba(15,23,42,.045);
+            overflow:hidden;
+        }
+
+        .section-head{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:1.25rem 1.35rem;
+            border-bottom:1px solid #eef2f7;
+        }
+
+        .section-kicker{
+            font-size:.68rem;
+            font-weight:900;
+            letter-spacing:.12em;
+            text-transform:uppercase;
+            color:#6366f1;
+        }
+
+        .quick-tile{
+            display:flex;
+            gap:.8rem;
+            align-items:center;
+            border-radius:18px;
+            border:1px solid #e2e8f0;
+            background:linear-gradient(180deg,#fff,#fbfdff);
+            padding:1rem;
+            transition:.2s ease;
+        }
+
+        .quick-tile:hover{
+            transform:translateY(-2px);
+            border-color:#c7d2fe;
+            box-shadow:0 12px 28px rgba(15,23,42,.06);
+        }
+
+        .quick-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            flex:none;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+        }
+
+        .profile-strip{
+            display:grid;
+            gap:1rem;
+            grid-template-columns:minmax(0,1fr);
+        }
+
+        .command-panel{
+            border-radius:24px;
+            color:#fff;
+            background:linear-gradient(145deg,#172554,#312e81);
+            box-shadow:0 18px 42px rgba(49,46,129,.16);
+        }
+
+        .command-list{
+            display:grid;
+            gap:.7rem;
+        }
+
+        .command-item{
+            display:flex;
+            align-items:center;
+            gap:.75rem;
+            border:1px solid rgba(255,255,255,.11);
+            border-radius:14px;
+            padding:.8rem;
+            background:rgba(255,255,255,.06);
+        }
+
+        .status-dot{
+            width:8px;
+            height:8px;
+            border-radius:999px;
+            background:#34d399;
+            box-shadow:0 0 0 4px rgba(52,211,153,.12);
+        }
+
+        .dashboard-table table{
+            border-collapse:separate;
+            border-spacing:0;
+        }
+
+        .dashboard-table thead th{
+            background:#f8fafc;
+            color:#64748b;
+            font-size:.69rem;
+            font-weight:900;
+            letter-spacing:.06em;
+            text-transform:uppercase;
+        }
+
+        .dashboard-table tbody tr{
+            transition:.16s ease;
+        }
+
+        .dashboard-table tbody tr:hover{
+            background:#fafbff;
+        }
+
+        .dashboard-table tbody td{
+            border-bottom:1px solid #f1f5f9;
+        }
+
+        .chat-launcher{
+            position:fixed;
+            right:1.25rem;
+            bottom:1.25rem;
+            z-index:80;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:.6rem;
+            height:58px;
+            padding:0 1.05rem;
+            border-radius:999px;
+            color:#fff;
+            font-weight:800;
+            background:linear-gradient(135deg,#4338ca,#2563eb);
+            border:1px solid rgba(255,255,255,.22);
+            box-shadow:0 20px 46px rgba(37,99,235,.30);
+            transition:.2s ease;
+        }
+
+        .chat-launcher:hover{
+            transform:translateY(-2px);
+            box-shadow:0 24px 56px rgba(37,99,235,.38);
         }
 
         .recruiter-chat-panel{
-            right:.75rem;
-            left:.75rem;
-            bottom:5rem;
-            width:auto;
-            height:min(72vh,620px);
-            border-radius:1.1rem;
+            position:fixed;
+            right:1.25rem;
+            bottom:6rem;
+            z-index:80;
+            width:min(430px,calc(100vw - 2rem));
+            height:min(640px,calc(100vh - 8rem));
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            border:1px solid #e2e8f0;
+            border-radius:1.5rem;
+            background:rgba(255,255,255,.98);
+            box-shadow:0 28px 70px rgba(15,23,42,.22);
+            backdrop-filter:blur(16px);
         }
-    }
 
-</style>
+        .recruiter-chat-head{
+            padding:1rem;
+            color:white;
+            background:linear-gradient(135deg,#172554,#312e81,#2563eb);
+        }
 
+        .recruiter-chat-messages{
+            flex:1;
+            overflow-y:auto;
+            padding:1rem;
+            background:linear-gradient(180deg,#f8fafc,#fff);
+            scroll-behavior:smooth;
+        }
+
+        .recruiter-chat-user{
+            max-width:84%;
+            margin-left:auto;
+            border-radius:1rem 1rem .35rem 1rem;
+            padding:.72rem .88rem;
+            color:white;
+            background:linear-gradient(135deg,#4338ca,#6366f1);
+            box-shadow:0 8px 20px rgba(79,70,229,.14);
+        }
+
+        .recruiter-chat-ai{
+            max-width:88%;
+            border:1px solid #e2e8f0;
+            border-radius:1rem 1rem 1rem .35rem;
+            padding:.72rem .88rem;
+            color:#334155;
+            background:white;
+            box-shadow:0 5px 16px rgba(15,23,42,.04);
+        }
+
+        .recruiter-chat-quick{
+            border:1px solid #e2e8f0;
+            border-radius:999px;
+            padding:.45rem .72rem;
+            font-size:.75rem;
+            font-weight:700;
+            color:#475569;
+            background:#fff;
+            transition:.18s;
+        }
+
+        .recruiter-chat-quick:hover{
+            border-color:#c7d2fe;
+            color:#4338ca;
+            background:#eef2ff;
+        }
+
+        @media (min-width:1024px){
+            .profile-strip{
+                grid-template-columns:minmax(0,1fr) 310px;
+            }
+        }
+
+        @media (max-width:640px){
+            .hero{border-radius:22px;padding:1.25rem}
+            .metric-card,.section-card,.command-panel{border-radius:18px}
+            .chat-launcher{right:.85rem;bottom:.85rem;width:56px;padding:0}
+            .chat-launcher span{display:none}
+            .recruiter-chat-panel{
+                right:.75rem;left:.75rem;bottom:5rem;width:auto;
+                height:min(72vh,620px);border-radius:1.1rem;
+            }
+        }
+    </style>
 </head>
 
+<body class="text-slate-900">
+<script>window.SKILLBRIDGE_ROLE="recruiter";</script>
 
-<body class="bg-slate-50 text-slate-900">
-
-<script>
-    window.SKILLBRIDGE_ROLE = "recruiter";
-</script>
-
-
-<div id="app-shell">
-
+<div id="app-shell" class="dashboard-shell">
     <main class="min-h-screen lg:pl-72">
-
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
+            <!-- HERO -->
+            <header class="hero mb-6">
+                <div class="hero-grid"></div>
 
-            <!-- HEADER -->
-
-            <header class="recruiter-hero mb-7">
-                <div class="recruiter-grid"></div>
-
-                <div class="relative z-10 flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
-
-                    <div class="max-w-3xl">
-
-                        <div class="mb-3 flex flex-wrap items-center gap-2">
-                            <span class="hero-badge">
-                                <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
-                                Recruiter Portal
+                <div class="relative z-10 grid gap-7 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
+                    <div>
+                        <div class="mb-4 flex flex-wrap items-center gap-2">
+                            <span class="hero-chip">
+                                <span class="status-dot"></span>
+                                Recruiter Command Center
                             </span>
-
-                            <span
-                                id="heroVerificationBadge"
-                                class="hero-badge text-amber-100"
-                            >
+                            <span id="heroVerificationBadge" class="hero-chip text-amber-100">
                                 Verification status
                             </span>
                         </div>
 
-                        <p class="text-sm font-semibold text-indigo-100">
-                            Welcome back
-                        </p>
-
-                        <h1
-                            id="heroCompanyName"
-                            class="mt-1 max-w-4xl text-3xl font-black tracking-tight text-white sm:text-4xl"
-                        >
+                        <p class="text-sm font-semibold text-indigo-100">Welcome back</p>
+                        <h1 id="heroCompanyName" class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
                             Company
                         </h1>
 
-                        <p class="mt-2 text-sm font-bold uppercase tracking-[0.15em] text-indigo-200">
-                            Recruiter Dashboard
+                        <p class="mt-3 max-w-2xl text-sm leading-6 text-indigo-100 sm:text-base">
+                            Publish opportunities, review talent, manage industry collaboration and track your hiring activity from one workspace.
                         </p>
-
-                        <p class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100 sm:text-base">
-                            Manage your company profile, opportunities, applicants,
-                            collaborations and industry challenges from one command center.
-                        </p>
-
                     </div>
 
-                    <div class="grid min-w-[300px] grid-cols-2 gap-3 xl:grid-cols-3">
-
-                        <a
-                            href="opportunities.html"
-                            class="hero-action"
-                        >
-                            <i
-                                data-lucide="plus-circle"
-                                class="h-5 w-5 text-cyan-200"
-                            ></i>
-
-                            <span class="text-xs text-indigo-200">
-                                Hiring
+                    <div class="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                        <a href="opportunities.html" class="hero-action">
+                            <span class="hero-action-icon text-cyan-200">
+                                <i data-lucide="briefcase-business" class="h-5 w-5"></i>
                             </span>
-
-                            <span class="font-bold">
-                                New Opportunity
+                            <span>
+                                <span class="block text-xs text-indigo-200">Create</span>
+                                <span class="font-bold">New Opportunity</span>
                             </span>
                         </a>
 
-                        <a
-                            href="applications.html"
-                            class="hero-action"
-                        >
-                            <i
-                                data-lucide="users-round"
-                                class="h-5 w-5 text-emerald-200"
-                            ></i>
-
-                            <span class="text-xs text-indigo-200">
-                                Candidates
+                        <a href="applications.html" class="hero-action">
+                            <span class="hero-action-icon text-emerald-200">
+                                <i data-lucide="users-round" class="h-5 w-5"></i>
                             </span>
-
-                            <span class="font-bold">
-                                View Applicants
+                            <span>
+                                <span class="block text-xs text-indigo-200">Review</span>
+                                <span class="font-bold">View Applicants</span>
                             </span>
                         </a>
 
-                        <button
-                            id="openRecruiterChat"
-                            type="button"
-                            class="hero-action text-left"
-                        >
-                            <i
-                                data-lucide="bot"
-                                class="h-5 w-5 text-violet-200"
-                            ></i>
-
-                            <span class="text-xs text-indigo-200">
-                                Intelligence
+                        <button id="openRecruiterChat" type="button" class="hero-action">
+                            <span class="hero-action-icon text-violet-200">
+                                <i data-lucide="bot" class="h-5 w-5"></i>
                             </span>
-
-                            <span class="font-bold">
-                                Hiring Assistant
+                            <span>
+                                <span class="block text-xs text-indigo-200">Assistant</span>
+                                <span class="font-bold">Hiring Intelligence</span>
                             </span>
                         </button>
-
                     </div>
-
                 </div>
             </header>
 
-
-
-            <!-- ========================= -->
-            <!-- STAT CARDS -->
-            <!-- ========================= -->
-
-            <section
-                class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6"
-            >
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
-                    >
-                        <i
-                            data-lucide="building-2"
-                            class="h-5 w-5"
-                        ></i>
+            <!-- METRICS -->
+            <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-indigo-50 text-indigo-600"><i data-lucide="building-2" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Profile</span>
                     </div>
+                    <p class="mt-5 text-sm text-slate-500">Company</p>
+                    <p id="companyCount" class="mt-1 text-2xl font-black">—</p>
+                </article>
 
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Company
-                    </p>
-
-                    <p
-                        id="companyCount"
-                        class="mt-1 text-2xl font-black"
-                    >
-                        —
-                    </p>
-
-                </div>
-
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
-                    >
-                        <i
-                            data-lucide="briefcase-business"
-                            class="h-5 w-5"
-                        ></i>
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-blue-50 text-blue-600"><i data-lucide="briefcase-business" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Published</span>
                     </div>
+                    <p class="mt-5 text-sm text-slate-500">Opportunities</p>
+                    <p id="opportunityCount" class="mt-1 text-2xl font-black">0</p>
+                </article>
 
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Opportunities
-                    </p>
-
-                    <p
-                        id="opportunityCount"
-                        class="mt-1 text-2xl font-black"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"
-                    >
-                        <i
-                            data-lucide="users"
-                            class="h-5 w-5"
-                        ></i>
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-emerald-50 text-emerald-600"><i data-lucide="users" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Talent</span>
                     </div>
+                    <p class="mt-5 text-sm text-slate-500">Applications</p>
+                    <p id="applicationCount" class="mt-1 text-2xl font-black">0</p>
+                </article>
 
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Applications
-                    </p>
-
-                    <p
-                        id="applicationCount"
-                        class="mt-1 text-2xl font-black"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"
-                    >
-                        <i
-                            data-lucide="handshake"
-                            class="h-5 w-5"
-                        ></i>
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-violet-50 text-violet-600"><i data-lucide="handshake" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Academia</span>
                     </div>
+                    <p class="mt-5 text-sm text-slate-500">Collaborations</p>
+                    <p id="collaborationCount" class="mt-1 text-2xl font-black">0</p>
+                </article>
 
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Collaborations
-                    </p>
-
-                    <p
-                        id="collaborationCount"
-                        class="mt-1 text-2xl font-black"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600"
-                    >
-                        <i
-                            data-lucide="trophy"
-                            class="h-5 w-5"
-                        ></i>
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-amber-50 text-amber-600"><i data-lucide="trophy" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Industry</span>
                     </div>
+                    <p class="mt-5 text-sm text-slate-500">Challenges</p>
+                    <p id="challengeCount" class="mt-1 text-2xl font-black">0</p>
+                </article>
 
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Challenges
-                    </p>
-
-                    <p
-                        id="challengeCount"
-                        class="mt-1 text-2xl font-black"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-
-                <div class="recruiter-stat p-5">
-
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600"
-                    >
-                        <i
-                            data-lucide="badge-check"
-                            class="h-5 w-5"
-                        ></i>
+                <article class="metric-card p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="metric-icon bg-rose-50 text-rose-600"><i data-lucide="badge-check" class="h-5 w-5"></i></span>
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Trust</span>
                     </div>
-
-                    <p
-                        class="mt-4 text-sm text-slate-500"
-                    >
-                        Verification
-                    </p>
-
-                    <p
-                        id="verified"
-                        class="mt-1 text-base font-black"
-                    >
-                        —
-                    </p>
-
-                </div>
-
+                    <p class="mt-5 text-sm text-slate-500">Verification</p>
+                    <p id="verified" class="mt-1 text-base font-black">—</p>
+                </article>
             </section>
 
-
-
-            <!-- ========================= -->
-            <!-- COMPANY -->
-            <!-- ========================= -->
-
-            <section class="company-profile-card mt-6 overflow-hidden">
-
-                <div
-                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
-                >
-
-                    <div>
-
-                        <h2 class="text-lg font-black">
-                            Company Profile
-                        </h2>
-
-                        <p
-                            class="mt-1 text-sm text-slate-500"
-                        >
-                            Your registered company information.
-                        </p>
-
+            <!-- COMPANY + COMMAND PANEL -->
+            <section class="profile-strip mt-6">
+                <div class="section-card">
+                    <div class="section-head">
+                        <div>
+                            <p class="section-kicker">Organization</p>
+                            <h2 class="mt-1 text-lg font-black">Company Profile</h2>
+                            <p class="mt-1 text-sm text-slate-500">Your company identity and hiring presence on SkillBridge AI.</p>
+                        </div>
+                        <a href="company.html" class="btn btn-soft">
+                            <i data-lucide="settings-2" class="h-4 w-4"></i>
+                            Manage Company
+                        </a>
                     </div>
-
-
-                    <a
-                        href="company.html"
-                        class="btn btn-soft"
-                    >
-                        Manage Company
-                    </a>
-
+                    <div id="companySection" class="p-5">
+                        <p class="text-sm text-slate-500">Loading company...</p>
+                    </div>
                 </div>
 
+                <aside class="command-panel p-5">
+                    <p class="text-xs font-black uppercase tracking-[.14em] text-indigo-200">Quick Actions</p>
+                    <h2 class="mt-2 text-xl font-black">Hiring Workspace</h2>
+                    <p class="mt-2 text-sm leading-6 text-indigo-100">Jump directly to the tasks recruiters use most.</p>
 
-                <div
-                    id="companySection"
-                    class="p-5"
-                >
+                    <div class="command-list mt-5">
+                        <a href="opportunities.html" class="command-item">
+                            <i data-lucide="circle-plus" class="h-5 w-5 text-cyan-200"></i>
+                            <span>
+                                <span class="block text-sm font-bold">Publish opportunity</span>
+                                <span class="text-xs text-indigo-200">Job or internship</span>
+                            </span>
+                        </a>
 
-                    <p class="text-sm text-slate-500">
-                        Loading company...
-                    </p>
+                        <a href="applications.html" class="command-item">
+                            <i data-lucide="user-round-search" class="h-5 w-5 text-emerald-200"></i>
+                            <span>
+                                <span class="block text-sm font-bold">Review candidates</span>
+                                <span class="text-xs text-indigo-200">Shortlist and interview</span>
+                            </span>
+                        </a>
 
-                </div>
-
+                        <a href="collaborations.html" class="command-item">
+                            <i data-lucide="school" class="h-5 w-5 text-violet-200"></i>
+                            <span>
+                                <span class="block text-sm font-bold">College collaboration</span>
+                                <span class="text-xs text-indigo-200">Workshop, mentorship, drives</span>
+                            </span>
+                        </a>
+                    </div>
+                </aside>
             </section>
 
+            <!-- QUICK WORKSPACE -->
+            <section class="mt-6 grid gap-4 md:grid-cols-3">
+                <a href="applications.html" class="quick-tile">
+                    <span class="quick-icon bg-emerald-50 text-emerald-600"><i data-lucide="list-checks" class="h-5 w-5"></i></span>
+                    <span>
+                        <span class="block text-sm font-black">Application Pipeline</span>
+                        <span class="text-xs text-slate-500">Review hiring status and candidates</span>
+                    </span>
+                </a>
 
+                <a href="collaborations.html" class="quick-tile">
+                    <span class="quick-icon bg-violet-50 text-violet-600"><i data-lucide="handshake" class="h-5 w-5"></i></span>
+                    <span>
+                        <span class="block text-sm font-black">Academia Connect</span>
+                        <span class="text-xs text-slate-500">Build college-industry partnerships</span>
+                    </span>
+                </a>
 
-            <!-- ========================= -->
+                <a href="challenges.html" class="quick-tile">
+                    <span class="quick-icon bg-amber-50 text-amber-600"><i data-lucide="lightbulb" class="h-5 w-5"></i></span>
+                    <span>
+                        <span class="block text-sm font-black">Industry Challenges</span>
+                        <span class="text-xs text-slate-500">Publish real-world problem statements</span>
+                    </span>
+                </a>
+            </section>
+
             <!-- OPPORTUNITIES -->
-            <!-- ========================= -->
-
-            <section class="section-premium mt-6">
-
-                <div
-                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
-                >
-
+            <section class="section-card mt-6 dashboard-table">
+                <div class="section-head">
                     <div>
-
-                        <h2 class="text-lg font-black">
-                            My Opportunities
-                        </h2>
-
-                        <p
-                            class="mt-1 text-sm text-slate-500"
-                        >
-                            Jobs and internships published by your company.
-                        </p>
-
+                        <p class="section-kicker">Hiring</p>
+                        <h2 class="mt-1 text-lg font-black">My Opportunities</h2>
+                        <p class="mt-1 text-sm text-slate-500">Jobs and internships published by your company.</p>
                     </div>
-
-
-                    <a
-                        href="opportunities.html"
-                        class="btn btn-primary"
-                    >
-                        <i
-                            data-lucide="plus"
-                            class="h-4 w-4"
-                        ></i>
-
+                    <a href="opportunities.html" class="btn btn-primary">
+                        <i data-lucide="plus" class="h-4 w-4"></i>
                         New Opportunity
                     </a>
-
                 </div>
-
-
-                <div
-                    id="opportunityList"
-                    class="p-5"
-                >
-
-                    <p class="text-sm text-slate-500">
-                        Loading opportunities...
-                    </p>
-
+                <div id="opportunityList" class="p-5">
+                    <p class="text-sm text-slate-500">Loading opportunities...</p>
                 </div>
-
             </section>
 
-
-
-            <!-- ========================= -->
-            <!-- COLLABORATIONS -->
-            <!-- ========================= -->
-
-            <section class="section-premium mt-6">
-
-                <div
-                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
-                >
-
-                    <div>
-
-                        <h2 class="text-lg font-black">
-                            Industry Collaborations
-                        </h2>
-
-                        <p
-                            class="mt-1 text-sm text-slate-500"
-                        >
-                            Workshops, mentorships, drives and industry partnerships.
-                        </p>
-
+            <div class="mt-6 grid gap-6 xl:grid-cols-2">
+                <!-- COLLABORATIONS -->
+                <section class="section-card">
+                    <div class="section-head">
+                        <div>
+                            <p class="section-kicker">Academia</p>
+                            <h2 class="mt-1 text-lg font-black">Industry Collaborations</h2>
+                            <p class="mt-1 text-sm text-slate-500">Workshops, mentorships, placement drives and partnerships.</p>
+                        </div>
+                        <a href="collaborations.html" class="btn btn-soft">Manage</a>
                     </div>
-
-
-                    <a
-                        href="collaborations.html"
-                        class="btn btn-soft"
-                    >
-                        Manage
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="collaborationList"
-                    class="p-5"
-                >
-
-                    <p class="text-sm text-slate-500">
-                        Loading collaborations...
-                    </p>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- ========================= -->
-            <!-- CHALLENGES -->
-            <!-- ========================= -->
-
-            <section class="section-premium mt-6">
-
-                <div
-                    class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5"
-                >
-
-                    <div>
-
-                        <h2 class="text-lg font-black">
-                            Industry Challenges
-                        </h2>
-
-                        <p
-                            class="mt-1 text-sm text-slate-500"
-                        >
-                            Real industry problem statements published for students.
-                        </p>
-
+                    <div id="collaborationList" class="p-5">
+                        <p class="text-sm text-slate-500">Loading collaborations...</p>
                     </div>
+                </section>
 
-
-                    <a
-                        href="challenges.html"
-                        class="btn btn-soft"
-                    >
-                        Manage
-                    </a>
-
-                </div>
-
-
-                <div
-                    id="challengeList"
-                    class="p-5"
-                >
-
-                    <p class="text-sm text-slate-500">
-                        Loading challenges...
-                    </p>
-
-                </div>
-
-            </section>
-
+                <!-- CHALLENGES -->
+                <section class="section-card">
+                    <div class="section-head">
+                        <div>
+                            <p class="section-kicker">Innovation</p>
+                            <h2 class="mt-1 text-lg font-black">Industry Challenges</h2>
+                            <p class="mt-1 text-sm text-slate-500">Real-world problem statements for students and institutions.</p>
+                        </div>
+                        <a href="challenges.html" class="btn btn-soft">Manage</a>
+                    </div>
+                    <div id="challengeList" class="p-5">
+                        <p class="text-sm text-slate-500">Loading challenges...</p>
+                    </div>
+                </section>
+            </div>
 
         </div>
-
     </main>
-
 </div>
 
-
-
-
-
-<!-- ========================= -->
-<!-- RECRUITER AI CHAT -->
-<!-- ========================= -->
-
-<button
-    id="recruiterChatLauncher"
-    type="button"
-    class="recruiter-chat-launcher"
-    aria-label="Open Hiring Intelligence Assistant"
->
-    <i
-        data-lucide="bot"
-        class="h-5 w-5"
-    ></i>
-
-    <span>
-        Hiring Assistant
-    </span>
+<!-- CHAT LAUNCHER -->
+<button id="recruiterChatLauncher" type="button" class="chat-launcher" aria-label="Open Hiring Intelligence Assistant">
+    <i data-lucide="bot" class="h-5 w-5"></i>
+    <span>Hiring Assistant</span>
 </button>
 
-
-<section
-    id="recruiterChatPanel"
-    class="recruiter-chat-panel hidden"
-    aria-label="Hiring Intelligence Assistant"
->
-
-    <!-- Header -->
-
+<section id="recruiterChatPanel" class="recruiter-chat-panel hidden" aria-label="Hiring Intelligence Assistant">
     <div class="recruiter-chat-head">
-
         <div class="flex items-center justify-between gap-3">
-
             <div class="flex items-center gap-3">
-
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"
-                >
-                    <i
-                        data-lucide="bot"
-                        class="h-5 w-5"
-                    ></i>
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+                    <i data-lucide="bot" class="h-5 w-5"></i>
                 </div>
-
-
                 <div>
-
-                    <h2 class="font-black">
-                        Hiring Intelligence Assistant
-                    </h2>
-
-                    <p
-                        id="recruiterChatStatus"
-                        class="text-xs text-indigo-100"
-                    >
-                        Connecting...
-                    </p>
-
+                    <h2 class="font-black">Hiring Intelligence Assistant</h2>
+                    <p id="recruiterChatStatus" class="text-xs text-indigo-100">Connecting...</p>
                 </div>
-
             </div>
-
 
             <div class="flex items-center gap-1">
-
-                <button
-                    id="recruiterNewChat"
-                    type="button"
-                    class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
-                    title="New chat"
-                >
-                    <i
-                        data-lucide="message-square-plus"
-                        class="h-4 w-4"
-                    ></i>
+                <button id="recruiterNewChat" type="button" class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="New chat">
+                    <i data-lucide="message-square-plus" class="h-4 w-4"></i>
                 </button>
-
-
-                <button
-                    id="recruiterCloseChat"
-                    type="button"
-                    class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
-                    title="Close"
-                >
-                    <i
-                        data-lucide="x"
-                        class="h-4 w-4"
-                    ></i>
+                <button id="recruiterCloseChat" type="button" class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white" title="Close">
+                    <i data-lucide="x" class="h-4 w-4"></i>
                 </button>
-
             </div>
-
         </div>
-
     </div>
 
-
-    <!-- Quick prompts -->
-
-    <div
-        class="flex flex-wrap gap-2 border-b border-slate-200 bg-slate-50 px-3 py-3"
-    >
-
-        <button
-            type="button"
-            class="recruiter-chat-quick"
-            data-recruiter-prompt="my company"
-        >
-            My Company
-        </button>
-
-
-        <button
-            type="button"
-            class="recruiter-chat-quick"
-            data-recruiter-prompt="my opportunities"
-        >
-            Opportunities
-        </button>
-
-
-        <button
-            type="button"
-            class="recruiter-chat-quick"
-            data-recruiter-prompt="my collaborations"
-        >
-            Collaborations
-        </button>
-
-
-        <button
-            type="button"
-            class="recruiter-chat-quick"
-            data-recruiter-prompt="Which opportunity has the most applicants?"
-        >
-            Hiring Insight
-        </button>
-
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 bg-slate-50 px-3 py-3">
+        <button type="button" class="recruiter-chat-quick" data-recruiter-prompt="my company">My Company</button>
+        <button type="button" class="recruiter-chat-quick" data-recruiter-prompt="my opportunities">Opportunities</button>
+        <button type="button" class="recruiter-chat-quick" data-recruiter-prompt="my collaborations">Collaborations</button>
+        <button type="button" class="recruiter-chat-quick" data-recruiter-prompt="Which opportunity has the most applicants?">Hiring Insight</button>
     </div>
 
-
-    <!-- Messages -->
-
-    <div
-        id="recruiterChatMessages"
-        class="recruiter-chat-messages space-y-3"
-    >
-
-        <div
-            class="flex items-center justify-center py-10"
-        >
-            <span
-                class="h-7 w-7 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"
-            ></span>
+    <div id="recruiterChatMessages" class="recruiter-chat-messages space-y-3">
+        <div class="flex items-center justify-center py-10">
+            <span class="h-7 w-7 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600"></span>
         </div>
-
     </div>
 
-
-    <!-- Input -->
-
-    <form
-        id="recruiterChatForm"
-        class="border-t border-slate-200 bg-white p-3"
-    >
-
+    <form id="recruiterChatForm" class="border-t border-slate-200 bg-white p-3">
         <div class="flex items-end gap-2">
-
-            <textarea
-                id="recruiterChatInput"
-                name="message"
-                rows="1"
+            <textarea id="recruiterChatInput" name="message" rows="1"
                 class="input max-h-28 min-h-[44px] resize-none"
-                placeholder="Ask about applicants, match scores, opportunities..."
-                required
-            ></textarea>
-
-
-            <button
-                id="recruiterChatSend"
-                type="submit"
-                class="btn btn-primary h-11 shrink-0 px-3"
-                aria-label="Send message"
-            >
-                <i
-                    data-lucide="send"
-                    class="h-4 w-4"
-                ></i>
+                placeholder="Ask about applicants, opportunities and collaboration..."
+                required></textarea>
+            <button id="recruiterChatSend" type="submit" class="btn btn-primary h-11 shrink-0 px-3" aria-label="Send message">
+                <i data-lucide="send" class="h-4 w-4"></i>
             </button>
-
         </div>
-
     </form>
-
 </section>
 
-
-<!-- ========================= -->
 <!-- VIEW MODAL -->
-<!-- ========================= -->
-
-<div
-    id="viewModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4"
->
-
-    <div
-        class="w-full max-w-2xl rounded-2xl bg-white shadow-2xl"
-    >
-
-        <div
-            class="flex items-center justify-between border-b p-5"
-        >
-
-            <h2
-                id="modalTitle"
-                class="text-xl font-black"
-            >
-                Details
-            </h2>
-
-
-            <button
-                onclick="closeModal()"
-                class="rounded-lg p-2 hover:bg-slate-100"
-            >
+<div id="viewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 p-5">
+            <h2 id="modalTitle" class="text-xl font-black">Details</h2>
+            <button onclick="closeModal()" class="rounded-lg p-2 hover:bg-slate-100">
                 <i data-lucide="x"></i>
             </button>
-
         </div>
-
-
-        <div
-            id="modalContent"
-            class="p-6"
-        ></div>
-
-
-        <div
-            class="flex justify-end border-t p-5"
-        >
-
-            <button
-                onclick="closeModal()"
-                class="btn btn-soft"
-            >
-                Close
-            </button>
-
+        <div id="modalContent" class="max-h-[70vh] overflow-y-auto p-6"></div>
+        <div class="flex justify-end border-t border-slate-200 p-5">
+            <button onclick="closeModal()" class="btn btn-soft">Close</button>
         </div>
-
     </div>
-
 </div>
-
-
 
 <script src="/assets/js/config.js"></script>
 <script src="/assets/js/api.js"></script>
 <script src="/assets/js/auth.js"></script>
 <script src="/assets/js/shell.js"></script>
-
 
 <script>
 
@@ -1435,7 +1032,7 @@ function renderOpportunities() {
 
     opportunityList.innerHTML = `
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto dashboard-table">
 
             <table
                 class="w-full min-w-[850px] text-left text-sm"
@@ -3152,7 +2749,5 @@ async function init() {
 init();
 
 </script>
-
-
 </body>
 </html>

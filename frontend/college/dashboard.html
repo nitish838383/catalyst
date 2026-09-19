@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
 
@@ -11,7 +10,7 @@
 
     <meta
         name="description"
-        content="SkillBridge AI — Academia–Industry Skill Intelligence Platform"
+        content="SkillBridge AI College & TPO Command Center"
     >
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,267 +24,674 @@
     <title>College / TPO Dashboard | SkillBridge AI</title>
 
     <style>
-      .college-chat-launcher{
-        position:fixed;right:1.25rem;bottom:1.25rem;z-index:90;
-        display:flex;align-items:center;gap:.6rem;
-        height:58px;padding:0 1rem;border-radius:999px;
-        background:linear-gradient(135deg,#4f46e5,#7c3aed);
-        color:#fff;font-weight:800;
-        box-shadow:0 20px 45px rgba(79,70,229,.35);
-        transition:.2s;
-      }
-      .college-chat-launcher:hover{transform:translateY(-2px)}
-      .college-chat-panel{
-        position:fixed;right:1.25rem;bottom:5.9rem;z-index:90;
-        width:min(420px,calc(100vw - 2rem));
-        height:min(620px,calc(100vh - 8rem));
-        display:flex;flex-direction:column;overflow:hidden;
-        border:1px solid rgba(148,163,184,.2);
-        border-radius:1.5rem;background:#0f172a;
-        box-shadow:0 30px 80px rgba(2,6,23,.5);
-      }
-      .college-chat-head{
-        padding:1rem;
-        background:linear-gradient(135deg,#312e81,#4f46e5,#7c3aed);
-        color:white;
-      }
-      .college-chat-messages{
-        flex:1;overflow-y:auto;padding:1rem;background:#111827;
-      }
-      .college-chat-user{
-        max-width:82%;margin-left:auto;padding:.75rem .9rem;
-        border-radius:1rem 1rem .35rem 1rem;
-        background:linear-gradient(135deg,#4f46e5,#6366f1);
-        color:white;
-      }
-      .college-chat-ai{
-        max-width:88%;padding:.75rem .9rem;
-        border:1px solid rgba(148,163,184,.18);
-        border-radius:1rem 1rem 1rem .35rem;
-        background:#1e293b;color:#e2e8f0;
-      }
-      .college-chat-quick{
-        border:1px solid rgba(148,163,184,.22);
-        border-radius:999px;padding:.42rem .7rem;
-        font-size:.75rem;font-weight:700;
-        color:#cbd5e1;background:rgba(255,255,255,.04);
-      }
-      .college-chat-quick:hover{
-        color:#fff;border-color:rgba(129,140,248,.5);
-        background:rgba(99,102,241,.14)
-      }
-      @media(max-width:640px){
-        .college-chat-launcher{
-          right:.8rem;bottom:.8rem;width:56px;padding:0;justify-content:center
+        :root{
+            --sb-indigo:#4f46e5;
+            --sb-blue:#2563eb;
+            --sb-violet:#7c3aed;
+            --sb-emerald:#059669;
+            --sb-amber:#d97706;
+            --sb-rose:#e11d48;
+            --sb-ink:#0f172a;
+            --sb-muted:#64748b;
+            --sb-line:#e2e8f0;
         }
-        .college-chat-launcher span{display:none}
-        .college-chat-panel{
-          left:.75rem;right:.75rem;bottom:5rem;width:auto;height:min(72vh,620px)
-        }
-      }
-    </style>
 
+        *{box-sizing:border-box}
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            background:
+                radial-gradient(circle at 7% 0%,rgba(79,70,229,.08),transparent 27%),
+                radial-gradient(circle at 93% 7%,rgba(14,165,233,.065),transparent 28%),
+                #f8fafc;
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .college-hero{
+            position:relative;
+            overflow:hidden;
+            border-radius:30px;
+            padding:2rem;
+            color:#fff;
+            background:
+                radial-gradient(circle at 88% 18%,rgba(255,255,255,.15),transparent 25%),
+                radial-gradient(circle at 8% 120%,rgba(45,212,191,.16),transparent 35%),
+                linear-gradient(135deg,#0f172a 0%,#172554 34%,#312e81 66%,#2563eb 100%);
+            box-shadow:0 24px 60px rgba(37,99,235,.17);
+        }
+
+        .college-hero::after{
+            content:"";
+            position:absolute;
+            width:350px;
+            height:350px;
+            right:-100px;
+            top:-205px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.14);
+            box-shadow:
+                0 0 0 48px rgba(255,255,255,.028),
+                0 0 0 96px rgba(255,255,255,.018);
+            pointer-events:none;
+        }
+
+        .college-hero-grid{
+            position:absolute;
+            inset:0;
+            opacity:.07;
+            background-image:
+                linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px);
+            background-size:32px 32px;
+        }
+
+        .portal-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:.45rem;
+            min-height:32px;
+            padding:.38rem .72rem;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:999px;
+            background:rgba(255,255,255,.09);
+            font-size:.72rem;
+            font-weight:800;
+        }
+
+        .portal-dot{
+            width:8px;
+            height:8px;
+            border-radius:999px;
+            background:#34d399;
+            box-shadow:0 0 0 4px rgba(52,211,153,.12);
+        }
+
+        .hero-action{
+            position:relative;
+            z-index:4;
+            display:flex;
+            align-items:center;
+            gap:.8rem;
+            min-height:70px;
+            padding:.9rem 1rem;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:18px;
+            background:rgba(255,255,255,.085);
+            transition:.2s ease;
+            text-align:left;
+        }
+
+        .hero-action:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,.14);
+            border-color:rgba(255,255,255,.22);
+        }
+
+        .hero-action-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            flex:none;
+            align-items:center;
+            justify-content:center;
+            border-radius:13px;
+            background:rgba(255,255,255,.11);
+        }
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .verification-pending{
+            color:#fde68a;
+        }
+
+        .verification-verified{
+            color:#a7f3d0;
+        }
+
+        .verification-rejected{
+            color:#fecdd3;
+        }
+
+        .status-pill{
+            display:inline-flex;
+            align-items:center;
+            gap:.4rem;
+            border-radius:999px;
+            padding:.35rem .68rem;
+            font-size:.72rem;
+            font-weight:800;
+        }
+
+        .status-pending{
+            background:#fff7ed;
+            color:#c2410c;
+            border:1px solid #fed7aa;
+        }
+
+        .status-verified{
+            background:#ecfdf5;
+            color:#047857;
+            border:1px solid #a7f3d0;
+        }
+
+        /* =====================================================
+           COMMON CARDS
+        ===================================================== */
+
+        .premium-card{
+            border:1px solid #e2e8f0;
+            border-radius:24px;
+            background:rgba(255,255,255,.96);
+            box-shadow:0 12px 34px rgba(15,23,42,.045);
+        }
+
+        .section-card{
+            border:1px solid #e2e8f0;
+            border-radius:24px;
+            background:#fff;
+            box-shadow:0 12px 34px rgba(15,23,42,.045);
+            overflow:hidden;
+        }
+
+        .section-head{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:1.25rem 1.35rem;
+            border-bottom:1px solid #eef2f7;
+        }
+
+        .section-kicker{
+            font-size:.68rem;
+            font-weight:900;
+            letter-spacing:.13em;
+            text-transform:uppercase;
+            color:#6366f1;
+        }
+
+        /* =====================================================
+           PROFILE CARD
+        ===================================================== */
+
+        .college-profile-shell{
+            display:grid;
+            gap:1.25rem;
+            grid-template-columns:minmax(0,1fr);
+        }
+
+        .identity-box{
+            display:flex;
+            width:58px;
+            height:58px;
+            flex:none;
+            align-items:center;
+            justify-content:center;
+            border-radius:18px;
+            background:linear-gradient(145deg,#eef2ff,#e0e7ff);
+            color:#4f46e5;
+        }
+
+        .profile-detail{
+            border:1px solid #eef2f7;
+            border-radius:16px;
+            background:linear-gradient(180deg,#fff,#fbfdff);
+            padding:1rem;
+        }
+
+        .trust-card{
+            border-radius:24px;
+            background:linear-gradient(145deg,#111827,#172554 55%,#312e81);
+            color:#fff;
+            box-shadow:0 18px 44px rgba(30,41,59,.18);
+        }
+
+        .trust-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:.7rem 0;
+            border-bottom:1px solid rgba(255,255,255,.08);
+        }
+
+        .trust-row:last-child{
+            border-bottom:0;
+        }
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .metric-card{
+            position:relative;
+            overflow:hidden;
+            border:1px solid #e2e8f0;
+            border-radius:21px;
+            background:#fff;
+            box-shadow:0 12px 30px rgba(15,23,42,.045);
+            transition:.2s ease;
+        }
+
+        .metric-card:hover{
+            transform:translateY(-4px);
+            border-color:#c7d2fe;
+            box-shadow:0 18px 38px rgba(15,23,42,.075);
+        }
+
+        .metric-card::after{
+            content:"";
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            height:3px;
+            opacity:.82;
+            background:linear-gradient(90deg,#4f46e5,#2563eb);
+        }
+
+        .metric-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+        }
+
+        /* =====================================================
+           ACTIONS
+        ===================================================== */
+
+        .action-card{
+            display:flex;
+            min-height:128px;
+            flex-direction:column;
+            justify-content:space-between;
+            border:1px solid #e2e8f0;
+            border-radius:20px;
+            background:linear-gradient(180deg,#fff,#fbfdff);
+            padding:1.1rem;
+            box-shadow:0 10px 26px rgba(15,23,42,.04);
+            transition:.2s ease;
+        }
+
+        .action-card:hover{
+            transform:translateY(-3px);
+            border-color:#c7d2fe;
+            box-shadow:0 16px 34px rgba(15,23,42,.07);
+        }
+
+        .action-icon{
+            display:flex;
+            width:42px;
+            height:42px;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+        }
+
+        .flow-node{
+            position:relative;
+            border:1px solid #e2e8f0;
+            border-radius:18px;
+            background:#fff;
+            padding:1rem;
+        }
+
+        .flow-node:not(:last-child)::after{
+            content:"";
+            position:absolute;
+            top:50%;
+            right:-22px;
+            width:22px;
+            height:1px;
+            background:#cbd5e1;
+        }
+
+        /* =====================================================
+           CHAT
+        ===================================================== */
+
+        .college-chat-launcher{
+            position:fixed;
+            right:1.25rem;
+            bottom:1.25rem;
+            z-index:90;
+            display:flex;
+            align-items:center;
+            gap:.6rem;
+            height:58px;
+            padding:0 1rem;
+            border-radius:999px;
+            background:linear-gradient(135deg,#4f46e5,#7c3aed);
+            color:#fff;
+            font-weight:800;
+            box-shadow:0 20px 45px rgba(79,70,229,.35);
+            transition:.2s;
+        }
+
+        .college-chat-launcher:hover{
+            transform:translateY(-2px);
+        }
+
+        .college-chat-panel{
+            position:fixed;
+            right:1.25rem;
+            bottom:5.9rem;
+            z-index:90;
+            width:min(420px,calc(100vw - 2rem));
+            height:min(620px,calc(100vh - 8rem));
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            border:1px solid rgba(148,163,184,.2);
+            border-radius:1.5rem;
+            background:#0f172a;
+            box-shadow:0 30px 80px rgba(2,6,23,.5);
+        }
+
+        .college-chat-head{
+            padding:1rem;
+            background:linear-gradient(135deg,#312e81,#4f46e5,#7c3aed);
+            color:white;
+        }
+
+        .college-chat-messages{
+            flex:1;
+            overflow-y:auto;
+            padding:1rem;
+            background:#111827;
+        }
+
+        .college-chat-user{
+            max-width:82%;
+            margin-left:auto;
+            padding:.75rem .9rem;
+            border-radius:1rem 1rem .35rem 1rem;
+            background:linear-gradient(135deg,#4f46e5,#6366f1);
+            color:white;
+        }
+
+        .college-chat-ai{
+            max-width:88%;
+            padding:.75rem .9rem;
+            border:1px solid rgba(148,163,184,.18);
+            border-radius:1rem 1rem 1rem .35rem;
+            background:#1e293b;
+            color:#e2e8f0;
+        }
+
+        .college-chat-quick{
+            border:1px solid rgba(148,163,184,.22);
+            border-radius:999px;
+            padding:.42rem .7rem;
+            font-size:.75rem;
+            font-weight:700;
+            color:#cbd5e1;
+            background:rgba(255,255,255,.04);
+        }
+
+        .college-chat-quick:hover{
+            color:#fff;
+            border-color:rgba(129,140,248,.5);
+            background:rgba(99,102,241,.14);
+        }
+
+        @media(min-width:1100px){
+            .college-profile-shell{
+                grid-template-columns:minmax(0,1fr) 350px;
+            }
+        }
+
+        @media(max-width:900px){
+            .flow-node:not(:last-child)::after{
+                display:none;
+            }
+        }
+
+        @media(max-width:640px){
+            .college-hero{
+                border-radius:22px;
+                padding:1.25rem;
+            }
+
+            .premium-card,
+            .section-card,
+            .metric-card,
+            .trust-card{
+                border-radius:18px;
+            }
+
+            .college-chat-launcher{
+                right:.8rem;
+                bottom:.8rem;
+                width:56px;
+                padding:0;
+                justify-content:center;
+            }
+
+            .college-chat-launcher span{
+                display:none;
+            }
+
+            .college-chat-panel{
+                left:.75rem;
+                right:.75rem;
+                bottom:5rem;
+                width:auto;
+                height:min(72vh,620px);
+            }
+        }
+    </style>
 </head>
 
+<body class="text-slate-900">
 
-<body class="bg-slate-50 text-slate-900">
+<script>
+    window.SKILLBRIDGE_ROLE = "college";
+</script>
 
-    <script>
-        window.SKILLBRIDGE_ROLE = "college";
-    </script>
+<div id="app-shell">
 
+    <main class="min-h-screen lg:pl-72">
 
-    <div id="app-shell">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-        <main class="min-h-screen lg:pl-72">
+            <!-- ================================================= -->
+            <!-- HERO -->
+            <!-- ================================================= -->
 
-            <div
-                class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
-            >
+            <header class="college-hero mb-6">
 
+                <div class="college-hero-grid"></div>
 
-                <!-- ============================================= -->
-                <!-- Premium Dashboard Header -->
-                <!-- ============================================= -->
+                <div class="relative z-10 grid gap-7 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
 
-                <header class="dashboard-hero mb-7">
+                    <div>
 
-                    <div class="dashboard-hero-grid"></div>
+                        <div class="mb-4 flex flex-wrap items-center gap-2">
 
-                    <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                            <span class="portal-badge">
+                                <span class="portal-dot"></span>
+                                College & TPO Command Center
+                            </span>
 
-                        <div>
-
-                            <div class="mb-3 flex flex-wrap items-center gap-2">
-
-                                <span class="dashboard-status-badge">
-                                    <span class="dashboard-status-dot"></span>
-                                    College Portal
-                                </span>
-
-                                <span
-                                    id="verificationBadge"
-                                    class="dashboard-status-badge dashboard-status-badge-soft"
-                                >
-                                    Verification status
-                                </span>
-
-                            </div>
-
-                            <p class="text-sm font-semibold text-indigo-100">
-                                Welcome back
-                            </p>
-
-                            <h1
-                                id="heroCollegeName"
-                                class="mt-1 max-w-4xl text-3xl font-black tracking-tight text-white sm:text-4xl"
+                            <span
+                                id="verificationBadge"
+                                class="portal-badge verification-pending"
                             >
-                                College
-                            </h1>
-
-                            <p class="mt-2 text-sm font-bold uppercase tracking-[0.15em] text-indigo-200">
-                                College / TPO Dashboard
-                            </p>
-
-                            <p class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100 sm:text-base">
-                                Manage your college profile, students, departments,
-                                skill analytics and industry collaborations from one
-                                intelligent command center.
-                            </p>
+                                Verification status
+                            </span>
 
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3 lg:w-[320px]">
+                        <p class="text-sm font-semibold text-indigo-100">
+                            Welcome back
+                        </p>
 
-                            <a
-                                href="analytics.html"
-                                class="dashboard-hero-action"
-                            >
-                                <i
-                                    data-lucide="chart-spline"
-                                    class="h-5 w-5"
-                                ></i>
+                        <h1
+                            id="heroCollegeName"
+                            class="mt-1 max-w-4xl text-3xl font-black tracking-tight sm:text-4xl"
+                        >
+                            College
+                        </h1>
 
-                                <span>Analytics</span>
-                            </a>
+                        <p class="mt-2 text-sm font-bold uppercase tracking-[0.15em] text-indigo-200">
+                            College / TPO Dashboard
+                        </p>
 
-                            <a
-                                href="collaborations.html"
-                                class="dashboard-hero-action"
-                            >
-                                <i
-                                    data-lucide="handshake"
-                                    class="h-5 w-5"
-                                ></i>
-
-                                <span>Collaborations</span>
-                            </a>
-
-                        </div>
+                        <p class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100 sm:text-base">
+                            Build a trusted student ecosystem, understand skill gaps,
+                            align training with industry demand and manage academia–industry collaboration.
+                        </p>
 
                     </div>
 
-                </header>
 
+                    <div class="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
 
+                        <a
+                            href="student-registry.html"
+                            class="hero-action"
+                        >
+                            <span class="hero-action-icon text-cyan-200">
+                                <i data-lucide="badge-check" class="h-5 w-5"></i>
+                            </span>
 
-                <!-- ============================================= -->
-                <!-- Profile Required -->
-                <!-- ============================================= -->
+                            <span>
+                                <span class="block text-xs text-indigo-200">
+                                    Student Trust
+                                </span>
 
-                <div
-                    id="onboarding"
-                    class="hidden mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"
-                >
-
-                    <div
-                        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-                    >
-
-                        <div class="flex items-start gap-3">
-
-                            <div
-                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100"
-                            >
-                                <i
-                                    data-lucide="circle-alert"
-                                    class="h-5 w-5 text-amber-700"
-                                ></i>
-                            </div>
-
-                            <div>
-
-                                <h2
-                                    class="font-bold text-amber-900"
-                                >
-                                    Complete your college profile
-                                </h2>
-
-                                <p
-                                    class="mt-1 text-sm text-amber-700"
-                                >
-                                    Create your college profile to
-                                    activate departments, analytics
-                                    and industry collaborations.
-                                </p>
-
-                            </div>
-
-                        </div>
+                                <span class="font-bold">
+                                    Student Registry
+                                </span>
+                            </span>
+                        </a>
 
 
                         <a
-                            href="profile.html"
-                            class="btn btn-primary whitespace-nowrap"
+                            href="analytics.html"
+                            class="hero-action"
                         >
-                            Create Profile
+                            <span class="hero-action-icon text-emerald-200">
+                                <i data-lucide="chart-no-axes-combined" class="h-5 w-5"></i>
+                            </span>
+
+                            <span>
+                                <span class="block text-xs text-indigo-200">
+                                    Intelligence
+                                </span>
+
+                                <span class="font-bold">
+                                    Skill Analytics
+                                </span>
+                            </span>
+                        </a>
+
+
+                        <a
+                            href="collaborations.html"
+                            class="hero-action"
+                        >
+                            <span class="hero-action-icon text-violet-200">
+                                <i data-lucide="handshake" class="h-5 w-5"></i>
+                            </span>
+
+                            <span>
+                                <span class="block text-xs text-indigo-200">
+                                    Industry
+                                </span>
+
+                                <span class="font-bold">
+                                    Collaborations
+                                </span>
+                            </span>
                         </a>
 
                     </div>
 
                 </div>
 
+            </header>
 
 
-                <!-- ============================================= -->
-                <!-- College Profile Summary -->
-                <!-- ============================================= -->
+            <!-- ================================================= -->
+            <!-- PROFILE REQUIRED -->
+            <!-- ================================================= -->
 
-                <section
-                    id="collegeProfileCard"
-                    class="card dashboard-profile-card mb-6 hidden overflow-hidden"
-                >
+            <section
+                id="onboarding"
+                class="hidden mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"
+            >
 
-                    <div
-                        class="border-b border-slate-100 p-5 sm:p-6"
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100">
+                            <i data-lucide="circle-alert" class="h-5 w-5 text-amber-700"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-bold text-amber-900">
+                                College profile required
+                            </h2>
+
+                            <p class="mt-1 text-sm text-amber-700">
+                                Complete the institution profile and verification process before using trusted college workflows.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="profile.html"
+                        class="btn btn-primary whitespace-nowrap"
                     >
+                        Create College Profile
+                    </a>
 
-                        <div
-                            class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"
-                        >
+                </div>
+
+            </section>
 
 
-                            <!-- College -->
-                            <div
-                                class="flex items-start gap-4"
-                            >
+            <!-- ================================================= -->
+            <!-- PROFILE + TRUST LAYER -->
+            <!-- ================================================= -->
 
-                                <div
-                                    class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100"
-                                >
-                                    <i
-                                        data-lucide="graduation-cap"
-                                        class="h-7 w-7 text-indigo-600"
-                                    ></i>
+            <section
+                id="collegeProfileCard"
+                class="college-profile-shell mb-6 hidden"
+            >
+
+                <div class="premium-card overflow-hidden">
+
+                    <div class="border-b border-slate-100 p-5 sm:p-6">
+
+                        <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+
+                            <div class="flex items-start gap-4">
+
+                                <div class="identity-box">
+                                    <i data-lucide="landmark" class="h-7 w-7"></i>
                                 </div>
-
 
                                 <div>
 
-                                    <p
-                                        class="text-xs font-bold uppercase tracking-wider text-indigo-600"
-                                    >
-                                        College Profile
+                                    <p class="section-kicker">
+                                        Verified Institution Identity
                                     </p>
 
                                     <h2
@@ -307,30 +713,22 @@
                             </div>
 
 
+                            <div class="flex flex-wrap gap-2">
 
-                            <!-- ID -->
-                            <div
-                                class="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3"
-                            >
+                                <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3">
 
-                                <p
-                                    class="text-xs font-semibold uppercase tracking-wide text-indigo-500"
-                                >
-                                    College ID
-                                </p>
+                                    <p class="text-[11px] font-bold uppercase tracking-wide text-indigo-500">
+                                        SkillBridge College ID
+                                    </p>
 
-                                <p
-                                    id="collegeId"
-                                    class="mt-1 text-xl font-black text-indigo-700"
-                                >
-                                    —
-                                </p>
+                                    <p
+                                        id="collegeId"
+                                        class="mt-1 text-xl font-black text-indigo-700"
+                                    >
+                                        —
+                                    </p>
 
-                                <p
-                                    class="mt-1 text-xs text-indigo-500"
-                                >
-                                    Auto-generated
-                                </p>
+                                </div>
 
                             </div>
 
@@ -339,25 +737,65 @@
                     </div>
 
 
+                    <div class="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3 sm:p-6">
 
-                    <!-- College Information -->
-                    <div
-                        class="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3 sm:p-6"
-                    >
+                        <div class="profile-detail">
 
-
-                        <!-- City -->
-                        <div>
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                AISHE Code
+                            </p>
 
                             <p
-                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
+                                id="collegeAisheCode"
+                                class="mt-2 font-black text-slate-800"
                             >
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <div class="profile-detail">
+
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                College / University Code
+                            </p>
+
+                            <p
+                                id="collegeCode"
+                                class="mt-2 font-black text-slate-800"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <div class="profile-detail">
+
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                Affiliation
+                            </p>
+
+                            <p
+                                id="collegeAffiliationStatus"
+                                class="mt-2 truncate font-black text-slate-800"
+                            >
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <div class="profile-detail">
+
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
                                 City
                             </p>
 
                             <p
                                 id="collegeCity"
-                                class="mt-1 font-semibold text-slate-800"
+                                class="mt-2 font-semibold text-slate-800"
                             >
                                 —
                             </p>
@@ -365,18 +803,15 @@
                         </div>
 
 
-                        <!-- State -->
-                        <div>
+                        <div class="profile-detail">
 
-                            <p
-                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-                            >
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
                                 State
                             </p>
 
                             <p
                                 id="collegeState"
-                                class="mt-1 font-semibold text-slate-800"
+                                class="mt-2 font-semibold text-slate-800"
                             >
                                 —
                             </p>
@@ -384,12 +819,9 @@
                         </div>
 
 
-                        <!-- Website -->
-                        <div>
+                        <div class="profile-detail">
 
-                            <p
-                                class="text-xs font-semibold uppercase tracking-wide text-slate-400"
-                            >
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
                                 Website
                             </p>
 
@@ -398,35 +830,24 @@
                                 href="#"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="mt-1 block truncate font-semibold text-indigo-600 hover:underline"
+                                class="mt-2 block truncate font-semibold text-indigo-600 hover:underline"
                             >
                                 —
                             </a>
 
                         </div>
 
-
                     </div>
 
 
-
-                    <!-- Actions -->
-                    <div
-                        class="flex flex-wrap gap-3 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6"
-                    >
+                    <div class="flex flex-wrap gap-3 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">
 
                         <a
                             href="profile.html"
                             class="btn btn-primary flex items-center gap-2"
                         >
-
-                            <i
-                                data-lucide="pencil"
-                                class="h-4 w-4"
-                            ></i>
-
-                            Edit Profile
-
+                            <i data-lucide="pencil" class="h-4 w-4"></i>
+                            Manage Profile
                         </a>
 
 
@@ -435,478 +856,692 @@
                             onclick="downloadCollegeProfile()"
                             class="btn btn-soft flex items-center gap-2"
                         >
-
-                            <i
-                                data-lucide="download"
-                                class="h-4 w-4"
-                            ></i>
-
+                            <i data-lucide="download" class="h-4 w-4"></i>
                             Download Profile
-
                         </button>
 
                     </div>
 
-                </section>
+                </div>
 
 
+                <!-- TRUST CARD -->
 
-                <!-- ============================================= -->
-                <!-- Dashboard Statistics -->
-                <!-- ============================================= -->
+                <aside class="trust-card p-5">
 
-                <section
-                    class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-                >
+                    <div class="flex items-start justify-between gap-3">
 
+                        <div>
 
-                    <!-- Students -->
-                    <div class="card dashboard-stat p-5">
+                            <p class="text-xs font-black uppercase tracking-[.13em] text-indigo-200">
+                                Trust Layer
+                            </p>
 
-                        <div
-                            class="flex items-center justify-between"
-                        >
+                            <h2 class="mt-1 text-xl font-black">
+                                Institution Verification
+                            </h2>
 
-                            <div>
-
-                                <p
-                                    class="text-sm text-slate-500"
-                                >
-                                    Students
-                                </p>
-
-                                <p
-                                    id="students"
-                                    class="mt-2 text-3xl font-black"
-                                >
-                                    —
-                                </p>
-
-                            </div>
+                        </div>
 
 
-                            <div
-                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-100"
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+                            <i data-lucide="shield-check" class="h-5 w-5 text-emerald-200"></i>
+                        </span>
+
+                    </div>
+
+
+                    <div class="mt-5">
+
+                        <div class="trust-row">
+                            <span class="text-sm text-slate-300">
+                                Overall Status
+                            </span>
+
+                            <span
+                                id="profileVerificationStatus"
+                                class="text-xs font-black text-amber-200"
                             >
+                                Pending
+                            </span>
+                        </div>
 
-                                <i
-                                    data-lucide="users"
-                                    class="h-5 w-5 text-indigo-600"
-                                ></i>
 
-                            </div>
+                        <div class="trust-row">
+                            <span class="text-sm text-slate-300">
+                                Official Email
+                            </span>
 
+                            <span
+                                id="emailVerification"
+                                class="text-xs font-black text-amber-200"
+                            >
+                                Pending
+                            </span>
+                        </div>
+
+
+                        <div class="trust-row">
+                            <span class="text-sm text-slate-300">
+                                Mobile
+                            </span>
+
+                            <span
+                                id="phoneVerification"
+                                class="text-xs font-black text-amber-200"
+                            >
+                                Pending
+                            </span>
+                        </div>
+
+
+                        <div class="trust-row">
+                            <span class="text-sm text-slate-300">
+                                Website Domain
+                            </span>
+
+                            <span
+                                id="websiteVerification"
+                                class="text-xs font-black text-amber-200"
+                            >
+                                Pending
+                            </span>
+                        </div>
+
+
+                        <div class="trust-row">
+                            <span class="text-sm text-slate-300">
+                                Documents
+                            </span>
+
+                            <span
+                                id="documentsVerification"
+                                class="text-xs font-black text-amber-200"
+                            >
+                                Pending
+                            </span>
                         </div>
 
                     </div>
 
 
-
-                    <!-- Departments -->
-                    <div class="card dashboard-stat p-5">
-
-                        <div
-                            class="flex items-center justify-between"
-                        >
-
-                            <div>
-
-                                <p
-                                    class="text-sm text-slate-500"
-                                >
-                                    Departments
-                                </p>
-
-                                <p
-                                    id="departments"
-                                    class="mt-2 text-3xl font-black"
-                                >
-                                    —
-                                </p>
-
-                            </div>
-
-
-                            <div
-                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100"
-                            >
-
-                                <i
-                                    data-lucide="building-2"
-                                    class="h-5 w-5 text-violet-600"
-                                ></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- Skill Gaps -->
-                    <div class="card dashboard-stat p-5">
-
-                        <div
-                            class="flex items-center justify-between"
-                        >
-
-                            <div>
-
-                                <p
-                                    class="text-sm text-slate-500"
-                                >
-                                    Skill Gaps
-                                </p>
-
-                                <p
-                                    id="gaps"
-                                    class="mt-2 text-3xl font-black"
-                                >
-                                    —
-                                </p>
-
-                            </div>
-
-
-                            <div
-                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100"
-                            >
-
-                                <i
-                                    data-lucide="triangle-alert"
-                                    class="h-5 w-5 text-amber-600"
-                                ></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- Collaborations -->
-                    <div class="card dashboard-stat p-5">
-
-                        <div
-                            class="flex items-center justify-between"
-                        >
-
-                            <div>
-
-                                <p
-                                    class="text-sm text-slate-500"
-                                >
-                                    Collaborations
-                                </p>
-
-                                <p
-                                    id="collabs"
-                                    class="mt-2 text-3xl font-black"
-                                >
-                                    —
-                                </p>
-
-                            </div>
-
-
-                            <div
-                                class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100"
-                            >
-
-                                <i
-                                    data-lucide="handshake"
-                                    class="h-5 w-5 text-emerald-600"
-                                ></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                </section>
-
-
-
-                <!-- ============================================= -->
-                <!-- Quick Actions -->
-                <!-- ============================================= -->
-
-                <section class="mt-7">
-
-                    <h2
-                        class="text-lg font-bold text-slate-900"
+                    <a
+                        href="profile.html"
+                        class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-black text-indigo-700 transition hover:bg-indigo-50"
                     >
-                        Quick Actions
+                        <i data-lucide="badge-check" class="h-4 w-4"></i>
+                        Verification Center
+                    </a>
+
+                </aside>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- METRICS -->
+            <!-- ================================================= -->
+
+            <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+                <article class="metric-card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="metric-icon bg-indigo-50 text-indigo-600">
+                            <i data-lucide="users" class="h-5 w-5"></i>
+                        </span>
+
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                            Talent
+                        </span>
+
+                    </div>
+
+                    <p class="mt-5 text-sm text-slate-500">
+                        Students
+                    </p>
+
+                    <p
+                        id="students"
+                        class="mt-1 text-3xl font-black"
+                    >
+                        —
+                    </p>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        College-linked student profiles
+                    </p>
+
+                </article>
+
+
+                <article class="metric-card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="metric-icon bg-violet-50 text-violet-600">
+                            <i data-lucide="layers-3" class="h-5 w-5"></i>
+                        </span>
+
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                            Academic
+                        </span>
+
+                    </div>
+
+                    <p class="mt-5 text-sm text-slate-500">
+                        Departments
+                    </p>
+
+                    <p
+                        id="departments"
+                        class="mt-1 text-3xl font-black"
+                    >
+                        —
+                    </p>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        Active academic branches
+                    </p>
+
+                </article>
+
+
+                <article class="metric-card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="metric-icon bg-amber-50 text-amber-600">
+                            <i data-lucide="triangle-alert" class="h-5 w-5"></i>
+                        </span>
+
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                            Intelligence
+                        </span>
+
+                    </div>
+
+                    <p class="mt-5 text-sm text-slate-500">
+                        Skill Gaps
+                    </p>
+
+                    <p
+                        id="gaps"
+                        class="mt-1 text-3xl font-black"
+                    >
+                        —
+                    </p>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        Identified improvement areas
+                    </p>
+
+                </article>
+
+
+                <article class="metric-card p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="metric-icon bg-emerald-50 text-emerald-600">
+                            <i data-lucide="handshake" class="h-5 w-5"></i>
+                        </span>
+
+                        <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                            Industry
+                        </span>
+
+                    </div>
+
+                    <p class="mt-5 text-sm text-slate-500">
+                        Collaborations
+                    </p>
+
+                    <p
+                        id="collabs"
+                        class="mt-1 text-3xl font-black"
+                    >
+                        —
+                    </p>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        Academia–industry connections
+                    </p>
+
+                </article>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- CORE WORKSPACE -->
+            <!-- ================================================= -->
+
+            <section class="section-card mt-6">
+
+                <div class="section-head">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            College Workspace
+                        </p>
+
+                        <h2 class="mt-1 text-lg font-black">
+                            Manage the Complete Student–Industry Flow
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Move from verified student identity to skill intelligence and industry action.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-5">
+
+                    <a
+                        href="student-registry.html"
+                        class="action-card"
+                    >
+
+                        <span class="action-icon bg-emerald-50 text-emerald-600">
+                            <i data-lucide="user-round-check" class="h-5 w-5"></i>
+                        </span>
+
+                        <span>
+                            <span class="block font-black">
+                                Student Registry
+                            </span>
+
+                            <span class="mt-1 block text-sm text-slate-500">
+                                Maintain trusted official student records.
+                            </span>
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="departments.html"
+                        class="action-card"
+                    >
+
+                        <span class="action-icon bg-blue-50 text-blue-600">
+                            <i data-lucide="network" class="h-5 w-5"></i>
+                        </span>
+
+                        <span>
+                            <span class="block font-black">
+                                Departments
+                            </span>
+
+                            <span class="mt-1 block text-sm text-slate-500">
+                                Organize academic branches and departments.
+                            </span>
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="analytics.html"
+                        class="action-card"
+                    >
+
+                        <span class="action-icon bg-amber-50 text-amber-600">
+                            <i data-lucide="chart-spline" class="h-5 w-5"></i>
+                        </span>
+
+                        <span>
+                            <span class="block font-black">
+                                Skill Analytics
+                            </span>
+
+                            <span class="mt-1 block text-sm text-slate-500">
+                                See student skills, demand and skill gaps.
+                            </span>
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="collaborations.html"
+                        class="action-card"
+                    >
+
+                        <span class="action-icon bg-violet-50 text-violet-600">
+                            <i data-lucide="handshake" class="h-5 w-5"></i>
+                        </span>
+
+                        <span>
+                            <span class="block font-black">
+                                Collaborations
+                            </span>
+
+                            <span class="mt-1 block text-sm text-slate-500">
+                                Manage workshops, mentorship and industry drives.
+                            </span>
+                        </span>
+
+                    </a>
+
+
+                    <button
+                        type="button"
+                        class="action-card text-left"
+                        onclick="document.getElementById('collegeChatLauncher').click()"
+                    >
+
+                        <span class="action-icon bg-indigo-50 text-indigo-600">
+                            <i data-lucide="brain-circuit" class="h-5 w-5"></i>
+                        </span>
+
+                        <span>
+                            <span class="block font-black">
+                                College Assistant
+                            </span>
+
+                            <span class="mt-1 block text-sm text-slate-500">
+                                Ask about skills, gaps, demand and training.
+                            </span>
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- PLATFORM STORY -->
+            <!-- ================================================= -->
+
+            <section class="section-card mt-6">
+
+                <div class="section-head">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            Skill Intelligence Loop
+                        </p>
+
+                        <h2 class="mt-1 text-lg font-black">
+                            From Student Data to College Action
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            The college module turns student capability data into measurable academic action.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="analytics.html"
+                        class="btn btn-soft"
+                    >
+                        Open Analytics
+                    </a>
+
+                </div>
+
+
+                <div class="grid gap-5 p-5 md:grid-cols-5">
+
+                    <div class="flow-node">
+
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <i data-lucide="users-round" class="h-4 w-4"></i>
+                        </span>
+
+                        <p class="mt-3 text-sm font-black">
+                            Student Skills
+                        </p>
+
+                        <p class="mt-1 text-xs leading-5 text-slate-500">
+                            Profiles, verified records and skill evidence.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flow-node">
+
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                            <i data-lucide="building-2" class="h-4 w-4"></i>
+                        </span>
+
+                        <p class="mt-3 text-sm font-black">
+                            Industry Demand
+                        </p>
+
+                        <p class="mt-1 text-xs leading-5 text-slate-500">
+                            Required skills from recruiter opportunities.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flow-node">
+
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                            <i data-lucide="triangle-alert" class="h-4 w-4"></i>
+                        </span>
+
+                        <p class="mt-3 text-sm font-black">
+                            Skill Gap
+                        </p>
+
+                        <p class="mt-1 text-xs leading-5 text-slate-500">
+                            Detect where students need improvement.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flow-node">
+
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                            <i data-lucide="book-open-check" class="h-4 w-4"></i>
+                        </span>
+
+                        <p class="mt-3 text-sm font-black">
+                            College Action
+                        </p>
+
+                        <p class="mt-1 text-xs leading-5 text-slate-500">
+                            Training, workshops and targeted development.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flow-node">
+
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                            <i data-lucide="handshake" class="h-4 w-4"></i>
+                        </span>
+
+                        <p class="mt-3 text-sm font-black">
+                            Industry Connect
+                        </p>
+
+                        <p class="mt-1 text-xs leading-5 text-slate-500">
+                            Collaboration, internships and placement readiness.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- College AI Assistant -->
+<!-- ===================================================== -->
+
+<button
+    id="collegeChatLauncher"
+    type="button"
+    class="college-chat-launcher"
+    aria-label="Open College AI Assistant"
+>
+    <i data-lucide="bot" class="h-5 w-5"></i>
+    <span>College AI Assistant</span>
+</button>
+
+
+<section
+    id="collegeChatPanel"
+    class="college-chat-panel hidden"
+    aria-label="College AI Assistant"
+>
+
+    <div class="college-chat-head">
+
+        <div class="flex items-center justify-between gap-3">
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+                    <i data-lucide="brain-circuit" class="h-5 w-5"></i>
+                </div>
+
+                <div>
+                    <h2 class="font-black">
+                        College Intelligence Assistant
                     </h2>
 
                     <p
-                        class="mt-1 text-sm text-slate-500"
+                        id="collegeChatStatus"
+                        class="text-xs text-indigo-100"
                     >
-                        Manage important college activities.
+                        Your college data · Secure
                     </p>
-
-
-                    <div
-                        class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-                    >
-
-
-                        <!-- Profile -->
-                        <a
-                            href="profile.html"
-                            class="card dashboard-action p-5"
-                        >
-
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100"
-                            >
-
-                                <i
-                                    data-lucide="school"
-                                    class="h-5 w-5 text-indigo-600"
-                                ></i>
-
-                            </div>
-
-                            <h3
-                                class="mt-4 font-bold"
-                            >
-                                College Profile
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm text-slate-500"
-                            >
-                                View and update college information.
-                            </p>
-
-                        </a>
-
-
-
-                        <!-- Departments -->
-                        <a
-                            href="departments.html"
-                            class="card dashboard-action p-5"
-                        >
-
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100"
-                            >
-
-                                <i
-                                    data-lucide="network"
-                                    class="h-5 w-5 text-violet-600"
-                                ></i>
-
-                            </div>
-
-                            <h3
-                                class="mt-4 font-bold"
-                            >
-                                Departments
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm text-slate-500"
-                            >
-                                Manage academic departments.
-                            </p>
-
-                        </a>
-
-
-
-                        <!-- Analytics -->
-                        <a
-                            href="analytics.html"
-                            class="card dashboard-action p-5"
-                        >
-
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100"
-                            >
-
-                                <i
-                                    data-lucide="chart-no-axes-combined"
-                                    class="h-5 w-5 text-amber-600"
-                                ></i>
-
-                            </div>
-
-                            <h3
-                                class="mt-4 font-bold"
-                            >
-                                Skill Analytics
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm text-slate-500"
-                            >
-                                Review student skills and industry gaps.
-                            </p>
-
-                        </a>
-
-
-
-                        <!-- Collaborations -->
-                        <a
-                            href="collaborations.html"
-                            class="card dashboard-action p-5"
-                        >
-
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100"
-                            >
-
-                                <i
-                                    data-lucide="handshake"
-                                    class="h-5 w-5 text-emerald-600"
-                                ></i>
-
-                            </div>
-
-                            <h3
-                                class="mt-4 font-bold"
-                            >
-                                Collaborations
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm text-slate-500"
-                            >
-                                Review industry collaboration requests.
-                            </p>
-
-                        </a>
-
-
-                    </div>
-
-                </section>
-
+                </div>
 
             </div>
 
-        </main>
+
+            <div class="flex items-center gap-1">
+
+                <button
+                    id="collegeChatNew"
+                    type="button"
+                    class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
+                    title="New chat"
+                >
+                    <i data-lucide="message-square-plus" class="h-4 w-4"></i>
+                </button>
+
+
+                <button
+                    id="collegeChatClose"
+                    type="button"
+                    class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
+                    title="Close"
+                >
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
 
 
+    <div class="flex flex-wrap gap-2 border-b border-white/10 bg-slate-900 px-3 py-3">
+
+        <button type="button" class="college-chat-quick" data-college-prompt="Show my college">
+            My College
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="Show college overview">
+            Overview
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="Show top student skills">
+            Top Skills
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="Show our skill gaps">
+            Skill Gaps
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="What skills are companies demanding?">
+            Industry Demand
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="What training should we organize?">
+            Training
+        </button>
+
+        <button type="button" class="college-chat-quick" data-college-prompt="Show collaborations">
+            Collaborations
+        </button>
+
+    </div>
 
 
-    <!-- ===================================================== -->
-    <!-- College AI Assistant -->
-    <!-- ===================================================== -->
-
-    <button
-      id="collegeChatLauncher"
-      type="button"
-      class="college-chat-launcher"
-      aria-label="Open College AI Assistant"
-    >
-      <i data-lucide="bot" class="h-5 w-5"></i>
-      <span>College AI Assistant</span>
-    </button>
-
-    <section
-      id="collegeChatPanel"
-      class="college-chat-panel hidden"
-      aria-label="College AI Assistant"
-    >
-      <div class="college-chat-head">
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-              <i data-lucide="brain-circuit" class="h-5 w-5"></i>
-            </div>
-            <div>
-              <h2 class="font-black">College Intelligence Assistant</h2>
-              <p id="collegeChatStatus" class="text-xs text-indigo-100">
-                Your college data · Secure
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-1">
-            <button
-              id="collegeChatNew"
-              type="button"
-              class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
-              title="New chat"
-            >
-              <i data-lucide="message-square-plus" class="h-4 w-4"></i>
-            </button>
-
-            <button
-              id="collegeChatClose"
-              type="button"
-              class="rounded-lg p-2 text-indigo-100 hover:bg-white/10 hover:text-white"
-              title="Close"
-            >
-              <i data-lucide="x" class="h-4 w-4"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2 border-b border-white/10 bg-slate-900 px-3 py-3">
-        <button type="button" class="college-chat-quick" data-college-prompt="Show my college">My College</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="Show college overview">Overview</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="Show top student skills">Top Skills</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="Show our skill gaps">Skill Gaps</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="What skills are companies demanding?">Industry Demand</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="What training should we organize?">Training</button>
-        <button type="button" class="college-chat-quick" data-college-prompt="Show collaborations">Collaborations</button>
-      </div>
-
-      <div
+    <div
         id="collegeChatMessages"
         class="college-chat-messages space-y-3"
-      ></div>
+    ></div>
 
-      <form
+
+    <form
         id="collegeChatForm"
         class="border-t border-white/10 bg-slate-950 p-3"
-      >
+    >
+
         <div class="flex items-end gap-2">
-          <textarea
-            id="collegeChatInput"
-            rows="1"
-            class="min-h-[44px] max-h-28 flex-1 resize-none rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
-            placeholder="Ask about students, skills, gaps, demand..."
-            required
-          ></textarea>
 
-          <button
-            id="collegeChatSend"
-            type="submit"
-            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
-            aria-label="Send message"
-          >
-            <i data-lucide="send" class="h-4 w-4"></i>
-          </button>
+            <textarea
+                id="collegeChatInput"
+                rows="1"
+                class="min-h-[44px] max-h-28 flex-1 resize-none rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
+                placeholder="Ask about students, skills, gaps, demand..."
+                required
+            ></textarea>
+
+
+            <button
+                id="collegeChatSend"
+                type="submit"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
+                aria-label="Send message"
+            >
+                <i data-lucide="send" class="h-4 w-4"></i>
+            </button>
+
         </div>
-      </form>
-    </section>
+
+    </form>
+
+</section>
 
 
-    <!-- ===================================================== -->
-    <!-- Scripts -->
-    <!-- ===================================================== -->
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/shell.js"></script>
 
-    <script src="/assets/js/config.js"></script>
-    <script src="/assets/js/api.js"></script>
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/shell.js"></script>
-
-
-    <script>
+<script>
 
         let currentCollege = null;
 
@@ -986,8 +1621,10 @@
                 document.getElementById(
                     "collegeUniversity"
                 ).textContent =
-                    college.university ??
-                    "University not specified";
+                    college.affiliation_status === "self_university"
+                        ? "Self University / University"
+                        : college.university ??
+                          "University not specified";
 
 
                 document.getElementById(
@@ -1011,15 +1648,133 @@
 
                 if (verificationBadge) {
 
-                    verificationBadge.textContent =
-                        college.is_verified
-                            ? "Verified College"
-                            : "Verification Pending";
+                    const verificationStatus =
+                        String(
+                            college.verification_status ||
+                            (college.is_verified ? "verified" : "pending")
+                        ).toLowerCase();
 
-                    verificationBadge.classList.toggle(
-                        "is-verified",
-                        Boolean(college.is_verified)
+                    verificationBadge.textContent =
+                        verificationStatus === "verified"
+                            ? "Verified Institution"
+                            : verificationStatus === "rejected"
+                                ? "Verification Rejected"
+                                : "Verification Pending";
+
+                    verificationBadge.classList.remove(
+                        "verification-verified",
+                        "verification-pending",
+                        "verification-rejected"
                     );
+
+                    verificationBadge.classList.add(
+                        verificationStatus === "verified"
+                            ? "verification-verified"
+                            : verificationStatus === "rejected"
+                                ? "verification-rejected"
+                                : "verification-pending"
+                    );
+
+                    const profileVerificationStatus =
+                        document.getElementById("profileVerificationStatus");
+
+                    if (profileVerificationStatus) {
+                        profileVerificationStatus.textContent =
+                            verificationStatus === "verified"
+                                ? "Verified"
+                                : verificationStatus === "rejected"
+                                    ? "Rejected"
+                                    : "Pending";
+                    }
+
+                    const aisheCode =
+                        document.getElementById("collegeAisheCode");
+
+                    if (aisheCode) {
+                        aisheCode.textContent =
+                            college.aishe_code ||
+                            "Not provided";
+                    }
+
+                    const collegeCode =
+                        document.getElementById("collegeCode");
+
+                    if (collegeCode) {
+                        collegeCode.textContent =
+                            college.college_code ||
+                            "Not provided";
+                    }
+
+                    const affiliationStatus =
+                        document.getElementById("collegeAffiliationStatus");
+
+                    if (affiliationStatus) {
+                        affiliationStatus.textContent =
+                            college.affiliation_status === "self_university"
+                                ? "Self University"
+                                : college.university ||
+                                  "Affiliation not specified";
+                    }
+
+                    const emailVerification =
+                        document.getElementById("emailVerification");
+
+                    if (emailVerification) {
+                        emailVerification.textContent =
+                            college.email_verified
+                                ? "Verified"
+                                : "Pending";
+
+                        emailVerification.className =
+                            college.email_verified
+                                ? "text-xs font-black text-emerald-600"
+                                : "text-xs font-black text-amber-600";
+                    }
+
+                    const phoneVerification =
+                        document.getElementById("phoneVerification");
+
+                    if (phoneVerification) {
+                        phoneVerification.textContent =
+                            college.phone_verified
+                                ? "Verified"
+                                : "Pending";
+
+                        phoneVerification.className =
+                            college.phone_verified
+                                ? "text-xs font-black text-emerald-600"
+                                : "text-xs font-black text-amber-600";
+                    }
+
+                    const websiteVerification =
+                        document.getElementById("websiteVerification");
+
+                    if (websiteVerification) {
+                        websiteVerification.textContent =
+                            college.website_verified
+                                ? "Verified"
+                                : "Pending";
+
+                        websiteVerification.className =
+                            college.website_verified
+                                ? "text-xs font-black text-emerald-600"
+                                : "text-xs font-black text-amber-600";
+                    }
+
+                    const documentsVerification =
+                        document.getElementById("documentsVerification");
+
+                    if (documentsVerification) {
+                        documentsVerification.textContent =
+                            college.documents_verified
+                                ? "Verified"
+                                : "Pending";
+
+                        documentsVerification.className =
+                            college.documents_verified
+                                ? "text-xs font-black text-emerald-600"
+                                : "text-xs font-black text-amber-600";
+                    }
 
                 }
 
@@ -1219,10 +1974,15 @@ COLLEGE PROFILE
 
 College ID: ${currentCollege.id ?? ""}
 College Name: ${currentCollege.name ?? ""}
+Affiliation Status: ${currentCollege.affiliation_status ?? ""}
 University: ${currentCollege.university ?? ""}
+College / University Code: ${currentCollege.college_code ?? ""}
+AISHE Code: ${currentCollege.aishe_code ?? ""}
 City: ${currentCollege.city ?? ""}
 State: ${currentCollege.state ?? ""}
 Website: ${currentCollege.website ?? ""}
+Official Email: ${currentCollege.official_email ?? ""}
+Verification Status: ${currentCollege.verification_status ?? (currentCollege.is_verified ? "verified" : "pending")}
                 `.trim();
 
 
@@ -1735,7 +2495,5 @@ Website: ${currentCollege.website ?? ""}
 
     </script>
 
-
 </body>
-
 </html>
