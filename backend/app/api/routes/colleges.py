@@ -583,28 +583,34 @@ def verify_website_domain(
             ),
         )
 
-    if not domain_matches(row.website, row.official_email):
-        row.website_verified = False
-        db.commit()
+    matched = domain_matches(
+        row.website,
+        row.official_email,
+    )
 
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Official email domain does not match the "
-                "college website domain. Manual review is required."
-            ),
-        )
+    row.website_verified = bool(matched)
 
-    row.website_verified = True
     db.commit()
     db.refresh(row)
 
+    # Domain mismatch is NOT a failed profile submission.
+    # It simply means this institution needs manual admin review.
     return {
         "success": True,
-        "message": "Official website/email domain matched successfully.",
+        "message": (
+            "Official website/email domain matched successfully."
+            if matched
+            else (
+                "Website and official email domains do not match. "
+                "Manual admin review is required."
+            )
+        ),
         "data": {
-            "website_verified": True,
+            "website_verified": bool(matched),
+            "domain_matched": bool(matched),
+            "manual_review_required": not bool(matched),
             "website_domain": get_website_domain(row.website),
+            "email_domain": get_email_domain(row.official_email),
         },
     }
 
