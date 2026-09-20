@@ -208,6 +208,82 @@
             100%{background-position:0 0}
         }
 
+
+        html,
+        body{
+            width:100%;
+            max-width:100%;
+            overflow-x:hidden;
+        }
+
+        #app-shell,
+        main,
+        .panel,
+        .department-card,
+        .metric{
+            min-width:0;
+        }
+
+        .directory-tools{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:.65rem;
+        }
+
+        .directory-search{
+            min-width:0;
+        }
+
+        .directory-secondary{
+            display:flex;
+            flex-wrap:wrap;
+            gap:.65rem;
+        }
+
+        .department-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:.55rem;
+            flex-shrink:0;
+        }
+
+        .department-actions .btn{
+            white-space:nowrap;
+        }
+
+        .department-stats{
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:.75rem;
+        }
+
+        .profile-detail{
+            min-width:0;
+            border:1px solid #eef2f7;
+            border-radius:14px;
+            background:#f8fafc;
+            padding:1rem;
+        }
+
+        .modal-sheet{
+            max-height:92vh;
+        }
+
+        .mobile-scroll{
+            overflow-wrap:anywhere;
+            word-break:break-word;
+        }
+
+        .export-note{
+            display:inline-flex;
+            align-items:center;
+            gap:.35rem;
+            font-size:.72rem;
+            font-weight:700;
+            color:#64748b;
+        }
+
         @media(max-width:640px){
             .page-hero,
             .panel,
@@ -217,7 +293,164 @@
             }
 
             .page-hero{
-                padding:1.25rem;
+                padding:1.1rem;
+            }
+
+            .page-hero h1{
+                font-size:1.8rem;
+                line-height:2.15rem;
+            }
+
+            .hero-actions{
+                display:grid;
+                width:100%;
+                grid-template-columns:1fr;
+            }
+
+            .hero-actions a{
+                width:100%;
+                justify-content:center;
+            }
+
+            .metrics-grid{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+                gap:.7rem;
+            }
+
+            .metric{
+                padding:1rem !important;
+            }
+
+            .metric-icon{
+                width:38px;
+                height:38px;
+                border-radius:12px;
+            }
+
+            .metric p[id]{
+                font-size:1.6rem;
+            }
+
+            .panel-head{
+                align-items:stretch;
+                padding:1rem;
+            }
+
+            .directory-tools{
+                width:100%;
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .directory-search{
+                width:100% !important;
+            }
+
+            .directory-secondary{
+                display:grid;
+                width:100%;
+                grid-template-columns:1fr 1fr;
+            }
+
+            .directory-secondary .input,
+            .directory-secondary .btn{
+                width:100%;
+                justify-content:center;
+            }
+
+            #list{
+                padding:.75rem !important;
+                gap:.75rem !important;
+            }
+
+            .department-card{
+                padding:1rem !important;
+            }
+
+            .department-actions{
+                display:grid;
+                width:100%;
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+
+            .department-actions .btn{
+                width:100%;
+                min-height:44px;
+                justify-content:center;
+                padding-left:.65rem;
+                padding-right:.65rem;
+            }
+
+            .department-stats{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+
+            .department-stats .mini-stat:last-child{
+                grid-column:1 / -1;
+            }
+
+            .mini-stat{
+                padding:.75rem;
+            }
+
+            .compact-pair{
+                grid-template-columns:1fr;
+            }
+
+            .modal-backdrop{
+                align-items:flex-end !important;
+                padding:0 !important;
+            }
+
+            .modal-sheet{
+                width:100%;
+                max-width:none !important;
+                max-height:92dvh;
+                border-radius:22px 22px 0 0 !important;
+            }
+
+            .modal-sheet form,
+            #detailsContent{
+                padding:1rem !important;
+            }
+
+            .modal-sheet .modal-head{
+                padding:1rem !important;
+            }
+
+            .details-grid{
+                grid-template-columns:1fr !important;
+            }
+
+            .details-footer{
+                display:grid !important;
+                grid-template-columns:1fr 1fr;
+                padding:1rem !important;
+            }
+
+            .details-footer .btn{
+                width:100%;
+                justify-content:center;
+            }
+        }
+
+        @media(max-width:380px){
+            .metrics-grid{
+                grid-template-columns:1fr;
+            }
+
+            .directory-secondary,
+            .department-actions,
+            .details-footer{
+                grid-template-columns:1fr;
+            }
+
+            .department-stats{
+                grid-template-columns:1fr;
+            }
+
+            .department-stats .mini-stat:last-child{
+                grid-column:auto;
             }
         }
     </style>
@@ -280,7 +513,7 @@
                     </div>
 
 
-                    <div class="flex flex-wrap gap-3">
+                    <div class="hero-actions flex flex-wrap gap-3">
 
                         <a
                             href="dashboard.html"
@@ -309,7 +542,7 @@
             <!-- METRICS -->
             <!-- ================================================= -->
 
-            <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section class="metrics-grid grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
                 <article class="metric p-5">
 
@@ -612,7 +845,7 @@
                         </div>
 
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="compact-pair grid grid-cols-2 gap-4">
 
                             <div>
 
@@ -692,9 +925,9 @@
                         </div>
 
 
-                        <div class="flex flex-wrap gap-2">
+                        <div class="directory-tools">
 
-                            <div class="relative">
+                            <div class="directory-search relative w-full sm:w-64">
 
                                 <i
                                     data-lucide="search"
@@ -703,29 +936,57 @@
 
                                 <input
                                     id="searchInput"
-                                    class="input w-56 pl-9"
+                                    class="input w-full pl-9"
                                     placeholder="Search departments..."
+                                    autocomplete="off"
                                 >
 
                             </div>
 
 
-                            <select
-                                id="statusFilter"
-                                class="input w-auto"
-                            >
-                                <option value="all">
-                                    All
-                                </option>
+                            <div class="directory-secondary">
 
-                                <option value="active">
-                                    Active
-                                </option>
+                                <select
+                                    id="statusFilter"
+                                    class="input sm:w-36"
+                                    aria-label="Filter department status"
+                                >
+                                    <option value="all">
+                                        All
+                                    </option>
 
-                                <option value="inactive">
-                                    Inactive
-                                </option>
-                            </select>
+                                    <option value="active">
+                                        Active
+                                    </option>
+
+                                    <option value="inactive">
+                                        Inactive
+                                    </option>
+                                </select>
+
+
+                                <button
+                                    type="button"
+                                    class="btn btn-soft"
+                                    onclick="exportDepartments()"
+                                    title="Download all departments as CSV"
+                                >
+                                    <i data-lucide="download" class="h-4 w-4"></i>
+                                    Export
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="btn btn-soft"
+                                    onclick="load()"
+                                    title="Refresh department directory"
+                                >
+                                    <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                                    <span class="sm:hidden">Refresh</span>
+                                </button>
+
+                            </div>
 
                         </div>
 
@@ -768,9 +1029,9 @@
     class="modal-backdrop fixed inset-0 z-[100] hidden items-center justify-center p-4"
 >
 
-    <div class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+    <div class="modal-sheet max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
 
-        <div class="flex items-center justify-between border-b border-slate-200 p-5">
+        <div class="modal-head flex items-center justify-between border-b border-slate-200 p-5">
 
             <div>
 
@@ -988,9 +1249,9 @@
     class="modal-backdrop fixed inset-0 z-[100] hidden items-center justify-center p-4"
 >
 
-    <div class="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+    <div class="modal-sheet w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
 
-        <div class="flex items-center justify-between border-b border-slate-200 p-5">
+        <div class="modal-head flex items-center justify-between border-b border-slate-200 p-5">
 
             <div>
 
@@ -1024,6 +1285,30 @@
             class="p-5"
         ></div>
 
+
+        <div class="details-footer flex flex-wrap justify-end gap-3 border-t border-slate-200 p-5">
+
+            <button
+                type="button"
+                class="btn btn-soft"
+                onclick="downloadCurrentDepartment()"
+            >
+                <i data-lucide="download" class="h-4 w-4"></i>
+                Download CSV
+            </button>
+
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="openCurrentDepartmentEdit()"
+            >
+                <i data-lucide="pencil" class="h-4 w-4"></i>
+                Edit Department
+            </button>
+
+        </div>
+
     </div>
 
 </div>
@@ -1038,6 +1323,7 @@
 <script>
     let departments = [];
     let currentCollege = null;
+    let currentViewedDepartmentId = null;
 
 
     const list =
@@ -1104,6 +1390,246 @@
             `;
 
     }
+
+
+    function csvCell(value) {
+
+        const text =
+            value === null ||
+            value === undefined
+                ? ""
+                : String(value);
+
+        return `"${text.replace(/"/g, '""')}"`;
+
+    }
+
+
+    function safeFileName(value) {
+
+        return String(value || "department")
+            .trim()
+            .replace(/[^a-z0-9]+/gi, "-")
+            .replace(/^-+|-+$/g, "")
+            .toLowerCase() || "department";
+
+    }
+
+
+    function downloadTextFile(
+        filename,
+        content,
+        mimeType = "text/csv;charset=utf-8"
+    ) {
+
+        const blob =
+            new Blob(
+                ["\uFEFF", content],
+                {
+                    type: mimeType
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(blob);
+
+
+        const anchor =
+            document.createElement("a");
+
+
+        anchor.href =
+            url;
+
+
+        anchor.download =
+            filename;
+
+
+        document.body.appendChild(anchor);
+
+        anchor.click();
+
+        anchor.remove();
+
+
+        setTimeout(
+            () => URL.revokeObjectURL(url),
+            500
+        );
+
+    }
+
+
+    function departmentCsvRows(items) {
+
+        const headers = [
+            "Department ID",
+            "Department Name",
+            "Code",
+            "Program Type",
+            "Status",
+            "HOD",
+            "Coordinator",
+            "Official Email",
+            "Contact Number",
+            "Intake Capacity",
+            "Established Year",
+            "Registered Students",
+            "Verified Students",
+        ];
+
+
+        const rows =
+            items.map(
+                department => [
+                    department.id,
+                    department.name,
+                    department.code,
+                    department.program_type,
+                    department.is_active === false
+                        ? "Inactive"
+                        : "Active",
+                    department.hod_name,
+                    department.coordinator_name,
+                    department.official_email,
+                    department.contact_number,
+                    department.intake_capacity,
+                    department.established_year,
+                    Number(
+                        department.registered_students ||
+                        0
+                    ),
+                    Number(
+                        department.verified_students ||
+                        0
+                    ),
+                ]
+            );
+
+
+        return [
+            headers,
+            ...rows
+        ]
+            .map(
+                row =>
+                    row
+                        .map(csvCell)
+                        .join(",")
+            )
+            .join("\r\n");
+
+    }
+
+
+    window.downloadDepartment =
+        function(departmentId) {
+
+            const department =
+                departments.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(departmentId)
+                );
+
+
+            if (!department) {
+
+                SB.toast(
+                    "Department data is not available."
+                );
+
+                return;
+
+            }
+
+
+            downloadTextFile(
+                `${safeFileName(department.name)}-department.csv`,
+                departmentCsvRows([department])
+            );
+
+
+            SB.toast(
+                "Department CSV downloaded."
+            );
+
+        };
+
+
+    window.exportDepartments =
+        function() {
+
+            const filtered =
+                getFilteredDepartments();
+
+
+            if (!filtered.length) {
+
+                SB.toast(
+                    "No departments available to export."
+                );
+
+                return;
+
+            }
+
+
+            downloadTextFile(
+                "skillbridge-departments.csv",
+                departmentCsvRows(filtered)
+            );
+
+
+            SB.toast(
+                `${filtered.length} department${filtered.length === 1 ? "" : "s"} exported.`
+            );
+
+        };
+
+
+    window.downloadCurrentDepartment =
+        function() {
+
+            if (
+                currentViewedDepartmentId ===
+                null
+            ) {
+                return;
+            }
+
+
+            downloadDepartment(
+                currentViewedDepartmentId
+            );
+
+        };
+
+
+    window.openCurrentDepartmentEdit =
+        function() {
+
+            if (
+                currentViewedDepartmentId ===
+                null
+            ) {
+                return;
+            }
+
+
+            const departmentId =
+                currentViewedDepartmentId;
+
+
+            closeDetailsModal();
+
+            openEditModal(
+                departmentId
+            );
+
+        };
 
 
     async function loadCollegeStatus() {
@@ -1405,7 +1931,7 @@
 
                                         <div class="flex flex-wrap items-center gap-2">
 
-                                            <h3 class="truncate text-lg font-black text-slate-900">
+                                            <h3 class="mobile-scroll text-lg font-black leading-snug text-slate-900">
                                                 ${SB.esc(department.name)}
                                             </h3>
 
@@ -1483,12 +2009,13 @@
                                     </div>
 
 
-                                    <div class="flex flex-wrap gap-2">
+                                    <div class="department-actions">
 
                                         <button
                                             type="button"
                                             class="btn btn-soft"
                                             onclick="viewDepartment(${department.id})"
+                                            title="View department details"
                                         >
                                             <i data-lucide="eye" class="h-4 w-4"></i>
                                             View
@@ -1499,9 +2026,21 @@
                                             type="button"
                                             class="btn btn-soft"
                                             onclick="openEditModal(${department.id})"
+                                            title="Edit department"
                                         >
                                             <i data-lucide="pencil" class="h-4 w-4"></i>
                                             Edit
+                                        </button>
+
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-soft"
+                                            onclick="downloadDepartment(${department.id})"
+                                            title="Download department data"
+                                        >
+                                            <i data-lucide="download" class="h-4 w-4"></i>
+                                            Download
                                         </button>
 
 
@@ -1534,7 +2073,7 @@
                                 </div>
 
 
-                                <div class="mt-5 grid gap-3 sm:grid-cols-3">
+                                <div class="department-stats mt-5">
 
                                     <div class="mini-stat">
 
@@ -1960,13 +2499,17 @@
             }
 
 
+            currentViewedDepartmentId =
+                department.id;
+
+
             detailsTitle.textContent =
                 department.name;
 
 
             detailsContent.innerHTML = `
 
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="details-grid grid gap-4 sm:grid-cols-2">
 
                     <div class="profile-detail">
                         <p class="text-xs font-bold uppercase text-slate-400">
@@ -2108,6 +2651,10 @@
             detailsModal.classList.remove(
                 "flex"
             );
+
+
+            currentViewedDepartmentId =
+                null;
 
         };
 
