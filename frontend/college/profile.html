@@ -456,10 +456,15 @@ const reviewFields={
 };
 
 function showMessage(text,type="success"){
+  const styles={
+    success:["bg-emerald-50","text-emerald-700","border-emerald-200"],
+    error:["bg-rose-50","text-rose-700","border-rose-200"],
+    warning:["bg-amber-50","text-amber-800","border-amber-200"],
+    info:["bg-indigo-50","text-indigo-700","border-indigo-200"]
+  };
+  const selected=styles[type]||styles.info;
   msg.className="mt-4 rounded-xl px-4 py-3 text-sm border";
-  msg.classList.add(type==="success"?"bg-emerald-50":"bg-rose-50");
-  msg.classList.add(type==="success"?"text-emerald-700":"text-rose-700");
-  msg.classList.add(type==="success"?"border-emerald-200":"border-rose-200");
+  msg.classList.add(...selected);
   msg.textContent=text;
 }
 
@@ -631,6 +636,27 @@ function updateCollegeLogoPreview(){
   img.src=url;
 }
 
+function updateVerificationControls(){
+  const emailBtn=document.getElementById("emailVerifyBtn");
+  const mobileBtn=document.getElementById("mobileVerifyBtn");
+  const websiteBtn=document.getElementById("websiteCheckBtn");
+
+  // OTP endpoints are not implemented yet, so do not send broken requests.
+  for(const btn of [emailBtn,mobileBtn]){
+    btn.disabled=true;
+    btn.classList.add("cursor-not-allowed","opacity-60");
+    btn.title="OTP verification backend is not configured yet.";
+  }
+
+  // Domain verification needs an already-saved college profile.
+  websiteBtn.disabled=!existingProfile;
+  websiteBtn.classList.toggle("cursor-not-allowed",!existingProfile);
+  websiteBtn.classList.toggle("opacity-60",!existingProfile);
+  websiteBtn.title=existingProfile
+    ? "Check website and official email domain"
+    : "Submit the college profile first";
+}
+
 function fillProfile(college){
   existingProfile=college;
   for(const id of Object.keys(payload())){
@@ -654,6 +680,7 @@ function fillProfile(college){
   document.getElementById("profileSummary").classList.remove("hidden");
   dashboardButton.classList.remove("hidden");dashboardButton.classList.add("flex");
   saveButtonText.textContent="Update & Resubmit";
+  updateVerificationControls();
   updateStatus(college);updateDomainHint();updateProgress();
 }
 
@@ -705,31 +732,51 @@ document.getElementById("authorization_letter").addEventListener("change",e=>{
 });
 form.addEventListener("input",updateProgress);
 
-document.getElementById("emailVerifyBtn").addEventListener("click",async()=>{
-  try{
-    await SB.post("/colleges/verification/email/send-otp",{});
-    showMessage("Email OTP request sent. Complete OTP verification from backend flow.");
-  }catch(e){showMessage(e.message||"Email verification endpoint is not available yet.","error")}
+document.getElementById("emailVerifyBtn").addEventListener("click",()=>{
+  showMessage(
+    "Email OTP verification is not configured yet. Your college profile can still be submitted for admin review.",
+    "info"
+  );
 });
-document.getElementById("mobileVerifyBtn").addEventListener("click",async()=>{
-  try{
-    await SB.post("/colleges/verification/mobile/send-otp",{});
-    showMessage("Mobile OTP request sent. Complete OTP verification from backend flow.");
-  }catch(e){showMessage(e.message||"Mobile verification endpoint is not available yet.","error")}
+
+document.getElementById("mobileVerifyBtn").addEventListener("click",()=>{
+  showMessage(
+    "Mobile OTP verification is not configured yet. Your college profile can still be submitted for admin review.",
+    "info"
+  );
 });
+
 document.getElementById("websiteCheckBtn").addEventListener("click",async()=>{
-  if(domainMatches()!==true){
-    showMessage("Official email domain does not match the website domain. Manual review may be required.","error");
+  if(!existingProfile){
+    showMessage(
+      "Submit the college profile first. Domain verification works on the saved institution profile.",
+      "warning"
+    );
     return;
   }
+
   try{
-    await SB.post("/colleges/verification/website",{});
-    showMessage("Website verification request sent.");
-  }catch(e){showMessage(e.message||"Website verification endpoint is not available yet.","error")}
+    const r=await SB.post("/colleges/verification/website",{});
+    const data=r?.data||r||{};
+    verificationState.website_verified=Boolean(data.website_verified);
+    updateProgress();
+
+    if(data.website_verified){
+      showMessage("Website and official email domain matched successfully.","success");
+    }else{
+      showMessage(
+        "Website and official email domains do not match. The profile is still submitted and will require manual admin review.",
+        "warning"
+      );
+    }
+  }catch(e){
+    showMessage(e.message||"Could not check website domain.","error");
+  }
 });
 
 form.addEventListener("submit",async e=>{
   e.preventDefault();
+
   if(!document.getElementById("declaration").checked){
     showMessage("Please confirm the institution declaration before submitting.","error");
     return;
@@ -740,24 +787,53 @@ form.addEventListener("submit",async e=>{
 
   try{
     const body=payload();
+
     const r=existingProfile
       ? await SB.patch("/colleges/profile",body)
       : await SB.post("/colleges/profile",body);
 
-    const college=r.data||r;
-    if(college&&college.id)fillProfile(college);
-    else await loadProfile();
+    const college=r?.data||r;
 
-    showMessage("College profile saved. Verification remains Pending until backend checks and admin approval are completed.");
+    if(college&&college.id){
+      fillProfile(college);
+    }else{
+      await loadProfile();
+    }
+
+    // Domain verification is advisory, not a blocker.
+    // It is attempted only AFTER the profile exists, avoiding 404 "Not Found".
+    let domainMessage="";
+
+    try{
+      const check=await SB.post("/colleges/verification/website",{});
+      const data=check?.data||check||{};
+      verificationState.website_verified=Boolean(data.website_verified);
+      updateProgress();
+
+      domainMessage=data.website_verified
+        ? " Website/email domain matched."
+        : " Website/email domain did not match; manual admin review is required.";
+    }catch(domainError){
+      console.warn("Domain check skipped:",domainError);
+      domainMessage=" Domain check could not be completed now; admin review can still continue.";
+    }
+
+    showMessage(
+      "College profile submitted successfully. Verification remains Pending until admin approval."+domainMessage,
+      verificationState.website_verified?"success":"warning"
+    );
+
   }catch(err){
     showMessage(err.message||"Unable to save college profile.","error");
   }finally{
     saveButton.disabled=false;
     saveButtonText.textContent=existingProfile?"Update & Resubmit":"Submit for Verification";
+    updateVerificationControls();
   }
 });
 
 toggleUniversityField();
+updateVerificationControls();
 setStep(1);
 loadProfile();
 if(window.lucide)lucide.createIcons();
