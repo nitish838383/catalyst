@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="SkillBridge AI — Admin Control Center">
+  <title>Admin Control Center | SkillBridge AI</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+
+  <style>
+    :root{
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --panel:#ffffff;
+      --brand:#4f46e5;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 0% 0%,rgba(79,70,229,.07),transparent 24rem),
+        #f8fafc;
+      color:var(--ink);
+    }
+
+    button,a,input,select,textarea{outline:none}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+      box-shadow:0 0 0 3px rgba(99,102,241,.22);
+    }
+
+    .admin-shell{
+      min-height:100dvh;
+      display:grid;
+      grid-template-columns:270px minmax(0,1fr);
+    }
+
+    .admin-sidebar{
+      position:sticky;
+      top:0;
+      height:100dvh;
+      overflow-y:auto;
+      padding:1.1rem;
+      color:#cbd5e1;
+      background:
+        radial-gradient(circle at 30% 0%,rgba(99,102,241,.28),transparent 16rem),
+        #0f172a;
+      border-right:1px solid rgba(255,255,255,.08);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+      padding:.5rem .55rem 1.2rem;
+    }
+
+    .brand-mark{
+      width:42px;height:42px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#6366f1,#2563eb);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(79,70,229,.28);
+    }
+
+    .nav-kicker{
+      padding:.8rem .75rem .45rem;
+      font-size:.68rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:#64748b;
+    }
+
+    .nav-btn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:.78rem;
+      border:0;
+      border-radius:13px;
+      padding:.8rem .85rem;
+      margin:.18rem 0;
+      background:transparent;
+      color:#cbd5e1;
+      font-size:.9rem;
+      font-weight:750;
+      text-align:left;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .nav-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+    .nav-btn.active{
+      background:rgba(99,102,241,.22);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(129,140,248,.26);
+    }
+
+    .nav-count{
+      margin-left:auto;
+      min-width:25px;
+      padding:.12rem .42rem;
+      border-radius:999px;
+      font-size:.67rem;
+      text-align:center;
+      color:#c7d2fe;
+      background:rgba(99,102,241,.18);
+    }
+
+    .main{
+      min-width:0;
+      padding:1.5rem;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      margin-bottom:1rem;
+    }
+
+    .mobile-menu{display:none}
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:26px;
+      padding:1.65rem;
+      color:#fff;
+      background:
+        radial-gradient(circle at 88% 8%,rgba(255,255,255,.14),transparent 13rem),
+        linear-gradient(125deg,#0f172a 0%,#1e1b4b 45%,#312e81 72%,#1d4ed8 100%);
+      box-shadow:0 22px 55px rgba(37,99,235,.14);
+    }
+
+    .hero:before{
+      content:"";
+      position:absolute;inset:0;
+      opacity:.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);
+      background-size:30px 30px;
+    }
+
+    .hero>*{position:relative;z-index:1}
+
+    .eyebrow{
+      font-size:.68rem;
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:#fff;
+      box-shadow:0 10px 30px rgba(15,23,42,.035);
+    }
+
+    .stat{
+      padding:1.05rem;
+      min-width:0;
+    }
+
+    .stat-label{font-size:.78rem;color:#64748b;font-weight:700}
+    .stat-value{margin-top:.3rem;font-size:1.7rem;font-weight:950;letter-spacing:-.04em}
+
+    .icon-box{
+      width:40px;height:40px;
+      display:flex;align-items:center;justify-content:center;
+      border-radius:13px;
+      flex-shrink:0;
+    }
+
+    .section{display:none}
+    .section.active{display:block}
+
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:1rem;
+      margin:1.4rem 0 .8rem;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.65rem;
+      align-items:center;
+    }
+
+    .field{
+      width:100%;
+      min-height:44px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      background:#fff;
+      padding:.65rem .8rem;
+      color:#0f172a;
+      font-size:.88rem;
+    }
+
+    .search-wrap{position:relative;min-width:260px}
+    .search-wrap svg{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:#94a3b8}
+    .search-wrap .field{padding-left:2.5rem}
+
+    .btnx{
+      min-height:42px;
+      border:1px solid #dbe3ef;
+      border-radius:11px;
+      padding:.62rem .85rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.45rem;
+      background:#fff;
+      color:#334155;
+      font-size:.82rem;
+      font-weight:850;
+      cursor:pointer;
+      transition:.16s ease;
+    }
+
+    .btnx:hover{background:#f8fafc;border-color:#cbd5e1}
+    .btnx.primary{background:#4f46e5;border-color:#4f46e5;color:#fff}
+    .btnx.primary:hover{background:#4338ca}
+    .btnx.success{background:#059669;border-color:#059669;color:#fff}
+    .btnx.danger{background:#fff1f2;border-color:#fecdd3;color:#be123c}
+    .btnx:disabled{opacity:.55;cursor:not-allowed}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:.32rem;
+      padding:.3rem .6rem;
+      border-radius:999px;
+      font-size:.7rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    .b-ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+    .b-warn{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+    .b-bad{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+    .b-info{background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe}
+    .b-muted{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0}
+
+    .data-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    table{width:100%;border-collapse:collapse}
+    th{
+      padding:.78rem .9rem;
+      text-align:left;
+      font-size:.67rem;
+      text-transform:uppercase;
+      letter-spacing:.07em;
+      color:#94a3b8;
+      background:#f8fafc;
+      white-space:nowrap;
+    }
+    td{
+      padding:.88rem .9rem;
+      border-top:1px solid #eef2f7;
+      font-size:.83rem;
+      vertical-align:middle;
+    }
+    tr:hover td{background:#fbfdff}
+
+    .trust-item{
+      padding:1rem;
+      border-bottom:1px solid #eef2f7;
+    }
+    .trust-item:last-child{border-bottom:0}
+
+    .verification-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:.45rem;
+      margin-top:.8rem;
+    }
+
+    .verify-mini{
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      padding:.55rem;
+      font-size:.7rem;
+      font-weight:800;
+      color:#64748b;
+      background:#f8fafc;
+    }
+
+    .verify-mini.ok{border-color:#a7f3d0;background:#ecfdf5;color:#047857}
+
+    .empty{
+      padding:2.7rem 1rem;
+      text-align:center;
+      color:#64748b;
+    }
+
+    .skeleton{
+      background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 37%,#f1f5f9 63%);
+      background-size:400% 100%;
+      animation:sk 1.35s ease infinite;
+    }
+    @keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+
+    .drawer-overlay{
+      position:fixed;inset:0;z-index:70;
+      background:rgba(2,6,23,.58);
+      backdrop-filter:blur(3px);
+      display:none;
+    }
+    .drawer-overlay.open{display:block}
+
+    .mobile-drawer{
+      position:absolute;left:0;top:0;bottom:0;
+      width:min(86vw,310px);
+      padding:1rem;
+      overflow-y:auto;
+      background:#0f172a;
+      box-shadow:20px 0 50px rgba(2,6,23,.25);
+    }
+
+    .modal{
+      position:fixed;inset:0;z-index:100;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:1rem;
+      background:rgba(2,6,23,.58);
+      backdrop-filter:blur(4px);
+    }
+    .modal.open{display:flex}
+    .modal-card{
+      width:min(760px,100%);
+      max-height:92dvh;
+      overflow-y:auto;
+      border-radius:20px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(15,23,42,.28);
+    }
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.8rem;
+    }
+
+    .detail{
+      padding:.85rem;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      background:#f8fafc;
+    }
+
+    .detail dt{
+      font-size:.67rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      color:#94a3b8;
+    }
+    .detail dd{margin:.35rem 0 0;font-size:.85rem;font-weight:800;color:#1e293b;overflow-wrap:anywhere}
+
+    @media(max-width:1024px){
+      .admin-shell{grid-template-columns:1fr}
+      .admin-sidebar{display:none}
+      .main{padding:1rem}
+      .mobile-menu{display:inline-flex}
+    }
+
+    @media(max-width:720px){
+      .main{padding:.8rem}
+      .hero{border-radius:19px;padding:1.2rem}
+      .hero h1{font-size:1.6rem}
+      .panel{border-radius:16px}
+      .section-head{align-items:stretch;flex-direction:column}
+      .toolbar{display:grid;grid-template-columns:1fr 1fr}
+      .search-wrap{min-width:0;grid-column:1/-1}
+      .verification-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .detail-grid{grid-template-columns:1fr}
+      .topbar .topbar-copy{display:none}
+      .data-wrap table{min-width:760px}
+      .stats-mobile{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    }
+
+    @media(max-width:390px){
+      .toolbar{grid-template-columns:1fr}
+      .search-wrap{grid-column:auto}
+      .stats-mobile{grid-template-columns:1fr!important}
+    }
+  </style>
+</head>
+
+<body>
+<script>window.SKILLBRIDGE_ROLE="admin";</script>
+
+<div class="admin-shell">
+
+  <aside class="admin-sidebar">
+    <div class="brand">
+      <span class="brand-mark"><i data-lucide="shield-check" class="h-5 w-5"></i></span>
+      <div>
+        <div class="text-[11px] font-black uppercase tracking-[.15em] text-indigo-300">SkillBridge AI</div>
+        <div class="mt-0.5 text-lg font-black text-white">Admin Control</div>
+      </div>
+    </div>
+
+    <div class="nav-kicker">Platform</div>
+    <button class="nav-btn active" data-section="overview">
+      <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+      Overview
+    </button>
+    <button class="nav-btn" data-section="colleges">
+      <i data-lucide="building-2" class="h-4 w-4"></i>
+      Colleges
+      <span id="sidePendingCount" class="nav-count">0</span>
+    </button>
+    <button class="nav-btn" data-section="students">
+      <i data-lucide="graduation-cap" class="h-4 w-4"></i>
+      Students
+    </button>
+    <button class="nav-btn" data-section="recruiters">
+      <i data-lucide="briefcase-business" class="h-4 w-4"></i>
+      Recruiters
+    </button>
+
+    <div class="mt-8 rounded-2xl border border-white/10 bg-white/[.045] p-4">
+      <div class="flex items-center gap-2 text-xs font-black uppercase tracking-[.12em] text-indigo-200">
+        <i data-lucide="fingerprint" class="h-4 w-4"></i>
+        Trust Layer
+      </div>
+      <p class="mt-2 text-xs leading-5 text-slate-400">
+        College approval controls student registry access and official student identity claims.
+      </p>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <div class="topbar">
+      <div class="flex items-center gap-3">
+        <button id="mobileMenuBtn" class="mobile-menu btnx" type="button">
+          <i data-lucide="menu" class="h-4 w-4"></i>
+        </button>
+        <div class="topbar-copy">
+          <p class="text-xs font-black uppercase tracking-[.12em] text-indigo-600">Administration</p>
+          <p id="currentSectionLabel" class="mt-0.5 font-black text-slate-900">Platform Overview</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span id="lastUpdated" class="hidden text-xs text-slate-400 sm:inline">Not updated</span>
+        <button id="refreshBtn" class="btnx" type="button">
+          <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+          <span class="hidden sm:inline">Refresh</span>
+        </button>
+        <button id="logoutBtn" class="btnx" type="button">
+          <i data-lucide="log-out" class="h-4 w-4"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section id="section-overview" class="section active">
+      <header class="hero">
+        <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <p class="eyebrow text-indigo-200">Platform governance</p>
+            <h1 class="mt-2 text-3xl font-black tracking-tight">Admin Command Center</h1>
+            <p class="mt-3 max-w-3xl text-sm leading-6 text-indigo-100">
+              Manage institution trust, student identity, recruiter verification and platform activity
+              from one secure workspace.
+            </p>
+          </div>
+
+          <button class="btnx border-white/20 bg-white/10 text-white hover:bg-white/15" type="button" onclick="switchSection('colleges','pending')">
+            <i data-lucide="badge-check" class="h-4 w-4"></i>
+            Review Pending Colleges
+          </button>
+        </div>
+      </header>
+
+      <div class="stats-mobile mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="panel stat">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="stat-label">Students</p>
+              <p id="statStudents" class="stat-value">—</p>
+            </div>
+            <span class="icon-box bg-indigo-50 text-indigo-600"><i data-lucide="graduation-cap" class="h-5 w-5"></i></span>
+          </div>
+          <p class="mt-2 text-xs text-slate-400"><span id="statVerifiedStudents">—</span> college-verified</p>
+        </article>
+
+        <article class="panel stat">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="stat-label">Colleges</p>
+              <p id="statColleges" class="stat-value">—</p>
+            </div>
+            <span class="icon-box bg-emerald-50 text-emerald-600"><i data-lucide="building-2" class="h-5 w-5"></i></span>
+          </div>
+          <p class="mt-2 text-xs text-amber-600"><span id="statPendingColleges">—</span> pending review</p>
+        </article>
+
+        <article class="panel stat">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="stat-label">Recruiters</p>
+              <p id="statRecruiters" class="stat-value">—</p>
+            </div>
+            <span class="icon-box bg-violet-50 text-violet-600"><i data-lucide="briefcase-business" class="h-5 w-5"></i></span>
+          </div>
+          <p class="mt-2 text-xs text-slate-400"><span id="statVerifiedCompanies">—</span> verified companies</p>
+        </article>
+
+        <article class="panel stat">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="stat-label">Opportunities</p>
+              <p id="statOpportunities" class="stat-value">—</p>
+            </div>
+            <span class="icon-box bg-blue-50 text-blue-600"><i data-lucide="target" class="h-5 w-5"></i></span>
+          </div>
+          <p class="mt-2 text-xs text-slate-400"><span id="statApplications">—</span> applications</p>
+        </article>
+      </div>
+
+      <div class="mt-5 grid gap-5 xl:grid-cols-[1.4fr_.8fr]">
+        <section class="panel overflow-hidden">
+          <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+            <div>
+              <p class="eyebrow text-indigo-600">Verification queue</p>
+              <h2 class="mt-1 text-lg font-black">Pending College Approvals</h2>
+            </div>
+            <button class="btnx" type="button" onclick="switchSection('colleges','pending')">View all</button>
+          </div>
+          <div id="pendingQueue">
+            <div class="p-5">
+              <div class="skeleton h-16 rounded-xl"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel p-5">
+          <p class="eyebrow text-indigo-600">Trust workflow</p>
+          <h2 class="mt-1 text-lg font-black">Verification Pipeline</h2>
+
+          <div class="mt-5 space-y-4">
+            <div class="flex gap-3">
+              <span class="icon-box bg-indigo-50 text-indigo-600"><i data-lucide="file-text" class="h-5 w-5"></i></span>
+              <div><p class="font-black">1. Institution profile</p><p class="mt-1 text-sm text-slate-500">Official IDs, contact data and documents submitted.</p></div>
+            </div>
+            <div class="flex gap-3">
+              <span class="icon-box bg-amber-50 text-amber-600"><i data-lucide="scan-search" class="h-5 w-5"></i></span>
+              <div><p class="font-black">2. Admin review</p><p class="mt-1 text-sm text-slate-500">Admin checks identity evidence and verification signals.</p></div>
+            </div>
+            <div class="flex gap-3">
+              <span class="icon-box bg-emerald-50 text-emerald-600"><i data-lucide="shield-check" class="h-5 w-5"></i></span>
+              <div><p class="font-black">3. Trusted institution</p><p class="mt-1 text-sm text-slate-500">Verified colleges can add official registry students.</p></div>
+            </div>
+            <div class="flex gap-3">
+              <span class="icon-box bg-blue-50 text-blue-600"><i data-lucide="link-2" class="h-5 w-5"></i></span>
+              <div><p class="font-black">4. Student identity claim</p><p class="mt-1 text-sm text-slate-500">Students claim existing registry records using college + enrollment ID.</p></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- COLLEGES -->
+    <section id="section-colleges" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow text-indigo-600">Institution trust</p>
+          <h1 class="mt-1 text-2xl font-black">College Management</h1>
+          <p class="mt-1 text-sm text-slate-500">Approve institutions before student registry actions are unlocked.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i data-lucide="search" class="h-4 w-4"></i>
+            <input id="collegeSearch" class="field" placeholder="Search college, code, AISHE...">
+          </div>
+          <select id="collegeStatusFilter" class="field min-w-36">
+            <option value="all">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="verified">Verified</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btnx" type="button" onclick="exportColleges()"><i data-lucide="download" class="h-4 w-4"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="panel overflow-hidden">
+        <div class="data-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Institution</th>
+                <th>Identity</th>
+                <th>Verification</th>
+                <th>Location</th>
+                <th>Trust Signals</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="collegeTableBody">
+              <tr><td colspan="6"><div class="skeleton h-10 rounded"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section id="section-students" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow text-indigo-600">Student identity</p>
+          <h1 class="mt-1 text-2xl font-black">Student Management</h1>
+          <p class="mt-1 text-sm text-slate-500">Review student accounts and official college-link status.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i data-lucide="search" class="h-4 w-4"></i>
+            <input id="studentSearch" class="field" placeholder="Search student, email, enrollment...">
+          </div>
+          <select id="studentVerifyFilter" class="field min-w-40">
+            <option value="all">All students</option>
+            <option value="verified">College verified</option>
+            <option value="unverified">Unverified</option>
+          </select>
+          <button class="btnx" type="button" onclick="exportStudents()"><i data-lucide="download" class="h-4 w-4"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="panel overflow-hidden">
+        <div class="data-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>College</th>
+                <th>Department</th>
+                <th>Enrollment</th>
+                <th>Academic</th>
+                <th>Verification</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <tr><td colspan="7"><div class="skeleton h-10 rounded"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECRUITERS -->
+    <section id="section-recruiters" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow text-indigo-600">Industry access</p>
+          <h1 class="mt-1 text-2xl font-black">Recruiter Management</h1>
+          <p class="mt-1 text-sm text-slate-500">Review company identity and recruiter platform access.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i data-lucide="search" class="h-4 w-4"></i>
+            <input id="recruiterSearch" class="field" placeholder="Search company, recruiter, industry...">
+          </div>
+          <select id="recruiterVerifyFilter" class="field min-w-40">
+            <option value="all">All companies</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Unverified</option>
+          </select>
+          <button class="btnx" type="button" onclick="exportRecruiters()"><i data-lucide="download" class="h-4 w-4"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="panel overflow-hidden">
+        <div class="data-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Recruiter</th>
+                <th>Industry</th>
+                <th>Location</th>
+                <th>Opportunities</th>
+                <th>Verification</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recruiterTableBody">
+              <tr><td colspan="7"><div class="skeleton h-10 rounded"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Mobile drawer -->
+<div id="drawerOverlay" class="drawer-overlay">
+  <div class="mobile-drawer">
+    <div class="flex items-center justify-between">
+      <div class="brand p-0">
+        <span class="brand-mark"><i data-lucide="shield-check" class="h-5 w-5"></i></span>
+        <div><div class="text-xs font-black text-indigo-300">SkillBridge AI</div><div class="font-black text-white">Admin</div></div>
+      </div>
+      <button id="drawerClose" class="btnx border-white/10 bg-white/5 text-white" type="button"><i data-lucide="x" class="h-4 w-4"></i></button>
+    </div>
+    <div class="mt-5">
+      <button class="nav-btn active mobile-nav" data-section="overview"><i data-lucide="layout-dashboard" class="h-4 w-4"></i> Overview</button>
+      <button class="nav-btn mobile-nav" data-section="colleges"><i data-lucide="building-2" class="h-4 w-4"></i> Colleges</button>
+      <button class="nav-btn mobile-nav" data-section="students"><i data-lucide="graduation-cap" class="h-4 w-4"></i> Students</button>
+      <button class="nav-btn mobile-nav" data-section="recruiters"><i data-lucide="briefcase-business" class="h-4 w-4"></i> Recruiters</button>
+    </div>
+  </div>
+</div>
+
+<!-- Universal details modal -->
+<div id="detailsModal" class="modal">
+  <div class="modal-card">
+    <div class="flex items-start justify-between gap-4 border-b border-slate-100 p-5">
+      <div>
+        <p id="detailsKicker" class="eyebrow text-indigo-600">Details</p>
+        <h2 id="detailsTitle" class="mt-1 text-xl font-black">Record</h2>
+      </div>
+      <button class="btnx" type="button" onclick="closeDetails()"><i data-lucide="x" class="h-4 w-4"></i></button>
+    </div>
+    <div id="detailsBody" class="p-5"></div>
+  </div>
+</div>
+
+<!-- College decision modal -->
+<div id="decisionModal" class="modal">
+  <div class="modal-card max-w-xl">
+    <div class="flex items-start justify-between gap-4 border-b border-slate-100 p-5">
+      <div>
+        <p class="eyebrow text-indigo-600">Institution review</p>
+        <h2 id="decisionTitle" class="mt-1 text-xl font-black">College Decision</h2>
+      </div>
+      <button class="btnx" type="button" onclick="closeDecision()"><i data-lucide="x" class="h-4 w-4"></i></button>
+    </div>
+    <form id="decisionForm" class="p-5">
+      <input type="hidden" id="decisionCollegeId">
+      <input type="hidden" id="decisionValue">
+
+      <div id="decisionContext" class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600"></div>
+
+      <label class="mt-5 block text-sm font-black text-slate-700" for="decisionNote">Admin note</label>
+      <textarea id="decisionNote" class="field mt-2 min-h-28 resize-y" placeholder="Review note / rejection reason / approval remark"></textarea>
+
+      <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <button class="btnx" type="button" onclick="closeDecision()">Cancel</button>
+        <button id="decisionSubmit" class="btnx primary" type="submit">Save decision</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+
+<script>
+  let adminUser = null;
+  let stats = {};
+  let colleges = [];
+  let students = [];
+  let recruiters = [];
+
+  const sectionLabels = {
+    overview: "Platform Overview",
+    colleges: "College Management",
+    students: "Student Management",
+    recruiters: "Recruiter Management"
+  };
+
+  const esc = value => {
+    if (window.SB?.esc) return SB.esc(value ?? "");
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  };
+
+  const unwrap = response => response?.data ?? response;
+
+  function roleValue(user){
+    return String(user?.role?.value || user?.role || "").toLowerCase();
+  }
+
+  function dateText(value){
+    if(!value) return "—";
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleString();
+  }
+
+  function boolBadge(value, yes="Yes", no="No"){
+    return value
+      ? `<span class="badge b-ok"><i data-lucide="check" class="h-3 w-3"></i>${esc(yes)}</span>`
+      : `<span class="badge b-muted">${esc(no)}</span>`;
+  }
+
+  function collegeStatusBadge(status, verified){
+    const normalized = String(status || (verified ? "verified" : "pending")).toLowerCase();
+    if(normalized === "verified") return `<span class="badge b-ok"><i data-lucide="badge-check" class="h-3 w-3"></i>Verified</span>`;
+    if(normalized === "rejected") return `<span class="badge b-bad"><i data-lucide="circle-x" class="h-3 w-3"></i>Rejected</span>`;
+    return `<span class="badge b-warn"><i data-lucide="clock-3" class="h-3 w-3"></i>Pending</span>`;
+  }
+
+  function switchSection(name, forcedFilter=null){
+    document.querySelectorAll(".section").forEach(el => el.classList.remove("active"));
+    document.getElementById(`section-${name}`)?.classList.add("active");
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.section === name);
+    });
+
+    document.getElementById("currentSectionLabel").textContent = sectionLabels[name] || "Admin";
+    closeDrawer();
+
+    if(name === "colleges"){
+      if(forcedFilter){
+        document.getElementById("collegeStatusFilter").value = forcedFilter;
+      }
+      renderColleges();
+    }
+    if(name === "students") renderStudents();
+    if(name === "recruiters") renderRecruiters();
+
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(window.lucide) lucide.createIcons();
+  }
+
+  window.switchSection = switchSection;
+
+  document.querySelectorAll("[data-section]").forEach(btn => {
+    btn.addEventListener("click", () => switchSection(btn.dataset.section));
+  });
+
+  const drawerOverlay = document.getElementById("drawerOverlay");
+  function openDrawer(){drawerOverlay.classList.add("open")}
+  function closeDrawer(){drawerOverlay.classList.remove("open")}
+  document.getElementById("mobileMenuBtn").addEventListener("click", openDrawer);
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  drawerOverlay.addEventListener("click", e => {if(e.target === drawerOverlay) closeDrawer()});
+
+  async function ensureAdmin(){
+    if(!window.Auth?.me){
+      throw new Error("Auth utility is unavailable.");
+    }
+    adminUser = await Auth.me();
+    if(roleValue(adminUser) !== "admin"){
+      throw new Error("Admin access required.");
+    }
+  }
+
+  async function loadStats(){
+    const response = await SB.get("/admin/dashboard/stats");
+    stats = unwrap(response) || {};
+
+    document.getElementById("statStudents").textContent = stats.total_students ?? 0;
+    document.getElementById("statVerifiedStudents").textContent = stats.verified_students ?? 0;
+    document.getElementById("statColleges").textContent = stats.total_colleges ?? 0;
+    document.getElementById("statPendingColleges").textContent = stats.pending_colleges ?? 0;
+    document.getElementById("sidePendingCount").textContent = stats.pending_colleges ?? 0;
+    document.getElementById("statRecruiters").textContent = stats.total_recruiters ?? 0;
+    document.getElementById("statVerifiedCompanies").textContent = stats.verified_companies ?? 0;
+    document.getElementById("statOpportunities").textContent = stats.total_opportunities ?? 0;
+    document.getElementById("statApplications").textContent = stats.total_applications ?? 0;
+  }
+
+  async function loadColleges(){
+    const response = await SB.get("/admin/colleges");
+    colleges = Array.isArray(unwrap(response)) ? unwrap(response) : [];
+    renderPendingQueue();
+    renderColleges();
+  }
+
+  async function loadStudents(){
+    const response = await SB.get("/admin/students");
+    students = Array.isArray(unwrap(response)) ? unwrap(response) : [];
+    renderStudents();
+  }
+
+  async function loadRecruiters(){
+    const response = await SB.get("/admin/recruiters");
+    recruiters = Array.isArray(unwrap(response)) ? unwrap(response) : [];
+    renderRecruiters();
+  }
+
+  function renderPendingQueue(){
+    const root = document.getElementById("pendingQueue");
+    const rows = colleges.filter(c => String(c.verification_status || "pending").toLowerCase() === "pending").slice(0,6);
+
+    if(!rows.length){
+      root.innerHTML = `<div class="empty"><i data-lucide="circle-check-big" class="mx-auto h-8 w-8 text-emerald-500"></i><p class="mt-3 font-black text-slate-800">No pending colleges</p><p class="mt-1 text-sm">The institution review queue is clear.</p></div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    root.innerHTML = rows.map(c => `
+      <div class="trust-item">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="font-black text-slate-900">${esc(c.name || "Unnamed college")}</p>
+              ${collegeStatusBadge(c.verification_status,c.is_verified)}
+            </div>
+            <p class="mt-1 text-xs text-slate-500">${esc(c.college_public_id || "No public ID")} · ${esc(c.city || "—")}, ${esc(c.state || "—")}</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="btnx" onclick="viewCollege(${Number(c.id)})"><i data-lucide="eye" class="h-4 w-4"></i>View</button>
+            <button class="btnx success" onclick="openDecision(${Number(c.id)},'verified')"><i data-lucide="check" class="h-4 w-4"></i>Approve</button>
+          </div>
+        </div>
+        <div class="verification-grid">
+          <div class="verify-mini ${c.email_verified ? "ok":""}">Email ${c.email_verified ? "✓":"—"}</div>
+          <div class="verify-mini ${c.phone_verified ? "ok":""}">Phone ${c.phone_verified ? "✓":"—"}</div>
+          <div class="verify-mini ${c.website_verified ? "ok":""}">Website ${c.website_verified ? "✓":"—"}</div>
+          <div class="verify-mini ${c.documents_verified ? "ok":""}">Docs ${c.documents_verified ? "✓":"—"}</div>
+        </div>
+      </div>
+    `).join("");
+
+    lucide.createIcons();
+  }
+
+  function filteredColleges(){
+    const q = document.getElementById("collegeSearch").value.trim().toLowerCase();
+    const status = document.getElementById("collegeStatusFilter").value;
+
+    return colleges.filter(c => {
+      const hay = [c.name,c.college_public_id,c.college_code,c.aishe_code,c.official_email,c.city,c.state]
+        .filter(Boolean).join(" ").toLowerCase();
+      const actual = String(c.verification_status || (c.is_verified ? "verified":"pending")).toLowerCase();
+      return (!q || hay.includes(q)) && (status === "all" || actual === status);
+    });
+  }
+
+  function renderColleges(){
+    const body = document.getElementById("collegeTableBody");
+    const rows = filteredColleges();
+
+    if(!rows.length){
+      body.innerHTML = `<tr><td colspan="6"><div class="empty">No colleges match this search/filter.</div></td></tr>`;
+      return;
+    }
+
+    body.innerHTML = rows.map(c => `
+      <tr>
+        <td>
+          <div class="flex items-center gap-3">
+            ${c.college_logo_url
+              ? `<img src="${esc(c.college_logo_url)}" alt="" class="h-10 w-10 rounded-xl border border-slate-200 object-cover">`
+              : `<span class="icon-box bg-indigo-50 text-indigo-600"><i data-lucide="building-2" class="h-5 w-5"></i></span>`}
+            <div class="min-w-0">
+              <p class="max-w-60 truncate font-black">${esc(c.name || "—")}</p>
+              <p class="mt-1 text-xs text-slate-400">${esc(c.official_email || "No official email")}</p>
+            </div>
+          </div>
+        </td>
+        <td>
+          <p class="font-bold">${esc(c.college_public_id || "—")}</p>
+          <p class="mt-1 text-xs text-slate-400">${esc(c.college_code || "No college code")} · AISHE ${esc(c.aishe_code || "—")}</p>
+        </td>
+        <td>${collegeStatusBadge(c.verification_status,c.is_verified)}</td>
+        <td><p class="font-bold">${esc(c.city || "—")}</p><p class="mt-1 text-xs text-slate-400">${esc(c.state || "—")}</p></td>
+        <td>
+          <div class="flex flex-wrap gap-1">
+            ${c.email_verified ? `<span class="badge b-ok">Email</span>` : `<span class="badge b-muted">Email</span>`}
+            ${c.website_verified ? `<span class="badge b-ok">Web</span>` : `<span class="badge b-muted">Web</span>`}
+            ${c.documents_verified ? `<span class="badge b-ok">Docs</span>` : `<span class="badge b-muted">Docs</span>`}
+          </div>
+        </td>
+        <td>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="btnx" onclick="viewCollege(${Number(c.id)})"><i data-lucide="eye" class="h-4 w-4"></i>View</button>
+            ${String(c.verification_status || "").toLowerCase() !== "verified"
+              ? `<button class="btnx success" onclick="openDecision(${Number(c.id)},'verified')"><i data-lucide="check" class="h-4 w-4"></i>Approve</button>`
+              : ""}
+            <button class="btnx danger" onclick="openDecision(${Number(c.id)},'rejected')"><i data-lucide="x" class="h-4 w-4"></i>Reject</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+
+    lucide.createIcons();
+  }
+
+  function filteredStudents(){
+    const q = document.getElementById("studentSearch").value.trim().toLowerCase();
+    const filter = document.getElementById("studentVerifyFilter").value;
+
+    return students.filter(s => {
+      const hay = [s.name,s.email,s.student_id_number,s.college_name,s.department_name,s.branch]
+        .filter(Boolean).join(" ").toLowerCase();
+      const verified = Boolean(s.college_verified);
+      const statusOk = filter === "all" || (filter === "verified" && verified) || (filter === "unverified" && !verified);
+      return (!q || hay.includes(q)) && statusOk;
+    });
+  }
+
+  function renderStudents(){
+    const body = document.getElementById("studentTableBody");
+    const rows = filteredStudents();
+
+    if(!rows.length){
+      body.innerHTML = `<tr><td colspan="7"><div class="empty">No students match this search/filter.</div></td></tr>`;
+      return;
+    }
+
+    body.innerHTML = rows.map(s => `
+      <tr>
+        <td><p class="font-black">${esc(s.name || "—")}</p><p class="mt-1 text-xs text-slate-400">${esc(s.email || "—")}</p></td>
+        <td><p class="font-bold">${esc(s.college_name || "Not linked")}</p><p class="mt-1 text-xs text-slate-400">${esc(s.college_public_id || "")}</p></td>
+        <td><p class="font-bold">${esc(s.department_name || s.branch || "—")}</p></td>
+        <td><p class="font-mono text-xs font-bold">${esc(s.student_id_number || "—")}</p></td>
+        <td><p class="font-bold">Year ${esc(s.year ?? "—")}</p><p class="mt-1 text-xs text-slate-400">Semester ${esc(s.semester ?? "—")}</p></td>
+        <td>${s.college_verified ? `<span class="badge b-ok">Verified</span>` : `<span class="badge b-warn">Unverified</span>`}</td>
+        <td><button class="btnx" onclick="viewStudent(${Number(s.id)})"><i data-lucide="eye" class="h-4 w-4"></i>View</button></td>
+      </tr>
+    `).join("");
+
+    lucide.createIcons();
+  }
+
+  function filteredRecruiters(){
+    const q = document.getElementById("recruiterSearch").value.trim().toLowerCase();
+    const filter = document.getElementById("recruiterVerifyFilter").value;
+
+    return recruiters.filter(r => {
+      const hay = [r.company_name,r.recruiter_name,r.email,r.industry,r.location,r.website]
+        .filter(Boolean).join(" ").toLowerCase();
+      const verified = Boolean(r.is_verified);
+      const statusOk = filter === "all" || (filter === "verified" && verified) || (filter === "unverified" && !verified);
+      return (!q || hay.includes(q)) && statusOk;
+    });
+  }
+
+  function renderRecruiters(){
+    const body = document.getElementById("recruiterTableBody");
+    const rows = filteredRecruiters();
+
+    if(!rows.length){
+      body.innerHTML = `<tr><td colspan="7"><div class="empty">No recruiters match this search/filter.</div></td></tr>`;
+      return;
+    }
+
+    body.innerHTML = rows.map(r => `
+      <tr>
+        <td><p class="font-black">${esc(r.company_name || "No company profile")}</p><p class="mt-1 text-xs text-slate-400">${esc(r.website || "—")}</p></td>
+        <td><p class="font-bold">${esc(r.recruiter_name || "—")}</p><p class="mt-1 text-xs text-slate-400">${esc(r.email || "—")}</p></td>
+        <td>${esc(r.industry || "—")}</td>
+        <td>${esc(r.location || "—")}</td>
+        <td><span class="badge b-info">${Number(r.opportunity_count || 0)} posted</span></td>
+        <td>${r.is_verified ? `<span class="badge b-ok">Verified</span>` : `<span class="badge b-warn">Pending</span>`}</td>
+        <td>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="btnx" onclick="viewRecruiter(${Number(r.company_id || 0)})"><i data-lucide="eye" class="h-4 w-4"></i>View</button>
+            ${r.company_id
+              ? `<button class="btnx ${r.is_verified ? "danger":"success"}" onclick="setRecruiterVerification(${Number(r.company_id)},${r.is_verified ? "false":"true"})">${r.is_verified ? "Unverify":"Verify"}</button>`
+              : ""}
+          </div>
+        </td>
+      </tr>
+    `).join("");
+
+    lucide.createIcons();
+  }
+
+  function detailField(label,value){
+    return `<div class="detail"><dt>${esc(label)}</dt><dd>${value === null || value === undefined || value === "" ? "—" : esc(value)}</dd></div>`;
+  }
+
+  function openDetails(kicker,title,html){
+    document.getElementById("detailsKicker").textContent = kicker;
+    document.getElementById("detailsTitle").textContent = title;
+    document.getElementById("detailsBody").innerHTML = html;
+    document.getElementById("detailsModal").classList.add("open");
+    lucide.createIcons();
+  }
+
+  window.closeDetails = () => document.getElementById("detailsModal").classList.remove("open");
+
+  window.viewCollege = function(id){
+    const c = colleges.find(x => Number(x.id) === Number(id));
+    if(!c) return;
+
+    const docs = `
+      <div class="mt-5 rounded-xl border border-slate-200 p-4">
+        <p class="text-sm font-black">Verification evidence</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          ${boolBadge(c.email_verified,"Email verified","Email pending")}
+          ${boolBadge(c.phone_verified,"Phone verified","Phone pending")}
+          ${boolBadge(c.website_verified,"Website verified","Website pending")}
+          ${boolBadge(c.documents_verified,"Documents verified","Documents pending")}
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          ${c.website ? `<a class="btnx" target="_blank" rel="noopener" href="${esc(c.website)}"><i data-lucide="external-link" class="h-4 w-4"></i>Website</a>` : ""}
+          ${c.affiliation_certificate_url ? `<a class="btnx" target="_blank" rel="noopener" href="${esc(c.affiliation_certificate_url)}"><i data-lucide="file-text" class="h-4 w-4"></i>Affiliation Certificate</a>` : ""}
+          ${c.authorization_letter_url ? `<a class="btnx" target="_blank" rel="noopener" href="${esc(c.authorization_letter_url)}"><i data-lucide="file-check-2" class="h-4 w-4"></i>Authorization Letter</a>` : ""}
+        </div>
+      </div>
+    `;
+
+    const actions = `
+      <div class="mt-5 flex flex-wrap justify-end gap-2">
+        ${String(c.verification_status || "").toLowerCase() !== "verified"
+          ? `<button class="btnx success" onclick="closeDetails();openDecision(${Number(c.id)},'verified')">Approve Institution</button>`
+          : ""}
+        <button class="btnx danger" onclick="closeDetails();openDecision(${Number(c.id)},'rejected')">Reject / Revoke</button>
+      </div>
+    `;
+
+    openDetails("College review",c.name || "College",`
+      <dl class="detail-grid">
+        ${detailField("Public College ID",c.college_public_id)}
+        ${detailField("College Code",c.college_code)}
+        ${detailField("AISHE Code",c.aishe_code)}
+        ${detailField("Affiliation",c.affiliation_status)}
+        ${detailField("University",c.university)}
+        ${detailField("Institution Type",c.institution_type)}
+        ${detailField("Official Email",c.official_email)}
+        ${detailField("Official Phone",c.official_phone)}
+        ${detailField("Principal",c.principal_name)}
+        ${detailField("Authorized Person",c.authorized_person_name)}
+        ${detailField("Designation",c.authorized_designation)}
+        ${detailField("Location",[c.city,c.state,c.pincode].filter(Boolean).join(", "))}
+        ${detailField("Verification Status",c.verification_status)}
+        ${detailField("Verified At",dateText(c.verified_at))}
+        ${detailField("Admin Note",c.verification_note)}
+      </dl>
+      ${docs}
+      ${actions}
+    `);
+  };
+
+  window.viewStudent = function(id){
+    const s = students.find(x => Number(x.id) === Number(id));
+    if(!s) return;
+    openDetails("Student identity",s.name || "Student",`
+      <dl class="detail-grid">
+        ${detailField("Email",s.email)}
+        ${detailField("Enrollment ID",s.student_id_number)}
+        ${detailField("College",s.college_name)}
+        ${detailField("Public College ID",s.college_public_id)}
+        ${detailField("Department",s.department_name || s.branch)}
+        ${detailField("Academic Year",s.year)}
+        ${detailField("Semester",s.semester)}
+        ${detailField("College Verified",s.college_verified ? "Yes":"No")}
+        ${detailField("Verification Source",s.college_verification_source)}
+        ${detailField("Verified At",dateText(s.college_verified_at))}
+        ${detailField("Career Goal",s.career_goal)}
+      </dl>
+    `);
+  };
+
+  window.viewRecruiter = function(companyId){
+    const r = recruiters.find(x => Number(x.company_id) === Number(companyId));
+    if(!r) return;
+    openDetails("Recruiter / company",r.company_name || "Recruiter",`
+      <dl class="detail-grid">
+        ${detailField("Recruiter",r.recruiter_name)}
+        ${detailField("Email",r.email)}
+        ${detailField("Industry",r.industry)}
+        ${detailField("Location",r.location)}
+        ${detailField("Website",r.website)}
+        ${detailField("Company Verified",r.is_verified ? "Yes":"No")}
+        ${detailField("Opportunities",r.opportunity_count)}
+      </dl>
+      <div class="mt-5 flex justify-end">
+        <button class="btnx ${r.is_verified ? "danger":"success"}" onclick="closeDetails();setRecruiterVerification(${Number(r.company_id)},${r.is_verified ? "false":"true"})">
+          ${r.is_verified ? "Remove verification":"Verify company"}
+        </button>
+      </div>
+    `);
+  };
+
+  window.openDecision = function(collegeId,decision){
+    const c = colleges.find(x => Number(x.id) === Number(collegeId));
+    if(!c) return;
+
+    document.getElementById("decisionCollegeId").value = c.id;
+    document.getElementById("decisionValue").value = decision;
+    document.getElementById("decisionNote").value = "";
+    document.getElementById("decisionTitle").textContent = decision === "verified" ? "Approve College" : "Reject / Revoke College";
+    document.getElementById("decisionContext").innerHTML = `
+      <p class="font-black text-slate-900">${esc(c.name)}</p>
+      <p class="mt-1">${esc(c.college_public_id || "No public ID")} · ${esc(c.official_email || "No official email")}</p>
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        ${boolBadge(c.website_verified,"Website verified","Website pending")}
+        ${boolBadge(c.documents_verified,"Docs verified","Docs pending")}
+      </div>
+    `;
+    const submit = document.getElementById("decisionSubmit");
+    submit.className = decision === "verified" ? "btnx success" : "btnx danger";
+    submit.textContent = decision === "verified" ? "Approve institution" : "Save rejection";
+    document.getElementById("decisionModal").classList.add("open");
+    lucide.createIcons();
+  };
+
+  window.closeDecision = () => document.getElementById("decisionModal").classList.remove("open");
+
+  document.getElementById("decisionForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = Number(document.getElementById("decisionCollegeId").value);
+    const decision = document.getElementById("decisionValue").value;
+    const note = document.getElementById("decisionNote").value.trim();
+    const btn = document.getElementById("decisionSubmit");
+
+    if(decision === "rejected" && !note){
+      SB.toast("Rejection reason is required.");
+      return;
+    }
+
+    const original = btn.textContent;
+    try{
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      await SB.patch(`/admin/colleges/${id}/verification`, {
+        status: decision,
+        note: note || null
+      });
+      closeDecision();
+      SB.toast(decision === "verified" ? "College approved successfully." : "College verification updated.");
+      await Promise.all([loadStats(),loadColleges()]);
+    }catch(error){
+      SB.toast(error.message);
+    }finally{
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
+  window.setRecruiterVerification = async function(companyId,isVerified){
+    const message = isVerified
+      ? "Verify this company for recruiter access?"
+      : "Remove verification from this company?";
+    if(!confirm(message)) return;
+
+    try{
+      await SB.patch(`/admin/recruiters/${companyId}/verification`, {is_verified:isVerified});
+      SB.toast(isVerified ? "Company verified." : "Company verification removed.");
+      await Promise.all([loadStats(),loadRecruiters()]);
+    }catch(error){
+      SB.toast(error.message);
+    }
+  };
+
+  function csvDownload(filename,rows){
+    if(!rows.length){
+      SB.toast("No data to export.");
+      return;
+    }
+    const headers = Object.keys(rows[0]);
+    const quote = value => `"${String(value ?? "").replaceAll('"','""')}"`;
+    const csv = [headers.map(quote).join(","), ...rows.map(row => headers.map(h => quote(row[h])).join(","))].join("\n");
+    const blob = new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  window.exportColleges = () => csvDownload("skillbridge-colleges.csv",filteredColleges().map(c => ({
+    id:c.id,name:c.name,public_id:c.college_public_id,college_code:c.college_code,aishe_code:c.aishe_code,
+    email:c.official_email,city:c.city,state:c.state,status:c.verification_status
+  })));
+
+  window.exportStudents = () => csvDownload("skillbridge-students.csv",filteredStudents().map(s => ({
+    id:s.id,name:s.name,email:s.email,college:s.college_name,department:s.department_name || s.branch,
+    enrollment_id:s.student_id_number,year:s.year,semester:s.semester,college_verified:s.college_verified
+  })));
+
+  window.exportRecruiters = () => csvDownload("skillbridge-recruiters.csv",filteredRecruiters().map(r => ({
+    company_id:r.company_id,company:r.company_name,recruiter:r.recruiter_name,email:r.email,
+    industry:r.industry,location:r.location,verified:r.is_verified,opportunities:r.opportunity_count
+  })));
+
+  ["collegeSearch","studentSearch","recruiterSearch"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      if(id === "collegeSearch") renderColleges();
+      if(id === "studentSearch") renderStudents();
+      if(id === "recruiterSearch") renderRecruiters();
+    });
+  });
+
+  document.getElementById("collegeStatusFilter").addEventListener("change",renderColleges);
+  document.getElementById("studentVerifyFilter").addEventListener("change",renderStudents);
+  document.getElementById("recruiterVerifyFilter").addEventListener("change",renderRecruiters);
+
+  async function refreshAll(){
+    const btn = document.getElementById("refreshBtn");
+    btn.disabled = true;
+    try{
+      await Promise.all([loadStats(),loadColleges(),loadStudents(),loadRecruiters()]);
+      document.getElementById("lastUpdated").textContent = `Updated ${new Date().toLocaleTimeString()}`;
+    }catch(error){
+      console.error(error);
+      SB.toast(error.message || "Admin data could not be loaded.");
+    }finally{
+      btn.disabled = false;
+      lucide.createIcons();
+    }
+  }
+
+  document.getElementById("refreshBtn").addEventListener("click",refreshAll);
+
+  document.getElementById("logoutBtn").addEventListener("click",() => {
+    localStorage.removeItem("skillbridge_token");
+    window.location.href = "/admin/login";
+  });
+
+  document.addEventListener("keydown",e => {
+    if(e.key === "Escape"){
+      closeDetails();
+      closeDecision();
+      closeDrawer();
+    }
+  });
+
+  async function init(){
+    lucide.createIcons();
+    try{
+      await ensureAdmin();
+      await refreshAll();
+    }catch(error){
+      console.error(error);
+
+      // Invalid/expired/non-admin sessions must return to the
+      // Render-hosted admin login page.
+      localStorage.removeItem("skillbridge_token");
+
+      window.location.replace(
+        "/admin/login"
+      );
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

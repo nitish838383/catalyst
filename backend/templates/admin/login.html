@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="SkillBridge AI — Secure Administrator Login">
+
+  <title>Admin Login | SkillBridge AI</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/assets/css/app.css">
+
+  <style>
+    :root{
+      --brand:#4f46e5;
+      --brand-dark:#3730a3;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      min-height:100%;
+    }
+
+    body{
+      margin:0;
+      min-height:100dvh;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 7% 8%,rgba(99,102,241,.14),transparent 25rem),
+        radial-gradient(circle at 95% 90%,rgba(37,99,235,.10),transparent 24rem),
+        #f8fafc;
+    }
+
+    .page{
+      min-height:100dvh;
+      display:grid;
+      grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);
+    }
+
+    .visual{
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      padding:2rem;
+      color:#fff;
+      background:
+        radial-gradient(circle at 77% 18%,rgba(255,255,255,.15),transparent 15rem),
+        linear-gradient(145deg,#020617 0%,#111827 30%,#312e81 72%,#2563eb 100%);
+    }
+
+    .visual:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      opacity:.08;
+      background-image:
+        linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);
+      background-size:32px 32px;
+    }
+
+    .visual>*{
+      position:relative;
+      z-index:1;
+    }
+
+    .brand-mark{
+      width:46px;
+      height:46px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:15px;
+      background:rgba(255,255,255,.11);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 18px 40px rgba(2,6,23,.24);
+    }
+
+    .security-card{
+      max-width:560px;
+      border:1px solid rgba(255,255,255,.13);
+      border-radius:22px;
+      padding:1.2rem;
+      background:rgba(255,255,255,.07);
+      backdrop-filter:blur(10px);
+    }
+
+    .login-side{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+    }
+
+    .login-card{
+      width:min(100%,470px);
+      border:1px solid #e2e8f0;
+      border-radius:28px;
+      padding:2rem;
+      background:rgba(255,255,255,.96);
+      box-shadow:0 30px 80px rgba(15,23,42,.10);
+    }
+
+    .input-wrap{
+      position:relative;
+    }
+
+    .field{
+      width:100%;
+      min-height:50px;
+      border:1px solid #cbd5e1;
+      border-radius:13px;
+      padding:.75rem .9rem .75rem 2.75rem;
+      background:#fff;
+      color:#0f172a;
+      font-size:.94rem;
+      transition:.17s ease;
+    }
+
+    .field:hover{
+      border-color:#94a3b8;
+    }
+
+    .field:focus{
+      outline:none;
+      border-color:#6366f1;
+      box-shadow:0 0 0 4px rgba(99,102,241,.11);
+    }
+
+    .input-icon{
+      position:absolute;
+      left:.9rem;
+      top:50%;
+      transform:translateY(-50%);
+      color:#94a3b8;
+      pointer-events:none;
+    }
+
+    .password-toggle{
+      position:absolute;
+      right:.55rem;
+      top:50%;
+      transform:translateY(-50%);
+      width:38px;
+      height:38px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:0;
+      border-radius:10px;
+      background:transparent;
+      color:#64748b;
+      cursor:pointer;
+    }
+
+    .password-toggle:hover{
+      background:#f1f5f9;
+      color:#334155;
+    }
+
+    .submit-btn{
+      width:100%;
+      min-height:50px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:.55rem;
+      border:0;
+      border-radius:13px;
+      background:linear-gradient(135deg,#4f46e5,#2563eb);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 14px 30px rgba(79,70,229,.20);
+      transition:.18s ease;
+    }
+
+    .submit-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 18px 35px rgba(79,70,229,.26);
+    }
+
+    .submit-btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .notice{
+      display:none;
+      margin-top:1rem;
+      border-radius:13px;
+      padding:.8rem .9rem;
+      font-size:.84rem;
+      line-height:1.4;
+    }
+
+    .notice.show{display:block}
+    .notice.error{
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#be123c;
+    }
+    .notice.success{
+      background:#ecfdf5;
+      border:1px solid #a7f3d0;
+      color:#047857;
+    }
+    .notice.info{
+      background:#eef2ff;
+      border:1px solid #c7d2fe;
+      color:#4338ca;
+    }
+
+    .spinner{
+      width:17px;
+      height:17px;
+      border:2px solid rgba(255,255,255,.35);
+      border-top-color:#fff;
+      border-radius:999px;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    @media(max-width:980px){
+      .page{
+        grid-template-columns:1fr;
+      }
+
+      .visual{
+        min-height:auto;
+        padding:1.25rem;
+      }
+
+      .visual-main{
+        display:none;
+      }
+
+      .visual-footer{
+        display:none;
+      }
+
+      .login-side{
+        padding:1rem;
+        min-height:calc(100dvh - 86px);
+      }
+    }
+
+    @media(max-width:520px){
+      .login-card{
+        border-radius:20px;
+        padding:1.25rem;
+      }
+
+      .login-side{
+        align-items:flex-start;
+        padding-top:1.35rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- Left trust / security panel -->
+  <section class="visual">
+
+    <div class="flex items-center gap-3">
+      <span class="brand-mark">
+        <i data-lucide="shield-check" class="h-6 w-6"></i>
+      </span>
+
+      <div>
+        <p class="text-xs font-black uppercase tracking-[.16em] text-indigo-200">
+          SkillBridge AI
+        </p>
+        <p class="mt-1 text-lg font-black">
+          Administration
+        </p>
+      </div>
+    </div>
+
+
+    <div class="visual-main max-w-2xl">
+
+      <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-indigo-100">
+        <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
+        Restricted administrative access
+      </div>
+
+      <h1 class="mt-5 text-5xl font-black leading-[1.08] tracking-tight">
+        Govern trust across the
+        <span class="text-indigo-200">SkillBridge ecosystem.</span>
+      </h1>
+
+      <p class="mt-5 max-w-xl text-base leading-7 text-slate-300">
+        Review institutions, protect official student identity, verify recruiters
+        and supervise platform activity from one secure control center.
+      </p>
+
+
+      <div class="mt-8 grid gap-3 sm:grid-cols-3">
+
+        <div class="security-card">
+          <i data-lucide="building-2" class="h-5 w-5 text-indigo-200"></i>
+          <p class="mt-3 font-black">College Trust</p>
+          <p class="mt-1 text-xs leading-5 text-slate-300">
+            Approve institution identity before official registry access.
+          </p>
+        </div>
+
+        <div class="security-card">
+          <i data-lucide="graduation-cap" class="h-5 w-5 text-indigo-200"></i>
+          <p class="mt-3 font-black">Student Identity</p>
+          <p class="mt-1 text-xs leading-5 text-slate-300">
+            Monitor verified college and enrollment mappings.
+          </p>
+        </div>
+
+        <div class="security-card">
+          <i data-lucide="briefcase-business" class="h-5 w-5 text-indigo-200"></i>
+          <p class="mt-3 font-black">Industry Access</p>
+          <p class="mt-1 text-xs leading-5 text-slate-300">
+            Review recruiter and company verification status.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="visual-footer flex items-center gap-2 text-xs text-slate-400">
+      <i data-lucide="lock-keyhole" class="h-4 w-4"></i>
+      Admin accounts are not available through public registration.
+    </div>
+
+  </section>
+
+
+  <!-- Login -->
+  <main class="login-side">
+
+    <section class="login-card">
+
+      <div class="flex items-start justify-between gap-4">
+
+        <div>
+          <p class="text-xs font-black uppercase tracking-[.15em] text-indigo-600">
+            Secure Portal
+          </p>
+
+          <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-950">
+            Admin Login
+          </h2>
+
+          <p class="mt-2 text-sm leading-6 text-slate-500">
+            Sign in using an authorized SkillBridge administrator account.
+          </p>
+        </div>
+
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+          <i data-lucide="key-round" class="h-5 w-5"></i>
+        </span>
+
+      </div>
+
+
+      <form id="adminLoginForm" class="mt-7 space-y-5">
+
+        <div>
+          <label for="email" class="mb-2 block text-sm font-black text-slate-700">
+            Admin Email
+          </label>
+
+          <div class="input-wrap">
+
+            <i data-lucide="mail" class="input-icon h-4 w-4"></i>
+
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="username"
+              placeholder="admin@skillbridge.ai"
+              class="field"
+              required
+            >
+
+          </div>
+        </div>
+
+
+        <div>
+          <div class="mb-2 flex items-center justify-between gap-3">
+
+            <label for="password" class="block text-sm font-black text-slate-700">
+              Password
+            </label>
+
+            <span class="text-xs font-semibold text-slate-400">
+              Admin only
+            </span>
+
+          </div>
+
+
+          <div class="input-wrap">
+
+            <i data-lucide="lock-keyhole" class="input-icon h-4 w-4"></i>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              class="field pr-12"
+              required
+            >
+
+
+            <button
+              id="passwordToggle"
+              type="button"
+              class="password-toggle"
+              aria-label="Show password"
+            >
+              <i id="passwordIcon" data-lucide="eye" class="h-4 w-4"></i>
+            </button>
+
+          </div>
+        </div>
+
+
+        <div
+          class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800"
+        >
+          <div class="flex gap-2">
+            <i data-lucide="shield-alert" class="mt-0.5 h-4 w-4 shrink-0"></i>
+
+            <p>
+              Student, College and Recruiter accounts cannot access this portal,
+              even with valid login credentials.
+            </p>
+          </div>
+        </div>
+
+
+        <button
+          id="submitButton"
+          type="submit"
+          class="submit-btn"
+        >
+          <i data-lucide="log-in" class="h-4 w-4"></i>
+          <span id="submitText">Continue to Admin Dashboard</span>
+        </button>
+
+      </form>
+
+
+      <div id="notice" class="notice"></div>
+
+
+      <div class="mt-6 border-t border-slate-100 pt-5">
+
+        <a
+          href="https://skillbridge-ai-sand.vercel.app/"
+          class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 transition hover:text-indigo-600"
+        >
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Return to SkillBridge
+        </a>
+
+      </div>
+
+
+      <div class="mt-6 rounded-xl bg-slate-50 p-3">
+
+        <div class="flex gap-2">
+
+          <i data-lucide="fingerprint" class="mt-0.5 h-4 w-4 shrink-0 text-indigo-600"></i>
+
+          <p class="text-xs leading-5 text-slate-500">
+            Authentication verifies your credentials first. Access is then
+            authorized separately by checking that your account role is
+            <strong class="text-slate-700">admin</strong>.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/auth.js"></script>
+
+
+<script>
+  const TOKEN_KEY = "skillbridge_token";
+
+  const form =
+    document.getElementById("adminLoginForm");
+
+  const emailInput =
+    document.getElementById("email");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  const submitButton =
+    document.getElementById("submitButton");
+
+  const submitText =
+    document.getElementById("submitText");
+
+  const notice =
+    document.getElementById("notice");
+
+  const passwordToggle =
+    document.getElementById("passwordToggle");
+
+
+  function roleOf(user) {
+
+    return String(
+      user?.role?.value ||
+      user?.role ||
+      ""
+    )
+    .trim()
+    .toLowerCase();
+
+  }
+
+
+  function showNotice(
+    message,
+    type = "error"
+  ) {
+
+    notice.className =
+      `notice show ${type}`;
+
+    notice.textContent =
+      message;
+
+  }
+
+
+  function clearNotice() {
+
+    notice.className =
+      "notice";
+
+    notice.textContent =
+      "";
+
+  }
+
+
+  function clearAuth() {
+
+    localStorage.removeItem(
+      TOKEN_KEY
+    );
+
+  }
+
+
+  function extractToken(response) {
+
+    return (
+      response?.access_token ||
+      response?.token ||
+      response?.data?.access_token ||
+      response?.data?.token ||
+      null
+    );
+
+  }
+
+
+  async function performLogin(
+    email,
+    password
+  ) {
+
+    /*
+      Prefer the project's existing Auth.login helper if available.
+      Otherwise use the same FastAPI login endpoint directly.
+    */
+
+    if (
+      window.Auth &&
+      typeof Auth.login === "function"
+    ) {
+
+      return await Auth.login({
+        email,
+        password
+      });
+
+    }
+
+
+    if (
+      !window.SB ||
+      typeof SB.post !== "function"
+    ) {
+
+      throw new Error(
+        "SkillBridge API helper is unavailable."
+      );
+
+    }
+
+
+    return await SB.post(
+      "/auth/login",
+      {
+        email,
+        password
+      }
+    );
+
+  }
+
+
+  async function currentUser() {
+
+    if (
+      window.Auth &&
+      typeof Auth.me === "function"
+    ) {
+
+      return await Auth.me();
+
+    }
+
+
+    if (
+      window.SB &&
+      typeof SB.get === "function"
+    ) {
+
+      const response =
+        await SB.get(
+          "/auth/me"
+        );
+
+      return (
+        response?.data ||
+        response
+      );
+
+    }
+
+
+    throw new Error(
+      "Unable to validate administrator account."
+    );
+
+  }
+
+
+  async function checkExistingAdminSession() {
+
+    const token =
+      localStorage.getItem(
+        TOKEN_KEY
+      );
+
+
+    if (!token) {
+
+      return;
+
+    }
+
+
+    try {
+
+      const user =
+        await currentUser();
+
+
+      if (
+        roleOf(user) ===
+        "admin"
+      ) {
+
+        showNotice(
+          "Admin session found. Opening dashboard...",
+          "info"
+        );
+
+
+        window.setTimeout(
+          () => {
+            window.location.href =
+              "/admin/dashboard";
+          },
+          300
+        );
+
+        return;
+
+      }
+
+
+      clearAuth();
+
+    }
+
+    catch (error) {
+
+      clearAuth();
+
+    }
+
+  }
+
+
+  passwordToggle.addEventListener(
+    "click",
+    function () {
+
+      const isPassword =
+        passwordInput.type ===
+        "password";
+
+
+      passwordInput.type =
+        isPassword
+          ? "text"
+          : "password";
+
+
+      passwordToggle.innerHTML =
+        isPassword
+          ? `
+            <i
+              data-lucide="eye-off"
+              class="h-4 w-4"
+            ></i>
+          `
+          : `
+            <i
+              data-lucide="eye"
+              class="h-4 w-4"
+            ></i>
+          `;
+
+
+      passwordToggle.setAttribute(
+        "aria-label",
+        isPassword
+          ? "Hide password"
+          : "Show password"
+      );
+
+
+      if (window.lucide) {
+
+        lucide.createIcons();
+
+      }
+
+    }
+  );
+
+
+  form.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      clearNotice();
+
+
+      const email =
+        emailInput.value
+          .trim()
+          .toLowerCase();
+
+
+      const password =
+        passwordInput.value;
+
+
+      if (
+        !email ||
+        !password
+      ) {
+
+        showNotice(
+          "Enter your admin email and password."
+        );
+
+        return;
+
+      }
+
+
+      const oldText =
+        submitText.textContent;
+
+
+      try {
+
+        submitButton.disabled =
+          true;
+
+
+        submitButton.innerHTML = `
+          <span class="spinner"></span>
+          Authenticating...
+        `;
+
+
+        /*
+          Remove any previous Student / College / Recruiter token
+          before beginning an admin login.
+        */
+
+        clearAuth();
+
+
+        const loginResponse =
+          await performLogin(
+            email,
+            password
+          );
+
+
+        /*
+          Some Auth.login helpers save the token themselves.
+          If it returns a token, save it explicitly as well.
+        */
+
+        const token =
+          extractToken(
+            loginResponse
+          );
+
+
+        if (token) {
+
+          localStorage.setItem(
+            TOKEN_KEY,
+            token
+          );
+
+        }
+
+
+        /*
+          Credentials being valid does NOT mean this is an admin.
+          /auth/me is the authorization boundary for the frontend.
+        */
+
+        const user =
+          await currentUser();
+
+
+        const role =
+          roleOf(
+            user
+          );
+
+
+        if (
+          role !==
+          "admin"
+        ) {
+
+          clearAuth();
+
+
+          throw new Error(
+            "Access denied. This portal is restricted to SkillBridge administrators."
+          );
+
+        }
+
+
+        showNotice(
+          "Administrator verified. Opening Control Center...",
+          "success"
+        );
+
+
+        submitButton.innerHTML = `
+          <i
+            data-lucide="shield-check"
+            class="h-4 w-4"
+          ></i>
+          Access Granted
+        `;
+
+
+        if (window.lucide) {
+
+          lucide.createIcons();
+
+        }
+
+
+        window.setTimeout(
+          () => {
+
+            window.location.href =
+              "/admin/dashboard";
+
+          },
+          450
+        );
+
+      }
+
+      catch (error) {
+
+        clearAuth();
+
+
+        const message =
+          error?.message ||
+          error?.detail ||
+          "Admin login failed. Check your credentials and try again.";
+
+
+        showNotice(
+          message,
+          "error"
+        );
+
+
+        submitButton.disabled =
+          false;
+
+
+        submitButton.innerHTML = `
+          <i
+            data-lucide="log-in"
+            class="h-4 w-4"
+          ></i>
+
+          <span>
+            ${oldText}
+          </span>
+        `;
+
+
+        if (window.lucide) {
+
+          lucide.createIcons();
+
+        }
+
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (
+        event.key === "Escape" &&
+        passwordInput.type === "text"
+      ) {
+
+        passwordInput.type =
+          "password";
+
+      }
+
+    }
+  );
+
+
+  async function init() {
+
+    if (window.lucide) {
+
+      lucide.createIcons();
+
+    }
+
+
+    await checkExistingAdminSession();
+
+  }
+
+
+  init();
+
+</script>
+
+</body>
+</html>
