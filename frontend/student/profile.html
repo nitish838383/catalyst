@@ -1160,13 +1160,26 @@
 
     const department =
       data.department?.name ||
-      currentProfile?.branch ||
+      currentProfile?.department_name ||
       "—";
 
-    const branch =
+    const rawBranch =
+      data.branch ||
+      data.student?.branch ||
       currentProfile?.branch ||
-      data.department?.name ||
-      "—";
+      "";
+
+    const collegeName =
+      data.college?.name ||
+      currentProfile?.college_name ||
+      "";
+
+    const branch =
+      rawBranch &&
+      rawBranch.trim().toLowerCase() !==
+        String(collegeName).trim().toLowerCase()
+        ? rawBranch
+        : department;
 
     const year =
       data.year ??
@@ -1593,12 +1606,21 @@
 
 
       officialDepartment.value =
-        currentProfile.branch ||
+        currentProfile.department_name ||
         "Set after verification";
 
+      const profileBranch =
+        currentProfile.branch || "";
+
+      const profileCollegeName =
+        currentProfile.college_name || "";
+
       officialBranch.value =
-        currentProfile.branch ||
-        "Set after verification";
+        profileBranch &&
+        profileBranch.trim().toLowerCase() !==
+          String(profileCollegeName).trim().toLowerCase()
+          ? profileBranch
+          : "Set after verification";
 
       officialYear.value =
         currentProfile.year
