@@ -1158,8 +1158,297 @@
 
     syncThemeButton();
   </script>
+
+<!-- ===================================================== -->
+<!-- MAINTENANCE / DEVELOPMENT WARNING -->
+<!-- ===================================================== -->
+<style>
+  .sb-maintenance-overlay{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(4,10,24,.72);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .25s ease,visibility .25s ease;
+  }
+
+  .sb-maintenance-overlay.is-visible{
+    opacity:1;
+    visibility:visible;
+  }
+
+  .sb-maintenance-card{
+    position:relative;
+    width:min(100%,520px);
+    overflow:hidden;
+    border:1px solid rgba(148,163,184,.22);
+    border-radius:24px;
+    background:
+      radial-gradient(circle at 100% 0%,rgba(99,102,241,.16),transparent 34%),
+      var(--surface,#111827);
+    color:var(--ink,#f8fafc);
+    box-shadow:0 35px 100px rgba(0,0,0,.45);
+    transform:translateY(18px) scale(.98);
+    transition:transform .28s ease;
+  }
+
+  .sb-maintenance-overlay.is-visible .sb-maintenance-card{
+    transform:translateY(0) scale(1);
+  }
+
+  .sb-maintenance-accent{
+    height:5px;
+    background:linear-gradient(90deg,#4169e1,#7c3aed,#22c55e);
+  }
+
+  .sb-maintenance-content{
+    padding:30px;
+  }
+
+  .sb-maintenance-icon{
+    width:58px;
+    height:58px;
+    display:grid;
+    place-items:center;
+    border-radius:18px;
+    background:rgba(65,105,225,.14);
+    color:#7d9cff;
+    border:1px solid rgba(125,156,255,.22);
+    margin-bottom:20px;
+  }
+
+  .sb-maintenance-icon svg{
+    width:28px;
+    height:28px;
+  }
+
+  .sb-maintenance-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(245,158,11,.11);
+    border:1px solid rgba(245,158,11,.25);
+    color:#f59e0b;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .sb-maintenance-badge span{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#f59e0b;
+    box-shadow:0 0 0 5px rgba(245,158,11,.10);
+  }
+
+  .sb-maintenance-card h2{
+    margin:0;
+    font-size:28px;
+    line-height:1.18;
+    letter-spacing:-.8px;
+    color:var(--ink,#f8fafc);
+  }
+
+  .sb-maintenance-card p{
+    margin:12px 0 0;
+    color:var(--muted,#94a3b8);
+    font-size:14px;
+    line-height:1.75;
+  }
+
+  .sb-maintenance-note{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    padding:13px 14px;
+    border:1px solid var(--line,#334155);
+    border-radius:14px;
+    background:var(--paper,#0f172a);
+    color:var(--muted,#94a3b8);
+    font-size:12px;
+    line-height:1.6;
+  }
+
+  .sb-maintenance-note svg{
+    width:17px;
+    height:17px;
+    flex-shrink:0;
+    margin-top:1px;
+    color:#7d9cff;
+  }
+
+  .sb-maintenance-actions{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+  }
+
+  .sb-maintenance-continue{
+    flex:1;
+    min-height:48px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(135deg,#4169e1,#6d5ce7);
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(65,105,225,.20);
+    transition:transform .18s ease,filter .18s ease;
+  }
+
+  .sb-maintenance-continue:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.06);
+  }
+
+  .sb-maintenance-close{
+    min-width:48px;
+    min-height:48px;
+    display:grid;
+    place-items:center;
+    border:1px solid var(--line,#334155);
+    border-radius:12px;
+    background:var(--paper,#0f172a);
+    color:var(--ink,#f8fafc);
+    cursor:pointer;
+  }
+
+  .sb-maintenance-close svg{
+    width:19px;
+    height:19px;
+  }
+
+  @media(max-width:520px){
+    .sb-maintenance-content{padding:24px 20px}
+    .sb-maintenance-card{border-radius:20px}
+    .sb-maintenance-card h2{font-size:24px}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .sb-maintenance-overlay,
+    .sb-maintenance-card,
+    .sb-maintenance-continue{
+      transition:none!important;
+    }
+  }
+</style>
+
+<div
+  id="sbMaintenanceWarning"
+  class="sb-maintenance-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="sbMaintenanceTitle"
+  aria-describedby="sbMaintenanceText"
+>
+  <div class="sb-maintenance-card">
+    <div class="sb-maintenance-accent"></div>
+
+    <div class="sb-maintenance-content">
+      <div class="sb-maintenance-icon">
+        <i data-lucide="construction"></i>
+      </div>
+
+      <div class="sb-maintenance-badge">
+        <span></span>
+        Development Notice
+      </div>
+
+      <h2 id="sbMaintenanceTitle">
+        SkillBridge AI is currently under development.
+      </h2>
+
+      <p id="sbMaintenanceText">
+        You can explore the platform, but some features, data, and workflows may still be
+        incomplete or temporarily unavailable while we continue improving the experience.
+      </p>
+
+      <div class="sb-maintenance-note">
+        <i data-lucide="info"></i>
+        <span>
+          This is a preview version. Please avoid relying on demo data as final platform information.
+        </span>
+      </div>
+
+      <div class="sb-maintenance-actions">
+        <button
+          id="sbMaintenanceContinue"
+          class="sb-maintenance-continue"
+          type="button"
+        >
+          Continue to SkillBridge
+        </button>
+
+        <button
+          id="sbMaintenanceClose"
+          class="sb-maintenance-close"
+          type="button"
+          aria-label="Close warning"
+        >
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-    alert("This website is currently under maintenance.");
+  (function () {
+    const overlay = document.getElementById("sbMaintenanceWarning");
+    const continueBtn = document.getElementById("sbMaintenanceContinue");
+    const closeBtn = document.getElementById("sbMaintenanceClose");
+
+    if (!overlay) return;
+
+    function openWarning() {
+      overlay.classList.add("is-visible");
+      document.body.style.overflow = "hidden";
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      window.setTimeout(() => {
+        continueBtn?.focus();
+      }, 100);
+    }
+
+    function closeWarning() {
+      overlay.classList.remove("is-visible");
+      document.body.style.overflow = "";
+    }
+
+    continueBtn?.addEventListener("click", closeWarning);
+    closeBtn?.addEventListener("click", closeWarning);
+
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay) {
+        closeWarning();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && overlay.classList.contains("is-visible")) {
+        closeWarning();
+      }
+    });
+
+    window.addEventListener("load", function () {
+      window.setTimeout(openWarning, 250);
+    });
+  })();
 </script>
 
 </body>
