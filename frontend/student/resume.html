@@ -213,8 +213,8 @@
                 <div class="analysis-stat flex items-center gap-3 p-4">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 font-black text-violet-600">2</div>
                     <div>
-                        <p class="font-bold text-slate-900">Extract Skills</p>
-                        <p class="text-xs text-slate-500">Resume skill analysis</p>
+                        <p class="font-bold text-slate-900">ATS & Skills</p>
+                        <p class="text-xs text-slate-500">Structure + skill analysis</p>
                     </div>
                 </div>
                 <div class="analysis-stat flex items-center gap-3 p-4">
@@ -257,6 +257,66 @@
                     <div class="max-w-lg text-sm text-slate-500 leading-relaxed">
                         SkillBridge will compare your profile and resume against the selected role and generate a personalized skill-gap analysis.
                     </div>
+                </div>
+            </section>
+
+            <!-- ========================================= -->
+            <!-- ATS READINESS -->
+            <!-- ========================================= -->
+            <section
+                id="resumeATSSection"
+                class="hidden mb-7 grid gap-5 lg:grid-cols-3"
+            >
+                <!-- ATS SCORE -->
+                <div class="analysis-stat p-6">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <p class="text-sm font-semibold text-slate-500">ATS Readiness Score</p>
+                            <p class="mt-1 text-xs text-slate-400">Deterministic resume-quality analysis</p>
+                        </div>
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <i data-lucide="gauge" class="h-5 w-5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex items-end gap-1">
+                        <span id="atsScore" class="text-5xl font-black text-indigo-600">0</span>
+                        <span class="mb-2 text-xl font-bold text-slate-400">/100</span>
+                    </div>
+
+                    <div class="mt-5 progress-track">
+                        <div id="atsScoreBar" class="progress-fill" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- DETECTED SECTIONS -->
+                <div class="analysis-stat p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                            <i data-lucide="list-checks" class="h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900">Resume Sections</h3>
+                            <p class="text-xs text-slate-500">Detected structure in your PDF</p>
+                        </div>
+                    </div>
+
+                    <div id="resumeSections" class="mt-4 space-y-2"></div>
+                </div>
+
+                <!-- ATS ISSUES -->
+                <div class="analysis-stat p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                            <i data-lucide="wrench" class="h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900">Resume Improvements</h3>
+                            <p class="text-xs text-slate-500">Rule-based ATS improvement points</p>
+                        </div>
+                    </div>
+
+                    <div id="atsIssues" class="mt-4 space-y-2"></div>
                 </div>
             </section>
 
@@ -476,8 +536,8 @@
                                 <i data-lucide="lightbulb" class="h-5 w-5"></i>
                             </div>
                             <div>
-                                <h2 class="text-xl font-black text-slate-900">AI Recommendation</h2>
-                                <p class="text-sm text-slate-500">Your next best action</p>
+                                <h2 class="text-xl font-black text-slate-900">Career Recommendation</h2>
+                                <p class="text-sm text-slate-500">Based on your readiness analysis</p>
                             </div>
                         </div>
                         <div id="recommendation" class="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/80 p-5 text-sm leading-7 text-slate-700">
@@ -506,6 +566,76 @@
                         <div id="roadmapList" class="hidden space-y-4"></div>
                     </div>
                 </section>
+            </section>
+
+
+            <!-- ========================================= -->
+            <!-- AI RESUME GUIDANCE -->
+            <!-- ========================================= -->
+            <section
+                id="aiResumeSection"
+                class="hidden mt-8 analysis-section overflow-hidden"
+            >
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                            <i data-lucide="sparkles" class="h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-black uppercase tracking-wider text-violet-500">
+                                AI Intelligence
+                            </div>
+                            <h2 class="mt-1 text-xl font-black text-slate-900">AI Resume Guidance</h2>
+                            <p class="mt-1 text-sm text-slate-500">
+                                Personalized resume improvements based on your actual resume and selected target role.
+                            </p>
+                        </div>
+                    </div>
+
+                    <button id="generateAIBtn" type="button" class="btn btn-primary">
+                        <i data-lucide="sparkles" class="h-4 w-4"></i>
+                        Generate AI Guidance
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div class="grid gap-5 lg:grid-cols-2">
+                        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+                            <h3 class="font-black text-emerald-800">Strengths</h3>
+                            <div id="aiStrengths" class="mt-4 space-y-2"></div>
+                        </div>
+
+                        <div class="rounded-2xl border border-amber-100 bg-amber-50/60 p-5">
+                            <h3 class="font-black text-amber-800">Weaknesses</h3>
+                            <div id="aiWeaknesses" class="mt-4 space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-black text-slate-900">Recommended Improvements</h3>
+                        <div id="aiImprovements" class="mt-3 space-y-2"></div>
+                    </div>
+
+                    <div class="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5">
+                        <h3 class="font-black text-indigo-900">Suggested Professional Summary</h3>
+                        <p id="aiSummary" class="mt-3 text-sm leading-7 text-slate-700">—</p>
+                    </div>
+
+                    <div>
+                        <h3 class="font-black text-slate-900">Project Bullet Improvements</h3>
+                        <div id="aiProjectBullets" class="mt-3 space-y-2"></div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-black text-slate-900">Learning Priorities</h3>
+                        <div id="aiLearning" class="mt-3 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-black text-slate-900">ATS Advice</h3>
+                        <div id="aiATSAdvice" class="mt-3 space-y-2"></div>
+                    </div>
+                </div>
             </section>
 
 
@@ -566,6 +696,7 @@
 let resumeId = null;
 let detectedSkills = [];
 let readinessData = null;
+let resumeAnalysisData = null;
 let selectedRole = "backend developer";
 
 /* ======================================================
@@ -609,6 +740,22 @@ const recommendedEmpty = document.getElementById("recommendedEmpty");
 const recommendedOpportunities = document.getElementById("recommendedOpportunities");
 const recommendedCount = document.getElementById("recommendedCount");
 const skillDeclaration = document.getElementById("skillDeclaration");
+
+const resumeATSSection = document.getElementById("resumeATSSection");
+const atsScore = document.getElementById("atsScore");
+const atsScoreBar = document.getElementById("atsScoreBar");
+const resumeSections = document.getElementById("resumeSections");
+const atsIssues = document.getElementById("atsIssues");
+
+const aiResumeSection = document.getElementById("aiResumeSection");
+const generateAIBtn = document.getElementById("generateAIBtn");
+const aiStrengths = document.getElementById("aiStrengths");
+const aiWeaknesses = document.getElementById("aiWeaknesses");
+const aiImprovements = document.getElementById("aiImprovements");
+const aiSummary = document.getElementById("aiSummary");
+const aiProjectBullets = document.getElementById("aiProjectBullets");
+const aiLearning = document.getElementById("aiLearning");
+const aiATSAdvice = document.getElementById("aiATSAdvice");
 
 
 /* ======================================================
@@ -697,9 +844,12 @@ document.getElementById("resumeForm").addEventListener("submit", async function 
 
     // Reset old analysis whenever a new resume is analyzed.
     readinessData = null;
+    resumeAnalysisData = null;
     careerAnalysis.classList.add("hidden");
     analysisSummary.classList.add("hidden");
     recommendedSection.classList.add("hidden");
+    resumeATSSection.classList.add("hidden");
+    aiResumeSection.classList.add("hidden");
     roadmapList.classList.add("hidden");
     roadmapEmpty.classList.remove("hidden");
 
@@ -733,18 +883,29 @@ document.getElementById("resumeForm").addEventListener("submit", async function 
 
         await SB.post(`/resumes/${resumeId}/analyze`, {});
 
-        const analysis = await SB.get(`/resumes/${resumeId}/analysis`);
+        const analysisResponse = await SB.get(`/resumes/${resumeId}/analysis`);
+
+        const analysis =
+            analysisResponse?.detected_skills
+                ? analysisResponse
+                : analysisResponse?.data?.detected_skills
+                    ? analysisResponse.data
+                    : analysisResponse?.data?.data?.detected_skills
+                        ? analysisResponse.data.data
+                        : analysisResponse || {};
+
+        resumeAnalysisData = analysis;
 
         detectedSkills =
-            Array.isArray(analysis?.data)
-                ? analysis.data
-                : Array.isArray(analysis?.data?.data)
-                    ? analysis.data.data
-                    : Array.isArray(analysis)
-                        ? analysis
-                        : [];
+            Array.isArray(analysis?.detected_skills)
+                ? analysis.detected_skills
+                : [];
 
         renderDetectedSkills();
+        renderResumeATS(
+            analysis?.ats || {},
+            analysis?.sections || {}
+        );
 
         resumeInfo.innerHTML = `
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
@@ -943,6 +1104,7 @@ acceptBtn.addEventListener("click", async function () {
 
         analysisSummary.classList.remove("hidden");
         careerAnalysis.classList.remove("hidden");
+        aiResumeSection.classList.remove("hidden");
 
         downloadAnalysisBtn.classList.remove("hidden");
         downloadAnalysisBtn.classList.add("inline-flex");
@@ -994,6 +1156,7 @@ function resetGeneratedAnalysis() {
     analysisSummary.classList.add("hidden");
     careerAnalysis.classList.add("hidden");
     recommendedSection.classList.add("hidden");
+    aiResumeSection.classList.add("hidden");
 
     readinessScore.textContent = "0";
     readinessText.textContent = "—";
@@ -1003,6 +1166,14 @@ function resetGeneratedAnalysis() {
     missingSkills.innerHTML = "";
     focusList.innerHTML = "";
     recommendation.innerHTML = "—";
+
+    aiStrengths.innerHTML = "";
+    aiWeaknesses.innerHTML = "";
+    aiImprovements.innerHTML = "";
+    aiProjectBullets.innerHTML = "";
+    aiLearning.innerHTML = "";
+    aiATSAdvice.innerHTML = "";
+    aiSummary.textContent = "—";
 
     summaryMatched.textContent = "0";
     summaryMissing.textContent = "0";
@@ -1023,6 +1194,68 @@ function resetGeneratedAnalysis() {
 
 function getConfirmedSkillCount() {
     return document.querySelectorAll(".skillCheck:checked").length;
+}
+
+
+/* ======================================================
+   RENDER ATS READINESS
+====================================================== */
+function renderResumeATS(ats, sections) {
+    const score = Math.max(
+        0,
+        Math.min(
+            100,
+            Number(ats?.score ?? 0)
+        )
+    );
+
+    atsScore.textContent = Math.round(score);
+    atsScoreBar.style.width = `${score}%`;
+
+    const sectionEntries = Object.entries(
+        sections && typeof sections === "object"
+            ? sections
+            : {}
+    );
+
+    resumeSections.innerHTML = sectionEntries.length
+        ? sectionEntries.map(([name, found]) => `
+            <div class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2">
+                <span class="text-sm font-semibold capitalize text-slate-700">
+                    ${SB.esc(String(name).replaceAll("_", " "))}
+                </span>
+                <span class="${found ? "text-emerald-600" : "text-rose-500"} font-black">
+                    ${found ? "✓" : "✕"}
+                </span>
+            </div>
+        `).join("")
+        : `
+            <p class="text-sm text-slate-500">
+                No section analysis returned.
+            </p>
+        `;
+
+    const issues = Array.isArray(ats?.issues)
+        ? ats.issues
+        : [];
+
+    atsIssues.innerHTML = issues.length
+        ? issues.map(issue => `
+            <div class="rounded-xl bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-800">
+                ${SB.esc(issue)}
+            </div>
+        `).join("")
+        : `
+            <div class="rounded-xl bg-emerald-50 px-3 py-2 text-sm leading-6 text-emerald-700">
+                No major ATS issues detected.
+            </div>
+        `;
+
+    resumeATSSection.classList.remove("hidden");
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 
@@ -1289,6 +1522,147 @@ function renderRoadmap(data) {
 }
 
 /* ======================================================
+   AI RESUME GUIDANCE
+====================================================== */
+generateAIBtn.addEventListener("click", generateResumeAIGuidance);
+
+
+async function generateResumeAIGuidance() {
+    if (!resumeId) {
+        SB.toast("Analyze your resume first.");
+        return;
+    }
+
+    if (!readinessData) {
+        SB.toast("Confirm your skills and generate career analysis first.");
+        return;
+    }
+
+    const originalHtml = generateAIBtn.innerHTML;
+
+    try {
+        generateAIBtn.disabled = true;
+        generateAIBtn.innerHTML = `
+            <span class="spinner"></span>
+            Generating AI Guidance...
+        `;
+
+        const response = await SB.post(
+            `/resumes/${resumeId}/ai-guidance`,
+            {
+                target_role: selectedRole
+            }
+        );
+
+        const guidance =
+            response?.data?.guidance ||
+            response?.data?.data?.guidance ||
+            response?.guidance ||
+            {};
+
+        renderAIGuidance(guidance);
+
+        SB.toast("AI resume guidance generated.");
+
+    } catch (error) {
+        console.error("AI resume guidance:", error);
+
+        SB.toast(
+            error.message ||
+            "Could not generate AI resume guidance."
+        );
+
+    } finally {
+        generateAIBtn.disabled = false;
+        generateAIBtn.innerHTML = originalHtml;
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+}
+
+
+function renderAIGuidance(data) {
+    const guidance =
+        data && typeof data === "object"
+            ? data
+            : {};
+
+    renderAIList(
+        aiStrengths,
+        guidance.strengths
+    );
+
+    renderAIList(
+        aiWeaknesses,
+        guidance.weaknesses
+    );
+
+    renderAIList(
+        aiImprovements,
+        guidance.improvements
+    );
+
+    renderAIList(
+        aiProjectBullets,
+        guidance.project_bullet_suggestions
+    );
+
+    renderAIList(
+        aiATSAdvice,
+        guidance.ats_advice
+    );
+
+    aiSummary.textContent =
+        guidance.summary_suggestion || "—";
+
+    const priorities =
+        Array.isArray(guidance.learning_priorities)
+            ? guidance.learning_priorities
+            : [];
+
+    aiLearning.innerHTML = priorities.length
+        ? priorities.map(skill => `
+            <span class="rounded-full bg-violet-50 px-3 py-1.5 text-sm font-bold text-violet-700">
+                ${SB.esc(skill)}
+            </span>
+        `).join("")
+        : `
+            <span class="text-sm text-slate-500">
+                No additional learning priorities returned.
+            </span>
+        `;
+
+    aiResumeSection.classList.remove("hidden");
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+
+function renderAIList(container, items) {
+    const values =
+        Array.isArray(items)
+            ? items
+            : [];
+
+    container.innerHTML = values.length
+        ? values.map(item => `
+            <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700">
+                ${SB.esc(item)}
+            </div>
+        `).join("")
+        : `
+            <p class="text-sm text-slate-500">
+                No suggestions returned.
+            </p>
+        `;
+}
+
+
+/* ======================================================
    DOWNLOAD ORIGINAL RESUME
 ====================================================== */
 downloadResumeBtn.addEventListener("click", async function () {
@@ -1299,7 +1673,7 @@ downloadResumeBtn.addEventListener("click", async function () {
 
     try {
         // Try common download endpoint
-        const token = localStorage.getItem("access_token") || localStorage.getItem("token") || "";
+        const token = localStorage.getItem("skillbridge_token") || localStorage.getItem("access_token") || localStorage.getItem("token") || "";
         const baseUrl = (window.SB && SB.baseUrl) ? SB.baseUrl : "";
 
         const response = await fetch(`${baseUrl}/resumes/${resumeId}/download`, {
@@ -1854,3 +2228,6 @@ if (window.lucide) {
 
 </body>
 </html>
+
+
+  
