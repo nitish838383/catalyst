@@ -1,69 +1,172 @@
 import re
 
+
 KNOWN_SKILLS = {
+    "Python": ["python"],
+    "Django": ["django"],
+    "FastAPI": ["fastapi", "fast api"],
+    "Flask": ["flask"],
 
-    "python": ["python"],
-    "django": ["django"],
-    "fastapi": ["fastapi", "fast api"],
-    "flask": ["flask"],
+    "JavaScript": [
+        "javascript",
+        "js",
+    ],
 
-    "javascript": ["javascript", "js"],
-    "typescript": ["typescript"],
-    "react": ["react", "react.js"],
-    "next.js": ["next.js", "nextjs"],
+    "TypeScript": [
+        "typescript",
+    ],
 
-    "html": ["html"],
-    "css": ["css"],
-    "postgresql": ["postgresql", "postgres"],
-    "mysql": ["mysql"],
-    "sql": ["sql"],
+    "React": [
+        "react",
+        "react.js",
+        "reactjs",
+    ],
 
-    "mongodb": ["mongodb"],
-    "redis": ["redis"],
-    "git": ["git"],
-    "github": ["github"],
-    "docker": ["docker"],
+    "Next.js": [
+        "next.js",
+        "nextjs",
+    ],
 
-    "kubernetes": ["kubernetes", "k8s"],
-    "aws": ["aws", "amazon web services"],
-    "azure": ["azure"],
-    "rest api": ["rest api", "restful api"],
+    "HTML": [
+        "html",
+        "html5",
+    ],
 
-    "sqlalchemy": ["sqlalchemy"],
-    "jwt": ["jwt", "json web token"],
-    "machine learning": ["machine learning"],
+    "CSS": [
+        "css",
+        "css3",
+    ],
 
-    "artificial intelligence": ["artificial intelligence", "ai"],
-    "pandas": ["pandas"],
-    "numpy": ["numpy"],
+    "PostgreSQL": [
+        "postgresql",
+        "postgres",
+    ],
 
-    "tensorflow": ["tensorflow"],
-    "pytorch": ["pytorch"],
-    "java": ["java"],
-    "c++": ["c++"],
-    "c": ["c language", " c "]
+    "MySQL": [
+        "mysql",
+    ],
 
+    "SQL": [
+        "sql",
+    ],
+
+    "MongoDB": [
+        "mongodb",
+        "mongo db",
+    ],
+
+    "Redis": [
+        "redis",
+    ],
+
+    "Git": [
+        "git",
+    ],
+
+    "GitHub": [
+        "github",
+    ],
+
+    "Docker": [
+        "docker",
+    ],
+
+    "Kubernetes": [
+        "kubernetes",
+        "k8s",
+    ],
+
+    "AWS": [
+        "aws",
+        "amazon web services",
+    ],
+
+    "Azure": [
+        "azure",
+        "microsoft azure",
+    ],
+
+    "REST API": [
+        "rest api",
+        "restful api",
+        "restful services",
+    ],
+
+    "SQLAlchemy": [
+        "sqlalchemy",
+    ],
+
+    "JWT": [
+        "jwt",
+        "json web token",
+    ],
+
+    "Machine Learning": [
+        "machine learning",
+    ],
+
+    "Artificial Intelligence": [
+        "artificial intelligence",
+    ],
+
+    "Pandas": [
+        "pandas",
+    ],
+
+    "NumPy": [
+        "numpy",
+    ],
+
+    "TensorFlow": [
+        "tensorflow",
+    ],
+
+    "PyTorch": [
+        "pytorch",
+    ],
+
+    "Java": [
+        "java",
+    ],
+
+    "C++": [
+        "c++",
+        "cpp",
+    ],
+
+    "C": [
+        "c language",
+        "c programming",
+    ],
 }
 
 
 def extract_skills(text: str) -> list[dict]:
+    normalized_text = text.lower()
 
-    t = text.lower()
-    out = []
+    detected_skills = []
 
     for name, aliases in KNOWN_SKILLS.items():
 
-        if any(
-            re.search(
-                rf"(?<!\w){re.escape(a)}(?!\w)",
-                t
+        for alias in aliases:
+
+            pattern = (
+                rf"(?<!\w)"
+                rf"{re.escape(alias.lower())}"
+                rf"(?!\w)"
             )
-            for a in aliases
-        ):
 
-            out.append({
-                "name": name,
-                "confidence": 1.0
-            })
+            if re.search(
+                pattern,
+                normalized_text,
+                flags=re.IGNORECASE,
+            ):
+                detected_skills.append({
+                    "name": name,
+                    "confidence": 1.0,
+                    "source": "resume",
+                })
 
-    return out
+                break
+
+    return detected_skills
